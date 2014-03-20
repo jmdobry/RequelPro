@@ -1,59 +1,27 @@
 <!DOCTYPE html>
-<html data-ng-app="Requel">
+<html data-ng-app="ReQuery">
 <head>
-    <title>Hello World!</title>
+    <title>ReQuery</title>
     <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <style>
         iframe {
             width: 100%;
             height: 500px;
         }
+        body {
+            background-color: #E6E6E7;
+            background: url('./img/low_contrast_linen.png') repeat repeat;
+        }
     </style>
 </head>
-<body class="container" data-ng-controller="MyCtrl as My">
-<div>
-    <div class="row">
-        <div class="page-header">
-            <h1>Requel Pro</h1>
-        </div>
-    </div>
-</div>
-<div class="row">
-
-    <div class="col-sm-3">
-        <div class="list-group">
-            <a href="" class="list-group-item" data-ng-repeat="url in My.adminUrls"
-               data-ng-click="My.activeAdminUrl = url" data-ng-class="{ active: My.activeAdminUrl === url }">
-                {{ url }}
-            </a>
-        </div>
-    </div>
-    <div class="col-sm-9">
-        <form>
-            <div class="form-group">
-                <label>Stuff</label>
-                <input type="text" data-ng-model="stuff" class="form-control"/>
-            </div>
-            <div class="form-group">
-                {{ stuff }}
-            </div>
-        </form>
-    </div>
-</div>
-<div class="row">
-    <iframe class="col-12" data-ng-src="{{ My.activeAdminUrl }}"></iframe>
-</div>
+<body>
+<main-header></main-header>
+<div data-ui-view></div>
 <script src="./bower_components/angular/angular.js"></script>
 <script src="./bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script>
-    angular.module('Requel', ['ngSanitize']).controller('MyCtrl', function ($scope, $sce) {
-        $scope.stuff = 'hello';
-        this.adminUrls = [
-            $sce.trustAsResourceUrl('http://localhost:8080'),
-            $sce.trustAsResourceUrl('http://db.codetrain.io')
-        ];
-        this.activeAdminUrl = '';
-    });
-</script>
+<script src="./bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="./js/app.js"></script>
+<script src="./js/core/directives/mainHeader.js"></script>
+<script src="./js/connections/controllers/connectionsController.js"></script>
 </body>
 </html>

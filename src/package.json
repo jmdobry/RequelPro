@@ -15,10 +15,11 @@
 		"title": "ReQuery",
 		"position": "center",
 		"resizeable": true,
+		"min_width": 700,
 		"toolbar": true
 	},
 	"private": true,
-	"single-instance": false,
+	"single-instance": true,
 	"repositories": [
 		{
 			"type": "git",
