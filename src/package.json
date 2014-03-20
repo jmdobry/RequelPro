@@ -1,0 +1,28 @@
+{
+	"name": "ReQuery",
+	"version": "0.0.1-SNAPSHOT",
+	"description": "RethinkDB Database Management with Reheat Integration",
+	"maintainers": [
+		{
+			"name": "Jason Dobry",
+			"email": "jason.dobry@requelpro.com",
+			"web": "http://www.requery.io"
+		}
+	],
+	"keywords": ["RethinkDB", "ReQL", "Database", "Query", "Inspector", "Reheat", "Model"],
+	"main": "./index.html",
+	"window": {
+		"title": "ReQuery",
+		"position": "center",
+		"resizeable": true,
+		"toolbar": true
+	},
+	"private": true,
+	"single-instance": false,
+	"repositories": [
+		{
+			"type": "git",
+			"url": "git@github.com:jmdobry/ReQueryApp.git"
+		}
+	]
+}

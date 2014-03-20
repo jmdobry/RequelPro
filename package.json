@@ -1,0 +1,24 @@
+{
+  "name": "ReQuery",
+  "version": "0.0.1-SNAPSHOT",
+  "description": "RethinkDB Database Management with Reheat Integration",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jmdobry/ReQueryApp.git"
+  },
+  "author": {
+    "name": "Jason Dobry",
+    "url": "http://www.requery.io",
+    "email": "jason.dobry@gmail.com"
+  },
+  "homepage": "http://www.requery.io",
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-node-webkit-builder": "^0.1.18",
+    "time-grunt": "^0.2.10",
+    "load-grunt-tasks": "^0.4.0",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-uglify": "^0.4.0"
+  },
+  "private": true
+}

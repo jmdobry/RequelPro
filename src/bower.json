@@ -1,0 +1,16 @@
+{
+  "author": "Jason Dobry",
+  "name": "Requel Pro",
+  "description": "RethinkDB Database Management",
+  "version": "0.0.1-SNAPSHOT",
+  "homepage": "https://www.requelpro.com/",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jmdobry/requel.git"
+  },
+  "dependencies": {
+    "angular": "1.2.14",
+    "angular-sanitize": "1.2.14"
+  },
+  "private": true
+}
