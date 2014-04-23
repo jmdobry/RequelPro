@@ -16,10 +16,12 @@
 		"position": "center",
 		"resizeable": true,
 		"min_width": 700,
+		"no-edit-menu": true,
 		"toolbar": true
 	},
 	"private": true,
-	"single-instance": true,
+	"single-instance": false,
+	"no-edit-menu": true,
 	"repositories": [
 		{
 			"type": "git",
