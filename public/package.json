@@ -13,9 +13,13 @@
   "main": "./index.html",
   "window": {
     "title": "Requel Pro",
+    "show": false,
     "position": "center",
     "resizeable": true,
-    "min_width": 700,
+    "width": 900,
+    "height": 600,
+    "min_width": 900,
+    "min_height": 600,
     "no-edit-menu": true,
     "toolbar": true
   },
