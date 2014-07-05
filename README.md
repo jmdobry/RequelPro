@@ -1,4 +1,4 @@
-ReQueryApp
+Requel Pro
 ==========
 
 Before Starting Development:

@@ -1,0 +1,15 @@
+{
+  "author": "Jason Dobry",
+  "name": "RequelPro",
+  "description": "RethinkDB Database Management",
+  "version": "0.0.1-SNAPSHOT",
+  "homepage": "https://www.requelpro.com/",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jmdobry/RequelPro.git"
+  },
+  "dependencies": {
+    "react": "0.10.0"
+  },
+  "private": true
+}
