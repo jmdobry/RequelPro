@@ -12,6 +12,15 @@
  */
 (function() {
   function createFileMenu(gui, rootMenu, position) {
+    function chooseFile(name) {
+      var chooser = document.querySelector(name);
+      chooser.addEventListener("change", function() {
+        console.log(this.value);
+      }, false);
+
+      chooser.click();
+    }
+
     var FileMenu = new gui.MenuItem({
       type: "normal",
       label: "File"
@@ -48,6 +57,7 @@
         label: "Import...",
         click: function() {
           console.log("Import data");
+          chooseFile("#import-file-dialog");
         }
       }),
       export: new gui.MenuItem({

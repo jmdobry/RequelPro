@@ -41,7 +41,11 @@
     var newConnection = React.createClass({
           displayName: "newConnection",
           render: function() {
-            return <div id="new-connection"><input type="text" /></div>;
+            return (
+              <div id="new-connection">
+                <h1>Connect</h1>
+              </div>
+              );
           }
     });
 
@@ -59,7 +63,7 @@
         <tabNav tabs={this.state.tabs} />
         <favoritesList favorites = {this.state.favorites}/>
         <newConnection/>
-        RequelPro
+        <input id="import-file-dialog" type="file" accept=".gz" />
         </div>
         );
     }
@@ -104,9 +108,25 @@
         }
       });
 
+    var deleteOption = new gui.MenuItem({
+        label: "Delete\t\t\u232b",
+        click: function() {
+          document.execCommand("delete");
+        }
+      });
+
+    var selectAll = new gui.MenuItem({
+        label: "Select All\t\t\u2318A",
+        click: function() {
+          document.execCommand("selectAll");
+        }
+      });
+
     menu.append(cut);
     menu.append(copy);
     menu.append(paste);
+    menu.append(deleteOption);
+    menu.append(selectAll);
 
     return menu;
   }
@@ -118,7 +138,7 @@
   });
 
   var editKey = "ctrl";
-  if (process.platform === 'darwin') {
+  if (process.platform === "darwin") {
     editKey = "command";
   }
 
