@@ -1,44 +1,67 @@
-var gui = require('nw.gui'),
-	win = gui.Window.get();
+/**
+ * @jsx React.DOM
+ */
+var gui = require("nw.gui");
+var win = gui.Window.get();
 
-win.on('loaded', function () {
-	win.show();
-	win.maximize();
-	win.removeAllListeners('loaded');
+win.on("loaded", function () {
+  win.show();
+  win.maximize();
+  win.removeAllListeners("loaded");
 });
 
-angular.module('ReQuery', ['ngSanitize', 'ui.router'])
-	.config(['$urlRouterProvider', '$stateProvider', function ($urlRouterProvider, $stateProvider) {
+function loadFavorites() {
+  var favorites = [];
+  try {
+    var f = localStorage.getItem("favorites");
+    if (f) {
+      favorites = JSON.parse(f);
+    } else {
+      localStorage.setItem("favorites", favorites);
+    }
+  } catch (err) {
+    console.error(err);
+    console.error("Failed to load favorites!");
+  }
+  return favorites;
+}
 
-		$urlRouterProvider.otherwise("/connections");
+var tabNav = React.createClass({
+  displayName: "tabNav",
+  render: function() {
+    var createTab = function(tab) {
+      return <li>{tab.connection.name}</li>;
+    };
+    return <ul>{this.props.tabs.map(createTab)}</ul>;
+  }
+});
 
-		$stateProvider
-			.state('connections', {
-				url: "/connections",
-				templateUrl: "./js/connections/controllers/connectionsPage.html",
-				controller: 'ConnectionsController',
-				controllerAs: 'ConnCtrl'
-			})
-			.state('state2', {
-				url: "/test2",
-				templateUrl: "./js/test2.html",
-				controller: 'MyCtrl',
-				controllerAs: 'My'
-			});
-	}])
-	.run(function ($log, MenubarService) {
-		// Load native UI library
-		try {
-			$log.debug('MenubarService loaded', MenubarService);
-		} catch (e) {
-			$log.error(e);
-		}
-	})
-	.controller('MyCtrl', function ($scope, $sce) {
-		$scope.stuff = 'hello';
-		this.adminUrls = [
-			$sce.trustAsResourceUrl('http://localhost:8080'),
-			$sce.trustAsResourceUrl('http://db.codetrain.io')
-		];
-		this.activeAdminUrl = '';
-	});
+var favoritesList = React.createClass({
+  displayName: "favoritesList",
+  render: function() {
+    var createFav = function(fav) {
+      return <li>{fav.name}</li>;
+    };
+    return <ul>{this.props.favorites.map(createFav)}</ul>;
+  }
+});
+
+var requelPro = React.createClass({
+  displayName: "RequelPro",
+  getInitialState: function () {
+    return {
+      favorites: loadFavorites(),
+      tabs: []
+    };
+  },
+  render: function () {
+    return (
+      <div>
+      <favoritesList favorites={this.state.favorites} />
+      RequelPro
+      </div>
+      );
+  }
+});
+
+React.renderComponent(requelPro(null), document.getElementById("main-view"));

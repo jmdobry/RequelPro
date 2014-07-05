@@ -1,29 +1,20 @@
 <!DOCTYPE html>
-<html data-ng-app="ReQuery">
+<html>
 <head>
-    <title>ReQuery</title>
-    <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <title>Requel Pro</title>
+    <meta charset="utf-8">
     <style>
         iframe {
             width: 100%;
             height: 500px;
         }
-
-        body {
-            background-color: #E6E6E7;
-            background: url('./img/low_contrast_linen.png') repeat repeat;
-        }
     </style>
 </head>
 <body>
-<main-header></main-header>
-<div data-ui-view></div>
-<script src="./bower_components/angular/angular.js"></script>
-<script src="./bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script src="./bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-<script src="./js/app.js"></script>
-<script src="./js/core/directives/mainHeader.js"></script>
-<script src="./js/core/services/Menubar.js"></script>
-<script src="./js/connections/controllers/connectionsController.js"></script>
+<div id="main-view"></div>
+<script src="./bower_components/react/react-with-addons.min.js"></script>
+<script src="./bower_components/react/JSXTransformer.js"></script>
+<script type="text/jsx" src="./js/app.js"></script>
+<script type="text/jsx" src="./js/mainMenu.js"></script>
 </body>
 </html>
