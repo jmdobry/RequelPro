@@ -26,15 +26,15 @@ function loadFavorites() {
   return favorites;
 }
 
-var tabNav = React.createClass({
-  displayName: "tabNav",
-  render: function() {
-    var createTab = function(tab) {
-      return <li>{tab.connection.name}</li>;
-    };
-    return <ul>{this.props.tabs.map(createTab)}</ul>;
-  }
-});
+// var tabNav = React.createClass({
+//   displayName: "tabNav",
+//   render: function() {
+//     var createTab = function(tab) {
+//       return <li>{tab.connection.name}</li>;
+//     };
+//     return <ul>{this.props.tabs.map(createTab)}</ul>;
+//   }
+// });
 
 var favoritesList = React.createClass({
   displayName: "favoritesList",
