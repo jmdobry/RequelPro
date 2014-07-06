@@ -22,7 +22,9 @@
     "grunt-jsxhint": "^0.0.2"
   },
   "dependencies": {
-    "RequelPro": "*"
+    "RequelPro": "*",
+    "rethinkdbdash": "^1.13.6",
+    "mout": "^0.9.1"
   },
   "private": true
 }

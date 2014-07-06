@@ -78,6 +78,7 @@
   window.win.width = window.screen.availWidth;
 
   React.renderComponent(window.requelPro(null), document.getElementById("main-view"));
+  window.R = require("RequelPro");
 
   $(function () {
     gui.Window.get().show();
