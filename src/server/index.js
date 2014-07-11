@@ -38,4 +38,4 @@ module.exports = {
   connect: connect,
   close: close,
   connections: connections
-}
+};

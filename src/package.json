@@ -2,16 +2,35 @@
   "name": "RequelPro",
   "version": "0.0.1-SNAPSHOT",
   "description": "RethinkDB Database Management.",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:jmdobry/RequelPro.git"
+  "maintainers": [
+    {
+      "name": "Jason Dobry",
+      "email": "jason.dobry@requelpro.com",
+      "web": "http://www.requelpro.com"
+    }
+  ],
+  "keywords": ["RethinkDB", "ReQL", "Database", "Query", "Inspector", "Reheat", "Model"],
+  "main": "./client/index.html",
+  "window": {
+    "title": "Requel Pro",
+    "show": false,
+    "position": "center",
+    "resizeable": true,
+    "width": 900,
+    "height": 600,
+    "min_width": 900,
+    "min_height": 600,
+    "no-edit-menu": true,
+    "toolbar": true,
+    "icon": "./client/img/mug_big.png"
   },
-  "author": {
-    "name": "Jason Dobry",
-    "url": "http://www.requery.io",
-    "email": "jason.dobry@gmail.com"
-  },
-  "main": "./index.js",
-  "homepage": "http://www.requelpro.com",
-  "private": true
+  "private": true,
+  "single-instance": false,
+  "no-edit-menu": true,
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git@github.com:jmdobry/RequelPro.git"
+    }
+  ]
 }

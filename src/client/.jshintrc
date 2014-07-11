@@ -1,6 +1,6 @@
 {
-  "node": true,
-  "browser": false,
+  "node": false,
+  "browser": true,
   "esnext": true,
   "bitwise": true,
   "camelcase": true,
@@ -19,9 +19,26 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
+    "inject": true,
+    "describe": true,
+    "process": true,
+    "Mousetrap": true,
+    "$": true,
+    "React": true,
+    "gui": true,
+    "win": true,
+    "it": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "assert": true,
+    "startInjector": true,
+    "DS": true,
+    "fail": true,
+    "$httpBackend": true,
     "console": true,
     "require": true,
     "module": true,
-    "exports": true
+    "exports": true,
+    "angular": true
   }
 }

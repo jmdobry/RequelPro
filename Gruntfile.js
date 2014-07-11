@@ -1,109 +1,122 @@
 module.exports = function (grunt) {
 
-  require('load-grunt-tasks')(grunt);
-  require('time-grunt')(grunt);
+  require("load-grunt-tasks")(grunt);
+  require("time-grunt")(grunt);
 
   grunt.initConfig({
     clean: {
-      build: ['./build/'],
-      releases: ['./build/releases/**/*']
+      build: ["./build/"],
+      dist: ["./dist/"],
+      releases: ["./build/releases/**/*"]
     },
 
     jshint: {
-      options: {
-        jshintrc: '.jshintrc'
+      client: {
+        options: {
+          jshintrc: "./src/client/.jshintrc"
+        },
+        src: [
+          "./src/client/js/**/*.js"
+        ]
       },
-      all: [
-        'public/js/**/*.js',
-        'public/test/**/*.js'
-      ]
+      server: {
+        options: {
+          jshintrc: "./src/server/.jshintrc",
+          ignores: [
+            "./src/server/node_modules/**/*"
+          ]
+        },
+        src: [
+          "./src/server/**/*.js"
+        ]
+      }
     },
 
     nodewebkit: {
       dist: {
         options: {
-          build_dir: './build',
+          build_dir: "./build",
           mac: true,
           win: true,
           linux32: true,
           linux64: true
         },
-        src: ['./public/**/*']
+        src: ["./dist/**/*"]
       },
       snapshot: {
         options: {
-          build_dir: './build',
+          build_dir: "./build",
           mac: true,
           win: false,
           linux32: false,
           linux64: false
         },
-        src: ['./public/**/*']
+        src: ["./src/**/*"]
       },
       dev: {
         options: {
-          build_dir: './build',
+          zip: true,
+          build_dir: "./build",
           mac: true,
           win: false,
           linux32: false,
           linux64: false,
           timestamped_builds: true
         },
-        src: ['./public/**/*']
+        src: ["./src/**/*"]
+      }
+    },
+
+    copy: {
+      dist: {
+        expand: true,
+        flatten: false,
+        cwd: 'src/',
+        src: ['**/*'],
+        dest: 'dist/'
+      }
+    },
+
+    uglify: {
+      dist: {
+        files: [
+          {
+            expand: true,
+            cwd: './dist/server',
+            src: ['**/*.js', '!node_modules/**/*'],
+            dest: './dist/server'
+          }
+        ]
       }
     }
   });
 
-  grunt.registerTask('link', function () {
-    var exec = require('child_process').exec;
-    var child;
-    var done = this.async();
-
-    child = exec('npm link', { cwd: 'src/' },
-      function (err, stdout, stderr) {
-        if (err) {
-          grunt.log.error(stderr);
-          done(err);
-        } else {
-          grunt.log.writeln(stdout);
-          child = exec('npm link RequelPro', { cwd: './' },
-            function (err, stdout, stderr) {
-              if (err !== null) {
-                grunt.log.error(stderr);
-                done(err);
-              } else {
-                grunt.log.writeln(stdout);
-                done();
-              }
-          });
-        }
-    });
-  });
-
-  grunt.registerTask('prebuild', [
-    'jshint',
-    'link'
+  grunt.registerTask("prebuild", [
+    "jshint"
   ]);
 
-  grunt.registerTask('build', [
-    'prebuild',
-    'clean:releases',
-    'nodewebkit:dev'
+  grunt.registerTask("build", [
+    "prebuild",
+    "clean:releases",
+    "nodewebkit:dev"
   ]);
 
-  grunt.registerTask('snapshot', [
-    'prebuild',
-    'clean:releases',
-    'nodewebkit:snapshot'
+  grunt.registerTask("snapshot", [
+    "prebuild",
+    "clean:releases",
+    "nodewebkit:snapshot"
   ]);
 
-  grunt.registerTask('dist', [
-    'prebuild',
-    'clean:releases',
-    'nodewebkit:dist'
+  grunt.registerTask("dist", [
+    "prebuild",
+    "clean:dist",
+    "clean:releases",
+    "copy",
+    "uglify",
+    "nodewebkit:dist"
   ]);
 
-  grunt.registerTask('default', [
-    'build'
+  grunt.registerTask("default", [
+    "build"
   ]);
 };

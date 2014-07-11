@@ -1,0 +1,7 @@
+{
+  "name": "RequelPro",
+  "dependencies": {
+    "rethinkdbdash": "^1.13.9",
+    "mout": "^0.9.1"
+  }
+}
