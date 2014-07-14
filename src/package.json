@@ -13,7 +13,7 @@
   "main": "./client/index.html",
   "window": {
     "title": "Requel Pro",
-    "show": false,
+    "show": true,
     "position": "center",
     "resizeable": true,
     "width": 900,
@@ -21,8 +21,7 @@
     "min_width": 900,
     "min_height": 600,
     "no-edit-menu": true,
-    "toolbar": true,
-    "icon": "./client/img/mug_big.png"
+    "toolbar": true
   },
   "private": true,
   "single-instance": false,
