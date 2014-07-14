@@ -1,0 +1,31 @@
+<div id="connectPage">
+    <div class="row">
+        <form name="connectForm" id="connectForm" class="col-sm-4 col-sm-offset-4"
+              data-ng-submit="ConnectCtrl.connect()">
+
+            <div class="form-group">
+                <label class="control-label" for="host">Host</label>
+                <input type="text" class="form-control" id="host" name="host" placeholder="Default: 127.0.0.1"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="port">Port</label>
+                <input type="number" class="form-control" id="port" name="port" placeholder="Default: 28015"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="db">Database</label>
+                <input type="text" class="form-control" id="db" name="db" placeholder="Default: Null"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="authKey">Auth Key</label>
+                <input type="text" class="form-control" id="authKey" name="authKey" placeholder="Default: Null"/>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Connect</button>
+            </div>
+        </form>
+    </div>
+</div>

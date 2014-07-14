@@ -21,10 +21,12 @@
     "grunt-contrib-uglify": "^0.5.0",
     "grunt-jsxhint": "^0.0.2",
     "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-concat": "^0.4.0"
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-sass": "^0.12.1",
+    "grunt-shell": "^0.7.0",
+    "grunt-html2js": "^0.2.8"
   },
   "dependencies": {
-    "RequelPro": "*",
     "rethinkdbdash": "^1.13.6",
     "mout": "^0.9.1"
   },

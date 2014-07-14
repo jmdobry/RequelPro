@@ -14,6 +14,8 @@
     "jquery": "~2.1.1",
     "mousetrap": "~1.4.6",
     "angular": "~1.2.20",
+    "font-awesome": "4.1.0",
+    "bootstrap-sass": "https://github.com/thomas-mcdonald/bootstrap-sass.git#v3.0.2.1",
     "angular-ui-router": "~0.2.10"
   },
   "private": true

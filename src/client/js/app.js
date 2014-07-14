@@ -9,23 +9,44 @@ try {
   win.height = window.screen.availHeight;
   win.width = window.screen.availWidth;
 
-  var RequelPro = angular.module('RequelPro', ['ui.router']);
+  var RequelPro = angular.module('RequelPro', ['ui.router', 'templates-app']);
 
   RequelPro.value('gui', gui);
   RequelPro.value('win', win);
   RequelPro.value('process', window.process);
   RequelPro.value('Mousetrap', window.Mousetrap);
 
-  RequelPro.config(['$logProvider', function ($logProvider) {
+  RequelPro.config(['$logProvider', '$stateProvider', function ($logProvider, $stateProvider) {
     console.log('Begin RequelPro.config()');
 
     $logProvider.debugEnabled(true);
 
+    try {
+      $stateProvider
+        .state('new', {
+          url: '/new',
+          templateUrl: 'connect/controllers/connectPage.html',
+          controller: 'ConnectController',
+          controllerAs: 'ConnectCtrl'
+        })
+        .state('content', {
+          url: '/content/:id',
+          templateUrl: 'content/controllers/contentPage.html',
+          controllerAs: 'ContentCtrl',
+          controller: 'ContentController'
+        });
+
+    } catch (err) {
+      console.error(err);
+    }
+
     console.log('End RequelPro.config()');
   }]);
 
-  RequelPro.run(['$log', '$rootScope', 'win', '$timeout', 'contextMenu', function ($log, $rootScope, win, $timeout) {
+  RequelPro.run(['$log', '$rootScope', 'win', '$timeout', 'contextMenu', '$state', function ($log, $rootScope, win, $timeout, contextMenu, $state) {
     $log.debug('Begin RequelPro.run()');
+
+    $state.go('new');
 
     function loadFavorites() {
       var favorites = [];

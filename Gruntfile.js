@@ -60,8 +60,8 @@ module.exports = function (grunt) {
           mac: true,
           win: false,
           linux32: false,
-          linux64: false,
-          timestamped_builds: true
+          linux64: false//,
+//          timestamped_builds: true
         },
         src: ['./dist/**/*']
       }
@@ -77,19 +77,36 @@ module.exports = function (grunt) {
       }
     },
 
+    sass: {
+      dist: {
+        files: {
+          'dist/client/styles/main.css': 'src/client/styles/requelpro.scss'
+        },
+        options: {
+          includePaths: [
+            'src/client/vendor/bower_components/bootstrap-sass/vendor/assets/stylesheets/',
+            'src/client/vendor/bower_components/font-awesome/scss/'
+          ]
+        }
+      }
+    },
+
     concat: {
       css: {
         src: [
           'src/client/vendor/bower_components/normalize-css/normalize.css',
-          'src/client/styles/requelpro.css'
+          'dist/client/styles/main.css'
         ],
         dest: 'dist/client/styles/main.css'
       },
       app: {
         src: [
+          '.tmp/js/templates.js',
           'src/client/js/app.js',
           'src/client/js/mainMenu.js',
-          'src/client/js/core/**/*.js'
+          'src/client/js/core/**/*.js',
+          'src/client/js/connect/**/*.js',
+          'src/client/js/content/**/*.js'
         ],
         dest: 'dist/client/js/app.js'
       },
@@ -116,6 +133,25 @@ module.exports = function (grunt) {
           }
         ]
       }
+    },
+
+    html2js: {
+      app: {
+        options: {
+          base: 'src/client/js/'
+        },
+        src: ['src/client/js/**/*.html'],
+        dest: '.tmp/js/templates.js'
+      }
+    },
+
+    shell: {
+      open: {
+        command: 'open ./build/releases/RequelPro/mac/RequelPro.app'
+      },
+      close: {
+        command: 'ps -ef | grep build/releases/RequelPro/mac/RequelPro.app/Contents/MacOS/node-webkit | grep -v grep | awk \'{print $2}\' | xargs kill -9'
+      }
     }
   });
 
@@ -124,13 +160,17 @@ module.exports = function (grunt) {
     'clean:dist',
     'copy',
     'clean:pre',
+    'html2js',
+    'sass',
     'concat'
   ]);
 
   grunt.registerTask('build', [
+    'shell:close',
     'prebuild',
     'clean:releases',
-    'nodewebkit:dev'
+    'nodewebkit:dev',
+    'shell:open'
   ]);
 
   grunt.registerTask('snapshot', [
@@ -145,6 +185,9 @@ module.exports = function (grunt) {
     'uglify',
     'nodewebkit:dist'
   ]);
+
+  grunt.registerTask('o', ['shell:open']);
+  grunt.registerTask('c', ['shell:close']);
 
   grunt.registerTask('default', [
     'build'
