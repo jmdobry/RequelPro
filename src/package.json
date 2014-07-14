@@ -13,7 +13,7 @@
   "main": "./client/index.html",
   "window": {
     "title": "Requel Pro",
-    "show": true,
+    "show": false,
     "position": "center",
     "resizeable": true,
     "width": 900,

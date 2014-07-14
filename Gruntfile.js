@@ -88,7 +88,8 @@ module.exports = function (grunt) {
       app: {
         src: [
           'src/client/js/app.js',
-          'src/client/js/mainMenu.js'
+          'src/client/js/mainMenu.js',
+          'src/client/js/core/**/*.js'
         ],
         dest: 'dist/client/js/app.js'
       },
