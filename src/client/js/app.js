@@ -9,7 +9,7 @@ try {
   win.height = window.screen.availHeight;
   win.width = window.screen.availWidth;
 
-  var RequelPro = angular.module('RequelPro', ['ui.router', 'templates-app']);
+  var RequelPro = angular.module('RequelPro', ['ui.router', 'templates-app', 'angular-data.DSCacheFactory', 'angular-data.DS']);
 
   RequelPro.value('gui', gui);
   RequelPro.value('win', win);
@@ -43,39 +43,48 @@ try {
     console.log('End RequelPro.config()');
   }]);
 
-  RequelPro.run(['$log', '$rootScope', 'win', '$timeout', 'contextMenu', '$state', function ($log, $rootScope, win, $timeout, contextMenu, $state) {
-    $log.debug('Begin RequelPro.run()');
+  RequelPro.run(['$log', '$rootScope', 'win', '$timeout', 'contextMenu', '$state', 'DS',
+    function ($log, $rootScope, win, $timeout, contextMenu, $state, DS) {
+      $log.debug('Begin RequelPro.run()');
 
-    $state.go('new');
+      $state.go('new');
 
-    function loadFavorites() {
-      var favorites = [];
-      try {
-        var f = localStorage.getItem('favorites');
-        if (f) {
-          favorites = JSON.parse(f);
-        } else {
-          localStorage.setItem('favorites', favorites);
+      DS.defineResource('connection', {
+        afterCreate: function (resourceName, attrs, cb) {
+          $log.debug('create', resourceName, attrs);
+          cb(null, attrs);
         }
-        $log.debug('Loaded favorites: ', favorites);
-      } catch (err) {
-        $log.error(err);
-        $log.error('Failed to load favorites!');
+      });
+
+      function loadFavorites() {
+        var favorites = [];
+        try {
+          var f = localStorage.getItem('favorites');
+          if (f) {
+            favorites = JSON.parse(f);
+          } else {
+            localStorage.setItem('favorites', favorites);
+          }
+          $log.debug('Loaded favorites: ', favorites);
+        } catch (err) {
+          $log.error(err);
+          $log.error('Failed to load favorites!');
+        }
+        return favorites;
       }
-      return favorites;
+
+      $rootScope.favorites = loadFavorites();
+
+      $timeout(function () {
+        $log.debug('Show window');
+        win.show();
+
+        RequelPro.value('R', require(process.cwd() + '/server/index.js'));
+      }, 500);
+
+      $log.debug('End RequelPro.run()');
     }
-
-    $rootScope.favorites = loadFavorites();
-
-    $timeout(function () {
-      $log.debug('Show window');
-      win.show();
-
-      RequelPro.value('R', require(process.cwd() + '/server/index.js'));
-    }, 500);
-
-    $log.debug('End RequelPro.run()');
-  }]);
+  ]);
 } catch (err) {
   console.error(err);
 }

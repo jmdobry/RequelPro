@@ -16,7 +16,9 @@
     "angular": "~1.2.20",
     "font-awesome": "4.1.0",
     "bootstrap-sass": "https://github.com/thomas-mcdonald/bootstrap-sass.git#v3.0.2.1",
-    "angular-ui-router": "~0.2.10"
+    "angular-ui-router": "~0.2.10",
+    "angular-data": "~0.9.1",
+    "angular-cache": "~3.0.3"
   },
   "private": true
 }

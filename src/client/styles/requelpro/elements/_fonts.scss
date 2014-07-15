@@ -1,0 +1,132 @@
+@font-face {
+  font-family: 'OpenSansLight';
+  src: url('../fonts/OpenSans-Light-webfont.eot');
+  src: url('../fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Light-webfont.svg#open_sanslight') format('svg'), url('../fonts/OpenSans-Light-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-color: $darkest-grayBlue;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: 'OpenSansLight';
+    src: url('../fonts/OpenSans-Light-webfont.svg#open_sanslight') format('svg');
+  }
+}
+
+@font-face {
+  font-family: 'OpenSansLightItalic';
+  src: url('../fonts/OpenSans-LightItalic-webfont.eot');
+  src: url('../fonts/OpenSans-LightItalic-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-LightItalic-webfont.svg#open_sanslight_italic') format('svg'), url('../fonts/OpenSans-LightItalic-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-color: $darkest-grayBlue;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: 'OpenSansLightItalic';
+    src: url('../fonts/OpenSans-LightItalic-webfont.svg#open_sanslight_italic') format('svg');
+  }
+}
+
+@font-face {
+  font-family: 'OpenSansRegular';
+  src: url('../fonts/OpenSans-Regular-webfont.eot');
+  src: url('../fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Regular-webfont.svg#open_sansregular') format('svg'), url('../fonts/OpenSans-Regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-color: $darkest-grayBlue;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: 'OpenSansRegular';
+    src: url('../fonts/OpenSans-Regular-webfont.svg#open_sansregular') format('svg');
+  }
+}
+
+@font-face {
+  font-family: 'OpenSansItalic';
+  src: url('../fonts/OpenSans-Italic-webfont.eot');
+  src: url('../fonts/OpenSans-Italic-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Italic-webfont.svg#open_sansitalic') format('svg'), url('../fonts/OpenSans-Italic-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-color: $darkest-grayBlue;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: 'OpenSansItalic';
+    src: url('../fonts/OpenSans-Italic-webfont.svg#open_sansitalic') format('svg');
+  }
+}
+
+@font-face {
+  font-family: 'OpenSansBold';
+  src: url('../fonts/OpenSans-Bold-webfont.eot');
+  src: url('../fonts/OpenSans-Bold-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Bold-webfont.svg#open_sansbold') format('svg'), url('../fonts/OpenSans-Bold-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-color: $darkest-grayBlue;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: 'OpenSansBold';
+    src: url('../fonts/OpenSans-Bold-webfont.svg#open_sansbold') format('svg');
+  }
+}
+
+@font-face {
+  font-family: 'OpenSansBoldItalic';
+  src: url('../fonts/OpenSans-BoldItalic-webfont.eot');
+  src: url('../fonts/OpenSans-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-BoldItalic-webfont.svg#open_sansbold_italic') format('svg'), url('../fonts/OpenSans-BoldItalic-webfont.woff') format('woff');
+
+  font-weight: normal;
+  font-style: normal;
+  font-color: $darkest-grayBlue;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: 'OpenSansBoldItalic';
+    src: url('../fonts/OpenSans-BoldItalic-webfont.svg#open_sansbold_italic') format('svg');
+  }
+}
+
+%default-font {
+  font-weight: normal;
+  font-style: normal;
+  font-color: $darkest-grayBlue;
+}
+
+.font-light {
+  @extend %default-font;
+  font-family: "OpenSansLight", $font-family-sans-serif;
+}
+
+.font-light-italic {
+  @extend %default-font;
+  font-family: "OpenSansLightItalic", $font-family-sans-serif;
+}
+
+.font-regular {
+  @extend %default-font;
+  font-family: "OpenSansRegular", $font-family-sans-serif;
+}
+
+.font-italic {
+  @extend %default-font;
+  font-family: "OpenSansItalic", $font-family-sans-serif;
+}
+
+.font-bold {
+  @extend %default-font;
+  font-family: "OpenSansBold", $font-family-sans-serif;
+}
+
+.font-bold-italic {
+  @extend %default-font;
+  font-family: "OpenSansBoldItalic", $font-family-sans-serif;
+}

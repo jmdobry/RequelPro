@@ -1,0 +1,165 @@
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  border-radius: $radius;
+}
+
+/**
+ * Generate a CSS triangle (e.g. for tooltips, popovers, etc)
+ * $dir up, down, left, or right (the direction you want the array to point)
+ * $color the coloar the triangle should be
+ * $size the size.
+ */
+@mixin requelpro-css-triangle($dir: down, $color: red, $base: 5px, $height: 5px) {
+  width: 0;
+  height: 0;
+
+// the $dir determines where the $base of the triangle sits
+  @if $dir == up {
+
+    border-left: $base solid transparent;
+    border-right: $base solid transparent;
+    border-bottom: $height solid $color;
+
+  } @else if $dir == down {
+
+    border-left: $base solid transparent;
+    border-right: $base solid transparent;
+    border-top: $height solid $color;
+
+  } @else if $dir == left {
+
+    border-top: $base solid transparent;
+    border-bottom: $base solid transparent;
+    border-right: $height solid $color;
+
+  } @else if $dir == right {
+
+    border-top: $base solid transparent;
+    border-bottom: $base solid transparent;
+    border-left: $height solid $color;
+
+  }
+}
+
+// Inline block hack...
+%ctb-inline-block {
+  display: -moz-inline-stack;
+  display: inline-block;
+  zoom: 1;
+  *display: inline;
+}
+
+// Panels
+// -------------------------
+@mixin panel-variant($heading-text-color, $heading-box-shadow-color, $heading-bg-color, $text-color, $bg-color, $border-color, $footer-box-shadow-color) {
+  border: 1px solid $heading-bg-color;
+  border-radius: 3px;
+  color: $text-color;
+  background-color: $bg-color;
+  box-shadow: none;
+  a {
+    color: $link-color;
+    &.btn {
+      color: #fff;
+    }
+  }
+
+  & > .panel-body {
+    border-bottom-left-radius: 1px;
+    border-bottom-right-radius: 1px;
+  }
+
+  & > .panel-heading {
+    color: $heading-text-color;
+    background-color: $heading-bg-color;
+    border: none;
+    font-weight: bold;
+    font-size: 15px;
+    box-shadow: none;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+
+    + .panel-collapse .panel-body {
+      border-top-color: $border-color;
+    }
+    & > .dropdown .caret {
+      border-color: $heading-text-color transparent;
+    }
+  }
+  & > .panel-footer {
+    color: $heading-text-color;
+    background-color: $heading-bg-color;
+    border: none;
+    box-shadow: none;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+
+    + .panel-collapse .panel-body {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+@mixin light-box-shadow() {
+  @include box-shadow(0 1px 3px rgba(0, 0, 0, 0.25));
+}
+
+@mixin box-shadow($shadow...) {
+  -webkit-box-shadow: $shadow;
+// iOS <4.3 & Android <4.1
+  -moz-box-shadow: $shadow;
+// iOS <4.3 & Android <4.1
+  box-shadow: $shadow;
+}
+
+// Button variants
+// -------------------------
+// Easily pump out default styles, as well as :hover, :focus, :active,
+// and disabled options for all buttons
+@mixin button-variant($color, $background, $border) {
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+  text-shadow: 1px 1px 0px darken($background, 7%);
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    color: $color;
+    background-color: darken($background, 8%);
+    border-color: lighten($border, 12%);
+  }
+  .open & {
+    &.dropdown-toggle {
+      color: $color;
+      background-color: darken($background, 8%);
+      border-color: lighten($border, 12%);
+    }
+  }
+  &:active,
+  &.active {
+    background-image: none;
+    position: relative;
+    top: 1px;
+  }
+  .open & {
+    &.dropdown-toggle {
+      background-image: none;
+    }
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &,
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+      background-color: $background;
+      border-color: $border;
+    }
+  }
+}

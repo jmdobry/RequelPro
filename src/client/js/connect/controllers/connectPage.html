@@ -1,30 +1,53 @@
 <div id="connectPage">
     <div class="row">
         <form name="connectForm" id="connectForm" class="col-sm-4 col-sm-offset-4"
-              data-ng-submit="ConnectCtrl.connect()">
+              data-ng-submit="ConnectCtrl.connect(ConnectCtrl.options, true)">
 
             <div class="form-group">
-                <label class="control-label" for="host">Host</label>
-                <input type="text" class="form-control" id="host" name="host" placeholder="Default: 127.0.0.1"/>
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-laptop"></i>
+                    </span>
+                    <input type="text" class="form-control" id="host" name="host" placeholder="127.0.0.1"
+                           data-ng-model="ConnectCtrl.options.host"/>
+                </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label" for="port">Port</label>
-                <input type="number" class="form-control" id="port" name="port" placeholder="Default: 28015"/>
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-anchor"></i>
+                    </span>
+                    <input type="text" class="form-control" id="port" name="port" placeholder="28015"
+                           data-ng-model="ConnectCtrl.options.port"/>
+                </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label" for="db">Database</label>
-                <input type="text" class="form-control" id="db" name="db" placeholder="Default: Null"/>
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-database"></i>
+                    </span>
+                    <input type="text" class="form-control" id="db" name="db"
+                           data-ng-model="ConnectCtrl.options.db"/>
+                </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label" for="authKey">Auth Key</label>
-                <input type="text" class="form-control" id="authKey" name="authKey" placeholder="Default: Null"/>
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-key"></i>
+                    </span>
+                    <input type="password" class="form-control" id="authKey" name="authKey"
+                           data-ng-model="ConnectCtrl.options.authKey"/>
+                </div>
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Connect</button>
+                <button class="btn btn-primary" data-ng-click="ConnectCtrl.connect(ConnectCtrl.options, false)">
+                    Test Connection
+                </button>
+                <button type="submit" class="btn btn-success">Connect</button>
             </div>
         </form>
     </div>

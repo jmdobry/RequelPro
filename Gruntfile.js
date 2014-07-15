@@ -74,6 +74,20 @@ module.exports = function (grunt) {
         cwd: 'src/',
         src: ['**/*', '!**/vendor/', '!**/js/'],
         dest: 'dist/'
+      },
+      'fonts': {
+        expand: true,
+        flatten: true,
+        cwd: 'src/client/fonts/',
+        src: ['**'],
+        dest: 'dist/client/fonts/'
+      },
+      'font-awesome': {
+        expand: true,
+        flatten: true,
+        cwd: 'src/client/vendor/bower_components/font-awesome/fonts/',
+        src: ['**'],
+        dest: 'dist/client/fonts/'
       }
     },
 
@@ -111,10 +125,15 @@ module.exports = function (grunt) {
         dest: 'dist/client/js/app.js'
       },
       plugins: {
+        options: {
+          separator: ';'
+        },
         src: [
           'src/client/vendor/bower_components/jquery/dist/jquery.js',
           'src/client/vendor/bower_components/angular/angular.js',
           'src/client/vendor/bower_components/angular-ui-router/release/angular-ui-router.js',
+          'src/client/vendor/bower_components/angular-data/dist/angular-data.js',
+          'src/client/vendor/bower_components/angular-cache/dist/angular-cache.js',
           'src/client/vendor/bower_components/mousetrap/mousetrap.js',
           'src/client/vendor/bower_components/mousetrap/plugins/global-bind/mousetrap-global-bind.js'
         ],
