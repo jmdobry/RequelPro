@@ -6,7 +6,17 @@
             <div class="form-group">
                 <div class="input-group">
                     <span class="input-group-addon">
-                        <i class="fa fa-laptop"></i>
+                        <i class="fa fa-bookmark"></i>
+                    </span>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="name this connection..."
+                           data-ng-model="ConnectCtrl.options.name"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-database"></i>
                     </span>
                     <input type="text" class="form-control" id="host" name="host" placeholder="127.0.0.1"
                            data-ng-model="ConnectCtrl.options.host"/>
@@ -20,16 +30,6 @@
                     </span>
                     <input type="text" class="form-control" id="port" name="port" placeholder="28015"
                            data-ng-model="ConnectCtrl.options.port"/>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        <i class="fa fa-database"></i>
-                    </span>
-                    <input type="text" class="form-control" id="db" name="db"
-                           data-ng-model="ConnectCtrl.options.db"/>
                 </div>
             </div>
 

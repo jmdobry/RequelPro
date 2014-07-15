@@ -14,6 +14,7 @@ try {
   RequelPro.value('gui', gui);
   RequelPro.value('win', win);
   RequelPro.value('process', window.process);
+  RequelPro.value('path', require('path'));
   RequelPro.value('Mousetrap', window.Mousetrap);
 
   RequelPro.config(['$logProvider', '$stateProvider', function ($logProvider, $stateProvider) {
@@ -43,13 +44,26 @@ try {
     console.log('End RequelPro.config()');
   }]);
 
-  RequelPro.run(['$log', '$rootScope', 'win', '$timeout', 'contextMenu', '$state', 'DS',
-    function ($log, $rootScope, win, $timeout, contextMenu, $state, DS) {
+  RequelPro.value('NeDB', {});
+
+  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', '$state', 'DS', 'path', 'NeDB',
+    function ($log, $rootScope, win, gui, $timeout, contextMenu, $state, DS, path, NeDB) {
       $log.debug('Begin RequelPro.run()');
 
       $state.go('new');
 
+      var Datastore = require('nedb');
+      var datapath = gui.App.dataPath + '/nedb';
+
+      NeDB.connection = new Datastore({
+        filename: path.join(datapath, 'connection.db'),
+        autoload: true,
+        error: function (err) {
+          $log.error(err);
+        }
+      });
       DS.defineResource('connection', {
+        idAttribute: '_id',
         afterCreate: function (resourceName, attrs, cb) {
           $log.debug('create', resourceName, attrs);
           cb(null, attrs);
@@ -84,7 +98,9 @@ try {
 
       $log.debug('End RequelPro.run()');
     }
-  ]);
-} catch (err) {
+  ])
+  ;
+} catch
+  (err) {
   console.error(err);
 }

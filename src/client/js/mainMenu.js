@@ -22,7 +22,7 @@
       type: 'normal',
       label: 'File'
     });
-    var fileSubmenu = new gui.Menu()
+    var fileSubmenu = new gui.Menu();
     if (process.platform !== 'win32') {
       rootMenu.insert(FileMenu, position);
       FileMenu.submenu = fileSubmenu;
@@ -108,9 +108,11 @@
       type: 'normal',
       label: 'Edit'
     });
-    rootMenu.insert(EditMenu, position);
-    rootMenu.items[position - 1].submenu = new gui.Menu();
-    var editSubmenu = rootMenu.items[position - 1].submenu;
+    var editSubmenu = new gui.Menu();
+    if (process.platform !== 'win32') {
+      rootMenu.insert(EditMenu, position);
+      EditMenu.submenu = editSubmenu;
+    }
     var editSubmenuItems = {
       undo: new gui.MenuItem({
         label: 'Undo\t\t\u2318Z',
@@ -151,6 +153,11 @@
     editSubmenu.append(editSubmenuItems.cut);
     editSubmenu.append(editSubmenuItems.copy);
     editSubmenu.append(editSubmenuItems.paste);
+
+    if (process.platform === 'win32') {
+      EditMenu.submenu = editSubmenu;
+      rootMenu.append(EditMenu);
+    }
   }
 
   function createViewMenu(gui, rootMenu, position) {
@@ -158,9 +165,11 @@
       type: 'normal',
       label: 'View'
     });
-    rootMenu.insert(ViewMenu, position);
-    rootMenu.items[position - 1].submenu = new gui.Menu();
-    var viewSubmenu = rootMenu.items[position - 1].submenu;
+    var viewSubmenu = new gui.Menu();
+    if (process.platform !== 'win32') {
+      rootMenu.insert(ViewMenu, position);
+      ViewMenu.submenu = viewSubmenu;
+    }
     var viewSubmenuItems = {
       test: new gui.MenuItem({
         label: 'Test click view',
@@ -170,6 +179,11 @@
       })
     };
     viewSubmenu.append(viewSubmenuItems.test);
+
+    if (process.platform === 'win32') {
+      ViewMenu.submenu = viewSubmenu;
+      rootMenu.append(ViewMenu);
+    }
   }
 
   function createDatabaseMenu(gui, rootMenu, position) {
@@ -177,9 +191,11 @@
       type: 'normal',
       label: 'Database'
     });
-    rootMenu.insert(DatabaseMenu, position);
-    rootMenu.items[position - 1].submenu = new gui.Menu();
-    var databaseSubmenu = rootMenu.items[position - 1].submenu;
+    var databaseSubmenu = new gui.Menu();
+    if (process.platform !== 'win32') {
+      rootMenu.insert(DatabaseMenu, position);
+      DatabaseMenu.submenu = databaseSubmenu;
+    }
     var databaseSubmenuItems = {
       createDatabase: new gui.MenuItem({
         label: 'Create Database...',
@@ -237,6 +253,11 @@
       type: 'separator'
     }));
     databaseSubmenu.append(databaseSubmenuItems.openDatabaseInNewTab);
+
+    if (process.platform === 'win32') {
+      DatabaseMenu.submenu = databaseSubmenu;
+      rootMenu.append(DatabaseMenu);
+    }
   }
 
   function createTableMenu(gui, rootMenu, position) {
@@ -244,9 +265,11 @@
       type: 'normal',
       label: 'Table'
     });
-    rootMenu.insert(TableMenu, position);
-    rootMenu.items[position - 1].submenu = new gui.Menu();
-    var tableSubmenu = rootMenu.items[position - 1].submenu;
+    var tableSubmenu = new gui.Menu();
+    if (process.platform !== 'win32') {
+      rootMenu.insert(TableMenu, position);
+      TableMenu.submenu = tableSubmenu;
+    }
     var tableSubmenuItems = {
       createTable: new gui.MenuItem({
         label: 'Create Table...',
@@ -292,6 +315,11 @@
     }));
     tableSubmenu.append(tableSubmenuItems.createIndex);
     tableSubmenu.append(tableSubmenuItems.dropIndex);
+
+    if (process.platform === 'win32') {
+      TableMenu.submenu = tableSubmenu;
+      rootMenu.append(TableMenu);
+    }
   }
 
   function createHelpMenu(gui, rootMenu) {
@@ -299,9 +327,11 @@
       type: 'normal',
       label: 'Help'
     });
-    rootMenu.append(HelpMenu);
-    rootMenu.items[rootMenu.items.length - 1].submenu = new gui.Menu();
-    var helpSubmenu = rootMenu.items[rootMenu.items.length - 1].submenu;
+    var helpSubmenu = new gui.Menu();
+    if (process.platform !== 'win32') {
+      rootMenu.append(HelpMenu);
+      HelpMenu.submenu = helpSubmenu;
+    }
     var helpSubmenuItems = {
       onlineHelp: new gui.MenuItem({
         label: 'Online Help',
@@ -312,6 +342,11 @@
     };
 
     helpSubmenu.append(helpSubmenuItems.onlineHelp);
+
+    if (process.platform === 'win32') {
+      HelpMenu.submenu = helpSubmenu;
+      rootMenu.append(HelpMenu);
+    }
   }
 
   try {
@@ -327,11 +362,11 @@
     }
 
     createFileMenu(gui, mainMenu, 1);
-    // createEditMenu(gui, mainMenu, 2);
-    // createViewMenu(gui, mainMenu, 3);
-    // createDatabaseMenu(gui, mainMenu, 4);
-    // createTableMenu(gui, mainMenu, 5);
-    // createHelpMenu(gui, mainMenu);
+    createEditMenu(gui, mainMenu, 2);
+    createViewMenu(gui, mainMenu, 3);
+    createDatabaseMenu(gui, mainMenu, 4);
+    createTableMenu(gui, mainMenu, 5);
+    createHelpMenu(gui, mainMenu);
 
     if (process.platform === 'win32') {
       win.menu = mainMenu;

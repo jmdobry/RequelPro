@@ -10,6 +10,11 @@
 @import "requelpro/elements/forms";
 
 // Routes
+@import "requelpro/routes/connect";
+
+body {
+  background-color: $light-gray;
+}
 
 #tab-nav {
   width: 100%;
