@@ -7,7 +7,11 @@ function DSNeDBAdapterProvider() {
 
   var mainPrefix = 'DSNeDBAdapter.';
   var errors = {
-    INSERT: mainPrefix + 'INSERT(resourceName, attrs, cb): '
+    INSERT: mainPrefix + 'INSERT(resourceName, attrs, cb): ',
+    UPDATE: mainPrefix + 'UPDATE(resourceName, query, attrs, options, cb): ',
+    REMOVE: mainPrefix + 'REMOVE(resourceName, query, options, cb): ',
+    FINDONE: mainPrefix + 'FINDONE(resourceName, primaryKey, cb): ',
+    FIND: mainPrefix + 'FIND(resourceName, query, cb): '
   };
 
   /**
@@ -63,27 +67,39 @@ function DSNeDBAdapterProvider() {
 
       /**
        * @doc method
-       * @id DSNeDBAdapter.methods:GET
-       * @name GET
+       * @id DSNeDBAdapter.methods:FINDONE
+       * @name FINDONE
        * @description
-       * Wrapper for `$http.get()`.
+       * Wrapper for `Datastore#findOne(primaryKey, cb)`.
        *
        * ## Signature:
        * ```js
-       * DS.GET(url[, config])
+       * DSNeDBAdapter.FINDONE(resourceName, primaryKey, cb)
        * ```
        *
-       * ## Example:
-       *
-       * ```js
-       * Works the same as $http.get()
-       * ```
-       *
-       * @param {string} url The url of the request.
-       * @param {object=} config Configuration for the request.
-       * @returns {Promise} Promise produced by the `$q` service.
+       * @param {string} resourceName The resource type, e.g. 'user', 'comment', etc.
+       * @param {string|number} primaryKey The primaryKey of the entity to retrieve.
+       * @param {function} cb Callback function.
        */
-//      GET: GET,
+      FINDONE: FINDONE,
+
+      /**
+       * @doc method
+       * @id DSNeDBAdapter.methods:FIND
+       * @name FIND
+       * @description
+       * Wrapper for `Datastore#find(query, cb)`.
+       *
+       * ## Signature:
+       * ```js
+       * DSNeDBAdapter.FIND(resourceName, query, cb)
+       * ```
+       *
+       * @param {string} resourceName The resource type, e.g. 'user', 'comment', etc.
+       * @param {object} query Search query parameters.
+       * @param {function} cb Callback function.
+       */
+      FIND: FIND,
 
       /**
        * @doc method
@@ -105,89 +121,74 @@ function DSNeDBAdapterProvider() {
 
       /**
        * @doc method
-       * @id DSNeDBAdapter.methods:PUT
-       * @name PUT
+       * @id DSNeDBAdapter.methods:UPDATE
+       * @name UPDATE
        * @description
-       * Wrapper for `$http.put()`.
+       * Wrapper for `Datastore#update(query, attrs, options, cb)`.
        *
        * ## Signature:
        * ```js
-       * DS.PUT(url[, attrs][, config])
+       * DSNeDBAdapter.UPDATE(resourceName, query, attrs, options, cb)
        * ```
        *
-       * ## Example:
-       *
-       * ```js
-       * Works the same as $http.put()
-       * ```
-       *
-       * @param {string} url The url of the request.
-       * @param {object=} attrs Request payload.
-       * @param {object=} config Configuration for the request.
-       * @returns {Promise} Promise produced by the `$q` service.
+       * @param {string} resourceName The resource type, e.g. 'user', 'comment', etc.
+       * @param {object} query Query for selecting document(s) to be updated.
+       * @param {object} attrs Attributes of item to be created.
+       * @param {object} options Configuration options.
+       * @param {function} cb Callback function.
        */
-//      PUT: PUT,
+      UPDATE: UPDATE,
 
       /**
        * @doc method
-       * @id DSNeDBAdapter.methods:DEL
-       * @name DEL
+       * @id DSNeDBAdapter.methods:REMOVE
+       * @name REMOVE
        * @description
-       * Wrapper for `$http.delete()`.
+       * Wrapper for `Datastore#remove(query, options, cb)`.
        *
        * ## Signature:
        * ```js
-       * DS.DEL(url[, config])
+       * DSNeDBAdapter.REMOVE(resourceName, query, options, cb)
        * ```
        *
-       * ## Example:
-       *
-       * ```js
-       * Works the same as $http.delete
-       * ```
-       *
-       * @param {string} url The url of the request.
-       * @param {object} config Configuration for the request.
-       * @returns {Promise} Promise produced by the `$q` service.
+       * @param {string} resourceName The resource type, e.g. 'user', 'comment', etc.
+       * @param {object} query Query for selecting document(s) to be removed.
+       * @param {object} options Configuration options.
+       * @param {function} cb Callback function.
        */
-//      DEL: DEL,
+      REMOVE: REMOVE,
 
       /**
        * @doc method
        * @id DSNeDBAdapter.methods:find
        * @name find
        * @description
-       * Retrieve a single entity from the server.
-       *
-       * Sends a `GET` request to `:baseUrl/:endpoint/:id`.
+       * Retrieve a single entity from a NeDB Datastore.
        *
        * @param {object} resourceConfig Properties:
-       * - `{string}` - `baseUrl` - Base url.
-       * - `{string=}` - `endpoint` - Endpoint path for the resource.
+       *
+       * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       *
        * @param {string|number} id The primary key of the entity to retrieve.
-       * @param {object=} options Optional configuration. Refer to the documentation for `$http.get`.
-       * @returns {Promise} Promise.
+       * @returns {Promise} Promise produced by the `$q` service.
        */
-//      find: find,
+      find: find,
 
       /**
        * @doc method
        * @id DSNeDBAdapter.methods:findAll
        * @name findAll
        * @description
-       * Retrieve a collection of entities from the server.
-       *
-       * Sends a `GET` request to `:baseUrl/:endpoint`.
-       *
+       * Retrieve a collection of entities from a NeDB Datastore.
        *
        * @param {object} resourceConfig Properties:
-       * - `{string}` - `baseUrl` - Base url.
-       * - `{string=}` - `endpoint` - Endpoint path for the resource.
-       * @param {object=} params Search query parameters. See the [query guide](/documentation/guide/queries/index).
-       * @param {object=} options Optional configuration. Refer to the documentation for `$http.get`.
-       * @returns {Promise} Promise.
+       *
+       * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       *
+       * @param {object=} params Search query parameters.
+       * @returns {Promise} Promise produced by the `$q` service.
        */
-//      findAll: findAll,
+      findAll: findAll,
 
       /**
        * @doc method
@@ -199,6 +200,7 @@ function DSNeDBAdapterProvider() {
        * @param {object} resourceConfig Properties:
        *
        * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       * - `{string}` - `idAttribute` - The field to use as the primary key.
        *
        * @param {object} attrs Attributes of item to be created.
        * @returns {Promise} Promise produced by the `$q` service.
@@ -210,38 +212,37 @@ function DSNeDBAdapterProvider() {
        * @id DSNeDBAdapter.methods:update
        * @name update
        * @description
-       * Update an entity on the server.
-       *
-       * Sends a `PUT` request to `:baseUrl/:endpoint/:id`.
+       * Update an entity in a NeDB Datastore.
        *
        * @param {object} resourceConfig Properties:
-       * - `{string}` - `baseUrl` - Base url.
-       * - `{string=}` - `endpoint` - Endpoint path for the resource.
+       *
+       * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       * - `{string}` - `idAttribute` - The field to use as the primary key.
+       *
        * @param {string|number} id The primary key of the entity to update.
-       * @param {object} attrs The attributes with which to update the entity. See the [query guide](/documentation/guide/queries/index).
-       * @param {object=} options Optional configuration. Refer to the documentation for `$http.put`.
-       * @returns {Promise} Promise.
+       * @param {object} attrs The attributes with which to update the entity.
+       * @param {object=} options Optional configuration.
+       * @returns {Promise} Promise produced by the `$q` service.
        */
-//      update: update,
+      update: update,
 
       /**
        * @doc method
        * @id DSNeDBAdapter.methods:updateAll
        * @name updateAll
        * @description
-       * Update a collection of entities on the server.
-       *
-       * Sends a `PUT` request to `:baseUrl/:endpoint`.
-       *
+       * Update a collection of entities in a NeDB Datastore.
        *
        * @param {object} resourceConfig Properties:
-       * - `{string}` - `baseUrl` - Base url.
-       * - `{string=}` - `endpoint` - Endpoint path for the resource.
-       * @param {object=} params Search query parameters. See the [query guide](/documentation/guide/queries/index).
-       * @param {object=} options Optional configuration. Refer to the documentation for `$http.put`.
-       * @returns {Promise} Promise.
+       *
+       * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       * - `{string}` - `idAttribute` - The field to use as the primary key.
+       *
+       * @param {object=} params Search query parameters.
+       * @param {object=} options Optional configuration.
+       * @returns {Promise} Promise produced by the `$q` service.
        */
-//      updateAll: updateAll,
+      updateAll: updateAll,
 
       /**
        * @doc method
@@ -250,16 +251,15 @@ function DSNeDBAdapterProvider() {
        * @description
        * destroy an entity on the server.
        *
-       * Sends a `PUT` request to `:baseUrl/:endpoint/:id`.
-       *
        * @param {object} resourceConfig Properties:
-       * - `{string}` - `baseUrl` - Base url.
-       * - `{string=}` - `endpoint` - Endpoint path for the resource.
+       *
+       * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       *
        * @param {string|number} id The primary key of the entity to destroy.
-       * @param {object=} options Optional configuration. Refer to the documentation for `$http.delete`.
-       * @returns {Promise} Promise.
+       * @param {object=} options Optional configuration.
+       * @returns {Promise} Promise produced by the `$q` service.
        */
-//      destroy: destroy,
+      destroy: destroy,
 
       /**
        * @doc method
@@ -268,34 +268,41 @@ function DSNeDBAdapterProvider() {
        * @description
        * Retrieve a collection of entities from the server.
        *
-       * Sends a `DELETE` request to `:baseUrl/:endpoint`.
-       *
-       *
        * @param {object} resourceConfig Properties:
-       * - `{string}` - `baseUrl` - Base url.
-       * - `{string=}` - `endpoint` - Endpoint path for the resource.
-       * @param {object=} params Search query parameters. See the [query guide](/documentation/guide/queries/index).
-       * @param {object=} options Optional configuration. Refer to the documentation for `$http.delete`.
-       * @returns {Promise} Promise.
+       *
+       * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       *
+       * @param {object=} params Search query parameters.
+       * @param {object=} options Optional configuration.
+       * @returns {Promise} Promise produced by the `$q` service.
        */
-//      destroyAll: destroyAll
+      destroyAll: destroyAll
     };
 
-    function HTTP(config) {
-      var start = new Date().getTime();
-
-      return $http(config).then(function (data) {
-        $log.debug(data.config.method + ' request:' + data.config.url + ' Time taken: ' + (new Date().getTime() - start) + 'ms', arguments);
-        return data;
-      });
+    function FINDONE(resourceName, primaryKey, cb) {
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.INSERT + resourceName));
+      } else if (!DSUtils.isString(FINDONE) && !DSUtils.isNumber(primaryKey)) {
+        return cb(new IA('primaryKey: Must be a string or number!'));
+      } else {
+        NeDB[resourceName].findOne(primaryKey, cb);
+      }
     }
 
-    function GET(url, config) {
-      config = config || {};
-      return HTTP(DSUtils.deepMixIn(config, {
-        url: url,
-        method: 'GET'
-      }));
+    function FIND(resourceName, query, cb) {
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.FIND + resourceName));
+      } else if (!DSUtils.isObject(query)) {
+        return cb(new IA('query: Must be an object!'));
+      } else {
+        NeDB[resourceName].find(query, cb);
+      }
     }
 
     function INSERT(resourceName, attrs, cb) {
@@ -311,26 +318,63 @@ function DSNeDBAdapterProvider() {
       }
     }
 
-    function PUT(url, attrs, config) {
-      config = config || {};
-      return HTTP(DSUtils.deepMixIn(config, {
-        url: url,
-        data: attrs,
-        method: 'PUT'
-      }));
+    function UPDATE(resourceName, query, attrs, options, cb) {
+      options = options || {};
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.UPDATE + resourceName));
+      } else if (!DSUtils.isObject(query)) {
+        return cb(new IA('query: Must be an object!'));
+      } else if (!DSUtils.isObject(attrs)) {
+        return cb(new IA('attrs: Must be an object!'));
+      } else if (!DSUtils.isObject(options)) {
+        return cb(new IA('options: Must be an object!'));
+      } else {
+        NeDB[resourceName].update(query, attrs, options, cb);
+      }
     }
 
-    function DEL(url, config) {
-      config = config || {};
-      return this.HTTP(DSUtils.deepMixIn(config, {
-        url: url,
-        method: 'DELETE'
-      }));
+    function REMOVE(resourceName, query, options, cb) {
+      options = options || {};
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.REMOVE + resourceName));
+      } else if (!DSUtils.isObject(query)) {
+        return cb(new IA('query: Must be an object!'));
+      } else if (!DSUtils.isObject(options)) {
+        return cb(new IA('options: Must be an object!'));
+      } else {
+        NeDB[resourceName].remove(query, options, cb);
+      }
     }
 
     function create(resourceConfig, attrs) {
       var deferred = $q.defer();
+      if ('idAttribute' in resourceConfig && resourceConfig.idAttribute in attrs) {
+        attrs._id = attrs[resourceConfig.idAttribute];
+      }
       this.INSERT(resourceConfig.name, attrs, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          if ('idAttribute' in resourceConfig) {
+            doc[resourceConfig.idAttribute] = doc._id;
+          }
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function destroy(resourceConfig, id) {
+      var deferred = $q.defer();
+      this.REMOVE(resourceConfig.name, {
+        _id: id
+      }, {}, function (err, doc) {
         if (err) {
           deferred.reject(err);
         } else {
@@ -340,69 +384,84 @@ function DSNeDBAdapterProvider() {
       return deferred.promise;
     }
 
-    function destroy(resourceConfig, id, options) {
-      options = options || {};
-      return this.DEL(
-        DSUtils.makePath(options.baseUrl || resourceConfig.baseUrl, resourceConfig.endpoint, id),
-        options
-      );
-    }
-
     function destroyAll(resourceConfig, params, options) {
+      params = params || {};
       options = options || {};
-      options.params = options.params || {};
-      if (params) {
-        params = defaults.queryTransform(resourceConfig.name, params);
-        DSUtils.deepMixIn(options.params, params);
+      options.multi = true;
+      params = defaults.queryTransform(resourceConfig.name, params);
+      var deferred = $q.defer();
+      this.REMOVE(resourceConfig.name, params, options, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function find(resourceConfig, id) {
+      var deferred = $q.defer();
+      this.FINDONE(resourceConfig.name, id, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function findAll(resourceConfig, params) {
+      params = params || {};
+      params = defaults.queryTransform(resourceConfig.name, params);
+      var deferred = $q.defer();
+      this.FIND(resourceConfig.name, params, function (err, docs) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(docs);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function update(resourceConfig, id, attrs) {
+      if ('idAttribute' in resourceConfig) {
+        delete attrs[resourceConfig.idAttribute];
       }
-      return this.DEL(
-        DSUtils.makePath(options.baseUrl || resourceConfig.baseUrl, resourceConfig.endpoint),
-        options
-      );
-    }
-
-    function find(resourceConfig, id, options) {
-      options = options || {};
-      return this.GET(
-        DSUtils.makePath(options.baseUrl || resourceConfig.baseUrl, resourceConfig.endpoint, id),
-        options
-      );
-    }
-
-    function findAll(resourceConfig, params, options) {
-      options = options || {};
-      options.params = options.params || {};
-      if (params) {
-        params = defaults.queryTransform(resourceConfig.name, params);
-        DSUtils.deepMixIn(options.params, params);
-      }
-      return this.GET(
-        DSUtils.makePath(options.baseUrl || resourceConfig.baseUrl, resourceConfig.endpoint),
-        options
-      );
-    }
-
-    function update(resourceConfig, id, attrs, options) {
-      options = options || {};
-      return this.PUT(
-        DSUtils.makePath(options.baseUrl || resourceConfig.baseUrl, resourceConfig.endpoint, id),
-        attrs,
-        options
-      );
+      delete attrs._id;
+      var deferred = $q.defer();
+      this.UPDATE(resourceConfig.name, {
+        _id: id
+      }, attrs, {}, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
     }
 
     function updateAll(resourceConfig, attrs, params, options) {
-      options = options || {};
-      options.params = options.params || {};
-      if (params) {
-        params = defaults.queryTransform(resourceConfig.name, params);
-        DSUtils.deepMixIn(options.params, params);
+      if ('idAttribute' in resourceConfig) {
+        delete attrs[resourceConfig.idAttribute];
       }
-      return this.PUT(
-        DSUtils.makePath(options.baseUrl || resourceConfig.baseUrl, resourceConfig.endpoint),
-        attrs,
-        options
-      );
+      delete attrs._id;
+      params = params || {};
+      options = options || {};
+      options.multi = true;
+      params = defaults.queryTransform(resourceConfig.name, params);
+      var deferred = $q.defer();
+      this.UPDATE(resourceConfig.name, params, attrs, options, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
     }
   }];
 }

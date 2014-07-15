@@ -63,7 +63,6 @@ try {
         }
       });
       DS.defineResource('connection', {
-        idAttribute: '_id',
         afterCreate: function (resourceName, attrs, cb) {
           $log.debug('create', resourceName, attrs);
           cb(null, attrs);
