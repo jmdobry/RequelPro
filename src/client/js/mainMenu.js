@@ -22,9 +22,11 @@
       type: 'normal',
       label: 'File'
     });
-    rootMenu.insert(FileMenu, position);
-    rootMenu.items[position - 1].submenu = new gui.Menu();
-    var fileSubmenu = rootMenu.items[position - 1].submenu;
+    var fileSubmenu = new gui.Menu()
+    if (process.platform !== 'win32') {
+      rootMenu.insert(FileMenu, position);
+      FileMenu.submenu = fileSubmenu;
+    }
     var fileSubmenuItems = {
       newConnectionWindow: new gui.MenuItem({
         label: 'New Connection Window',
@@ -94,6 +96,11 @@
     }));
     fileSubmenu.append(fileSubmenuItems.closeWindow);
     fileSubmenu.append(fileSubmenuItems.closeTab);
+
+    if (process.platform === 'win32') {
+      FileMenu.submenu = fileSubmenu;
+      rootMenu.append(FileMenu);
+    }
   }
 
   function createEditMenu(gui, rootMenu, position) {
@@ -307,16 +314,29 @@
     helpSubmenu.append(helpSubmenuItems.onlineHelp);
   }
 
-  var gui = require('nw.gui');
-  var win = gui.Window.get();
+  try {
+    console.log('creating main menu');
+    var gui = require('nw.gui');
+    var win = gui.Window.get();
+    var mainMenu = new gui.Menu({
+      type: 'menubar'
+    });
 
-  win.menu = new gui.Menu({
-    type: 'menubar'
-  });
-  createFileMenu(gui, win.menu, 1);
-  createEditMenu(gui, win.menu, 2);
-  createViewMenu(gui, win.menu, 3);
-  createDatabaseMenu(gui, win.menu, 4);
-  createTableMenu(gui, win.menu, 5);
-  createHelpMenu(gui, win.menu);
+    if (process.platform !== 'win32') {
+      win.menu = mainMenu;
+    }
+
+    createFileMenu(gui, mainMenu, 1);
+    // createEditMenu(gui, mainMenu, 2);
+    // createViewMenu(gui, mainMenu, 3);
+    // createDatabaseMenu(gui, mainMenu, 4);
+    // createTableMenu(gui, mainMenu, 5);
+    // createHelpMenu(gui, mainMenu);
+
+    if (process.platform === 'win32') {
+      win.menu = mainMenu;
+    }
+  } catch (err) {
+    console.error(err);
+  }
 })();

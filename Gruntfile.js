@@ -36,16 +36,18 @@ module.exports = function (grunt) {
     nodewebkit: {
       dist: {
         options: {
+          version: '0.9.2',
           build_dir: './build',
-          mac: true,
+          mac: false,
           win: true,
-          linux32: true,
-          linux64: true
+          linux32: false,
+          linux64: false
         },
         src: ['./dist/**/*']
       },
       snapshot: {
         options: {
+          version: '0.9.2',
           build_dir: './build',
           mac: true,
           win: false,
@@ -56,12 +58,12 @@ module.exports = function (grunt) {
       },
       dev: {
         options: {
+          version: '0.9.2',
           build_dir: './build',
           mac: true,
           win: false,
           linux32: false,
-          linux64: false//,
-//          timestamped_builds: true
+          linux64: false
         },
         src: ['./dist/**/*']
       }
@@ -201,7 +203,7 @@ module.exports = function (grunt) {
   grunt.registerTask('dist', [
     'prebuild',
     'clean:releases',
-    'uglify',
+    //'uglify',
     'nodewebkit:dist'
   ]);
 
