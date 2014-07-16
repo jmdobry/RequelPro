@@ -1,4 +1,4 @@
-<div id="contentPage">
+<div id="contentPage" data-ng-click="ContentCtrl.offClick($event)">
     <div class="row">
         <div class="col-sm-2">
             <div class="panel panel-default">
@@ -26,14 +26,14 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th data-ng-repeat="(field, type) in ContentCtrl.fields">{{ field }}</th>
+                        <th data-ng-repeat="field in ContentCtrl.fields">{{ field }}</th>
                     </tr>
                     </thead>
                     <tbody data-ng-class="{ processing: ContentCtrl.processing }">
                     <tr data-ng-repeat="row in ContentCtrl.rows track by row[ContentCtrl.primaryKey]"
                         data-ng-class="{ active: ContentCtrl.selectedRow === $index }"
                         data-ng-click="ContentCtrl.selectRow($index)">
-                        <td data-ng-repeat="(field, type) in ContentCtrl.fields"
+                        <td data-ng-repeat="field in ContentCtrl.fields"
                             data-ng-click="ContentCtrl.selectField($event, $parent.$index)">
                             <span>{{ row[field] }}</span>
                             <input type="text" class="ng-hide" data-ng-model="row[field]"/>

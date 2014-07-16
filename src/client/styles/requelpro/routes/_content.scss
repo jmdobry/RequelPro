@@ -18,6 +18,10 @@
     cursor: default;
     height: 20px;
     overflow: hidden;
+    span, input {
+      height: 18px;
+      display: block;
+    }
   }
   tr {
     height: 20px;

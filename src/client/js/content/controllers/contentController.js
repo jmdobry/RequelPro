@@ -1,3 +1,4 @@
+/* jshint camelcase: false */
 angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '$location', 'DS', '$state', '$timeout', 'mout',
   function ($scope, $log, $location, DS, $state, $timeout, mout) {
     $log.debug('Begin ContentController constructor');
@@ -6,15 +7,19 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
     var r = require('rethinkdb');
     var prevTarget;
     var $prevTarget;
+    var prevValue;
 
     function processRows(rows, tableInfo) {
       _this.primaryKey = tableInfo.primary_key;
-      _this.fields = {};
+      var fields = {};
       angular.forEach(rows, function (row) {
         mout.object.forOwn(row, function (value, key) {
-          _this.fields[key] = typeof value;
+          fields[key] = typeof value;
         });
       });
+      delete fields[_this.primaryKey];
+      _this.fields = mout.object.keys(fields);
+      _this.fields.unshift(_this.primaryKey);
       return rows;
     }
 
@@ -47,14 +52,21 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
 
     this.selectRow = function (index) {
       if (this.selectedRow !== index && $prevTarget) {
-        $prevTarget.find('input').addClass('ng-hide');
+        $prevTarget.find('input').off('blur keydown').addClass('ng-hide');
         $prevTarget.find('span').removeClass('ng-hide');
-        prevTarget = null;
-        $prevTarget = null;
+        prevTarget = $prevTarget = null;
       } else if (this.selectedRow === index) {
         return;
       }
       this.selectedRow = index;
+    };
+
+    this.offClick = function ($event) {
+      if ($prevTarget && prevTarget && prevTarget !== $event.target) {
+        $prevTarget.find('input').off('blur keydown').addClass('ng-hide');
+        $prevTarget.find('span').removeClass('ng-hide');
+        prevTarget = $prevTarget = null;
+      }
     };
 
     this.selectField = function ($event, parentIndex) {
@@ -62,8 +74,7 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
         if (prevTarget && prevTarget !== $event.currentTarget) {
           $prevTarget.find('input').off('blur keydown').addClass('ng-hide');
           $prevTarget.find('span').removeClass('ng-hide');
-          prevTarget = null;
-          $prevTarget = null;
+          prevTarget = $prevTarget = null;
         } else {
           var $el = angular.element($event.currentTarget);
           var $input = $el.find('input');
@@ -73,27 +84,30 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
           $input
             .removeClass('ng-hide')
             .on('blur', function () {
-              console.log('save value as', $input.val());
-              $input.off('blur keydown');
+              $input.off('blur keydown').addClass('ng-hide');
               $span.removeClass('ng-hide');
-              $input.addClass('ng-hide');
-              prevTarget = null;
-              $prevTarget = null;
-              updateRow(_this.selectedRow);
+              prevTarget = $prevTarget = null;
+              if ($input.val() !== prevValue) {
+                updateRow(_this.selectedRow);
+              }
             })
             .on('keydown', function (e) {
               if (e.keyCode === 13) {
-                console.log('save value as', $input.val());
-                $input.off('keydown blur');
+                $input.off('keydown blur').addClass('ng-hide');
                 $span.removeClass('ng-hide');
-                $input.addClass('ng-hide');
-                prevTarget = null;
-                $prevTarget = null;
-                updateRow(_this.selectedRow);
+                prevTarget = $prevTarget = null;
+                if ($input.val() !== prevValue) {
+                  updateRow(_this.selectedRow);
+                }
               }
             });
+
           prevTarget = $event.currentTarget;
           $prevTarget = $el;
+          prevValue = $input.val();
+
+          $event.preventDefault();
+          $event.stopPropagation();
         }
       }
     };

@@ -41,6 +41,10 @@ angular.module('RequelPro').controller('ConnectController', ['$scope', '$log', '
         });
     };
 
+    this.remove = function (connection) {
+      DS.destroy('connection', connection.id);
+    };
+
     this.test = function (connection) {
       connection.connect()
         .then(function (conn) {

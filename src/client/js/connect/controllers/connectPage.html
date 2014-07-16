@@ -20,6 +20,9 @@
                         data-ng-repeat="connection in ConnectCtrl.connections track by connection.id"
                         data-ng-click="ConnectCtrl.connection = connection">
                         <h4 class="list-group-item-heading">
+                            <span class="pull-right text-danger" data-ng-click="ConnectCtrl.remove(connection)">
+                                <i class="fa fa-trash-o">&nbsp;</i>
+                            </span>
                             {{ connection.name }}
                         </h4>
 
