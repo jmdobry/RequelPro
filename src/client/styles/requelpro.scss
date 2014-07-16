@@ -1,16 +1,14 @@
 @import "font-awesome";
 @import "requelpro/variables";
-
 // Import base Bootstrap v3.0 styles
 @import "bootstrap";
 @import "requelpro/mixins";
-
 // Elements
 @import "requelpro/elements/fonts";
 @import "requelpro/elements/forms";
-
 // Routes
 @import "requelpro/routes/connect";
+@import "requelpro/routes/content";
 
 body {
   background-color: $light-gray;
@@ -39,4 +37,8 @@ body {
 
 #import-file-dialog {
   display: none;
+}
+
+.container {
+  width: 100% !important;
 }

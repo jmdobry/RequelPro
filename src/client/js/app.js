@@ -13,11 +13,13 @@ try {
 
   RequelPro.value('gui', gui);
   RequelPro.value('win', win);
+  RequelPro.value('mout', require('mout'));
   RequelPro.value('process', window.process);
   RequelPro.value('path', require('path'));
   RequelPro.value('Mousetrap', window.Mousetrap);
+  RequelPro.value('NeDB', {});
 
-  RequelPro.config(['$logProvider', '$stateProvider', function ($logProvider, $stateProvider) {
+  RequelPro.config(['$logProvider', '$stateProvider', 'DSProvider', function ($logProvider, $stateProvider, DSProvider) {
     console.log('Begin RequelPro.config()');
 
     $logProvider.debugEnabled(true);
@@ -41,19 +43,31 @@ try {
       console.error(err);
     }
 
+    DSProvider.defaults.defaultAdapter = 'DSNeDBAdapter';
+    DSProvider.defaults.deserialize = function (resourceName, data) {
+      console.debug('\tdeserialize()', resourceName, data);
+      if (data.data) {
+        return data.data;
+      } else {
+        return data;
+      }
+    };
+
     console.log('End RequelPro.config()');
   }]);
 
-  RequelPro.value('NeDB', {});
-
-  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', '$state', 'DS', 'path', 'NeDB',
-    function ($log, $rootScope, win, gui, $timeout, contextMenu, $state, DS, path, NeDB) {
+  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', '$state', 'DS', 'DSNeDBAdapter', 'path', 'NeDB',
+    function ($log, $rootScope, win, gui, $timeout, contextMenu, $state, DS, DSNeDBAdapter, path, NeDB) {
       $log.debug('Begin RequelPro.run()');
 
       $state.go('new');
 
+      DS.adapters.DSNeDBAdapter = DSNeDBAdapter;
+
       var Datastore = require('nedb');
       var datapath = gui.App.dataPath + '/nedb';
+
+      $log.debug('nedb datapath:', datapath);
 
       NeDB.connection = new Datastore({
         filename: path.join(datapath, 'connection.db'),
@@ -62,12 +76,21 @@ try {
           $log.error(err);
         }
       });
-      DS.defineResource('connection', {
+      DS.defineResource({
+        name: 'connection',
         afterCreate: function (resourceName, attrs, cb) {
           $log.debug('create', resourceName, attrs);
           cb(null, attrs);
-        }
+        },
+        methods: require(process.cwd() + '/server/models/Connection.js')
       });
+
+      DS.findAll('connection')
+        .then(function () {
+          $log.debug(arguments);
+        }, function (err) {
+          $log.error(err);
+        });
 
       function loadFavorites() {
         var favorites = [];
@@ -92,13 +115,12 @@ try {
         $log.debug('Show window');
         win.show();
 
-        RequelPro.value('R', require(process.cwd() + '/server/index.js'));
+
       }, 500);
 
       $log.debug('End RequelPro.run()');
     }
-  ])
-  ;
+  ]);
 } catch
   (err) {
   console.error(err);

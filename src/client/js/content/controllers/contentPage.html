@@ -1,1 +1,47 @@
-content
+<div id="contentPage">
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Databases</h3>
+
+                    <div class="form-group">
+                        <select data-ng-options="db for db in ContentCtrl.dbList" data-ng-model="ContentCtrl.db"
+                                id="db" name="db" class="form-control" data-disable="ContentCtrl.processing">
+                            <option value="">Select a database...</option>
+                        </select>
+                    </div>
+                </div>
+                <ul class="list-group" data-ng-class="{ processing: ContentCtrl.processing }">
+                    <li class="list-group-item" data-ng-class="{ active: ContentCtrl.table === table }"
+                        data-ng-repeat="table in ContentCtrl.tableList | orderBy:'toString()'"
+                        data-ng-click="ContentCtrl.table = table" data-disable="ContentCtrl.processing">
+                        {{ table }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="panel panel-default">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th data-ng-repeat="(field, type) in ContentCtrl.fields">{{ field }}</th>
+                    </tr>
+                    </thead>
+                    <tbody data-ng-class="{ processing: ContentCtrl.processing }">
+                    <tr data-ng-repeat="row in ContentCtrl.rows track by row[ContentCtrl.primaryKey]"
+                        data-ng-class="{ active: ContentCtrl.selectedRow === $index }"
+                        data-ng-click="ContentCtrl.selectRow($index)">
+                        <td data-ng-repeat="(field, type) in ContentCtrl.fields"
+                            data-ng-click="ContentCtrl.selectField($event, $parent.$index)">
+                            <span>{{ row[field] }}</span>
+                            <input type="text" class="ng-hide" data-ng-model="row[field]"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

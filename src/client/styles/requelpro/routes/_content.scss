@@ -1,0 +1,26 @@
+#contentPage {
+  padding-top: 100px;
+  .list-group-item {
+    cursor: pointer;
+    &:hover, &.active {
+      background-color: $brand-primary;
+      color: #fff;
+    }
+  }
+  .processing {
+    opacity: 0.6;
+  }
+  .table {
+    font-size: 12px;
+  }
+  td {
+    padding: 1px;
+    cursor: default;
+    height: 20px;
+    overflow: hidden;
+  }
+  tr {
+    height: 20px;
+    overflow: hidden;
+  }
+}

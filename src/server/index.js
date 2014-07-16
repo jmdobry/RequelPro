@@ -1,15 +1,15 @@
-var rethinkdbdash = require("rethinkdbdash");
-var mout = require("mout");
+var rethinkdbdash = require('rethinkdbdash');
+var mout = require('mout');
 
 var connections = [];
 var defaults = {
   min: 1,
   bufferSize: 1,
   max: 10,
-  db: "test",
-  host: "localhost",
+  db: 'test',
+  host: 'localhost',
   port: 28015,
-  authKey: ""
+  authKey: ''
 };
 
 function connect(options) {

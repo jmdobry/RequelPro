@@ -1,8 +1,14 @@
+#connectPage {
+  padding-top: 100px;
+  .list-group-item {
+    cursor: pointer;
+    &:hover, &.active {
+      background-color: $brand-primary;
+      color: #fff;
+    }
+  }
+}
+
 #connectForm {
-  padding: 30px;
-  border: 1px solid $light-gray;
-  @include border-radius(2px);
-  margin-top: 50px;
   @include light-box-shadow();
-  background-color: #fff;
 }

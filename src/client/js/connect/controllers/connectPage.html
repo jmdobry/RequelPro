@@ -1,54 +1,94 @@
 <div id="connectPage">
     <div class="row">
-        <form name="connectForm" id="connectForm" class="col-sm-4 col-sm-offset-4"
-              data-ng-submit="ConnectCtrl.connect(ConnectCtrl.options, true)">
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Connections</h3>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item" data-ng-class="{ active: !ConnectCtrl.connection.id }"
+                        data-ng-click="ConnectCtrl.connection = ConnectCtrl.newConnection">
+                        <h4 class="list-group-item-heading">
+                            <i class="fa fa-plus"></i> New Connection
+                        </h4>
 
-            <div class="form-group">
-                <div class="input-group">
+                        <p class="list-group-item-text">
+                            {{ ConnectCtrl.options.host || '127.0.0.1' }}:{{ ConnectCtrl.options.port || 28015 }}
+                        </p>
+                    </li>
+                    <li class="list-group-item" data-ng-class="{ active: ConnectCtrl.connection.id === connection.id }"
+                        data-ng-repeat="connection in ConnectCtrl.connections track by connection.id"
+                        data-ng-click="ConnectCtrl.connection = connection">
+                        <h4 class="list-group-item-heading">
+                            {{ connection.name }}
+                        </h4>
+
+                        <p class="list-group-item-text">
+                            {{ connection.host }}:{{ connection.port }}
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <form name="connectForm" id="connectForm" class="panel panel-default"
+                  data-ng-submit="ConnectCtrl.connect(ConnectCtrl.connection)">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Connection Details</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="input-group">
                     <span class="input-group-addon">
                         <i class="fa fa-bookmark"></i>
                     </span>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="name this connection..."
-                           data-ng-model="ConnectCtrl.options.name"/>
-                </div>
-            </div>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="name this connection..."
+                                   data-ng-model="ConnectCtrl.connection.name"/>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <div class="input-group">
+                    <div class="form-group">
+                        <div class="input-group">
                     <span class="input-group-addon">
                         <i class="fa fa-database"></i>
                     </span>
-                    <input type="text" class="form-control" id="host" name="host" placeholder="127.0.0.1"
-                           data-ng-model="ConnectCtrl.options.host"/>
-                </div>
-            </div>
+                            <input type="text" class="form-control" id="host" name="host" placeholder="127.0.0.1"
+                                   data-ng-model="ConnectCtrl.connection.host"/>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <div class="input-group">
+                    <div class="form-group">
+                        <div class="input-group">
                     <span class="input-group-addon">
                         <i class="fa fa-anchor"></i>
                     </span>
-                    <input type="text" class="form-control" id="port" name="port" placeholder="28015"
-                           data-ng-model="ConnectCtrl.options.port"/>
-                </div>
-            </div>
+                            <input type="text" class="form-control" id="port" name="port" placeholder="28015"
+                                   data-ng-model="ConnectCtrl.connection.port"/>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <div class="input-group">
+                    <div class="form-group">
+                        <div class="input-group">
                     <span class="input-group-addon">
                         <i class="fa fa-key"></i>
                     </span>
-                    <input type="password" class="form-control" id="authKey" name="authKey"
-                           data-ng-model="ConnectCtrl.options.authKey"/>
-                </div>
-            </div>
+                            <input type="password" class="form-control" id="authKey" name="authKey"
+                                   data-ng-model="ConnectCtrl.connection.authKey"/>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <button class="btn btn-primary" data-ng-click="ConnectCtrl.connect(ConnectCtrl.options, false)">
-                    Test Connection
-                </button>
-                <button type="submit" class="btn btn-success">Connect</button>
-            </div>
-        </form>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary"
+                                data-ng-click="ConnectCtrl.test(ConnectCtrl.connection)">
+                            Test Connection
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            Connect
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

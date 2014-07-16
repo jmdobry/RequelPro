@@ -47,6 +47,208 @@ function DSNeDBAdapterProvider() {
     var IA = DSErrors.IA;
     var NER = DSErrors.NER;
 
+    function FINDONE(resourceName, primaryKey, cb) {
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.INSERT + resourceName));
+      } else if (!DSUtils.isString(FINDONE) && !DSUtils.isNumber(primaryKey)) {
+        return cb(new IA('primaryKey: Must be a string or number!'));
+      } else {
+        NeDB[resourceName].findOne(primaryKey, cb);
+      }
+    }
+
+    function FIND(resourceName, query, cb) {
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.FIND + resourceName));
+      } else if (!DSUtils.isObject(query)) {
+        return cb(new IA('query: Must be an object!'));
+      } else {
+        NeDB[resourceName].find(query, cb);
+      }
+    }
+
+    function INSERT(resourceName, attrs, cb) {
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.INSERT + resourceName));
+      } else if (!DSUtils.isObject(attrs)) {
+        return cb(new IA('attrs: Must be an object!'));
+      } else {
+        NeDB[resourceName].insert(attrs, cb);
+      }
+    }
+
+    function UPDATE(resourceName, query, attrs, options, cb) {
+      options = options || {};
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.UPDATE + resourceName));
+      } else if (!DSUtils.isObject(query)) {
+        return cb(new IA('query: Must be an object!'));
+      } else if (!DSUtils.isObject(attrs)) {
+        return cb(new IA('attrs: Must be an object!'));
+      } else if (!DSUtils.isObject(options)) {
+        return cb(new IA('options: Must be an object!'));
+      } else {
+        NeDB[resourceName].update(query, attrs, options, cb);
+      }
+    }
+
+    function REMOVE(resourceName, query, options, cb) {
+      options = options || {};
+      if (!DSUtils.isFunction(cb)) {
+        throw new IA('cb: Must be a function!');
+      }
+      if (!(resourceName in NeDB)) {
+        return cb(new NER(errors.REMOVE + resourceName));
+      } else if (!DSUtils.isObject(query)) {
+        return cb(new IA('query: Must be an object!'));
+      } else if (!DSUtils.isObject(options)) {
+        return cb(new IA('options: Must be an object!'));
+      } else {
+        NeDB[resourceName].remove(query, options, cb);
+      }
+    }
+
+    function create(resourceConfig, attrs) {
+      var deferred = $q.defer();
+      if (resourceConfig && resourceConfig.idAttribute in attrs) {
+        attrs._id = attrs[resourceConfig.idAttribute];
+      }
+      INSERT(resourceConfig.name, attrs, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          if (resourceConfig.idAttribute) {
+            var a = {
+              $set: {}
+            };
+            a.$set[resourceConfig.idAttribute] = doc._id;
+            UPDATE(resourceConfig.name, { _id: doc._id }, a, {}, function (err) {
+              if (err) {
+                REMOVE(resourceConfig.name, { _id: doc._id }, function () {
+                  deferred.reject(err);
+                });
+              } else {
+                doc[resourceConfig.idAttribute] = doc._id;
+                deferred.resolve(doc);
+              }
+            });
+          } else {
+            deferred.resolve(doc);
+          }
+        }
+      });
+      return deferred.promise;
+    }
+
+    function destroy(resourceConfig, id) {
+      var deferred = $q.defer();
+      this.REMOVE(resourceConfig.name, {
+        _id: id
+      }, {}, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function destroyAll(resourceConfig, params, options) {
+      params = params || {};
+      options = options || {};
+      options.multi = true;
+      params = defaults.queryTransform(resourceConfig.name, params);
+      var deferred = $q.defer();
+      this.REMOVE(resourceConfig.name, params, options, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function find(resourceConfig, id) {
+      var deferred = $q.defer();
+      this.FINDONE(resourceConfig.name, id, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function findAll(resourceConfig, params) {
+      $log.debug('Begin DSNeDBAdapter.findAll()', resourceConfig, params);
+      params = params || {};
+      params = defaults.queryTransform(resourceConfig.name, params);
+      var deferred = $q.defer();
+      this.FIND(resourceConfig.name, params, function (err, docs) {
+        if (err) {
+          $log.error('DSNeDBAdapter.findAll()', err);
+          deferred.reject(err);
+        } else {
+          $log.debug('DSNeDBAdapter.findAll()', docs);
+          deferred.resolve(docs);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function update(resourceConfig, id, attrs) {
+      if (resourceConfig && resourceConfig.idAttribute) {
+        delete attrs[resourceConfig.idAttribute];
+      }
+      delete attrs._id;
+      var deferred = $q.defer();
+      this.UPDATE(resourceConfig.name, {
+        _id: id
+      }, attrs, {}, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
+    function updateAll(resourceConfig, attrs, params, options) {
+      if (resourceConfig && resourceConfig.idAttribute) {
+        delete attrs[resourceConfig.idAttribute];
+      }
+      delete attrs._id;
+      params = params || {};
+      options = options || {};
+      options.multi = true;
+      params = defaults.queryTransform(resourceConfig.name, params);
+      var deferred = $q.defer();
+      this.UPDATE(resourceConfig.name, params, attrs, options, function (err, doc) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(doc);
+        }
+      });
+      return deferred.promise;
+    }
+
     /**
      * @doc interface
      * @id DSNeDBAdapter
@@ -278,192 +480,7 @@ function DSNeDBAdapterProvider() {
        */
       destroyAll: destroyAll
     };
-
-    function FINDONE(resourceName, primaryKey, cb) {
-      if (!DSUtils.isFunction(cb)) {
-        throw new IA('cb: Must be a function!');
-      }
-      if (!(resourceName in NeDB)) {
-        return cb(new NER(errors.INSERT + resourceName));
-      } else if (!DSUtils.isString(FINDONE) && !DSUtils.isNumber(primaryKey)) {
-        return cb(new IA('primaryKey: Must be a string or number!'));
-      } else {
-        NeDB[resourceName].findOne(primaryKey, cb);
-      }
-    }
-
-    function FIND(resourceName, query, cb) {
-      if (!DSUtils.isFunction(cb)) {
-        throw new IA('cb: Must be a function!');
-      }
-      if (!(resourceName in NeDB)) {
-        return cb(new NER(errors.FIND + resourceName));
-      } else if (!DSUtils.isObject(query)) {
-        return cb(new IA('query: Must be an object!'));
-      } else {
-        NeDB[resourceName].find(query, cb);
-      }
-    }
-
-    function INSERT(resourceName, attrs, cb) {
-      if (!DSUtils.isFunction(cb)) {
-        throw new IA('cb: Must be a function!');
-      }
-      if (!(resourceName in NeDB)) {
-        return cb(new NER(errors.INSERT + resourceName));
-      } else if (!DSUtils.isObject(attrs)) {
-        return cb(new IA('attrs: Must be an object!'));
-      } else {
-        NeDB[resourceName].insert(attrs, cb);
-      }
-    }
-
-    function UPDATE(resourceName, query, attrs, options, cb) {
-      options = options || {};
-      if (!DSUtils.isFunction(cb)) {
-        throw new IA('cb: Must be a function!');
-      }
-      if (!(resourceName in NeDB)) {
-        return cb(new NER(errors.UPDATE + resourceName));
-      } else if (!DSUtils.isObject(query)) {
-        return cb(new IA('query: Must be an object!'));
-      } else if (!DSUtils.isObject(attrs)) {
-        return cb(new IA('attrs: Must be an object!'));
-      } else if (!DSUtils.isObject(options)) {
-        return cb(new IA('options: Must be an object!'));
-      } else {
-        NeDB[resourceName].update(query, attrs, options, cb);
-      }
-    }
-
-    function REMOVE(resourceName, query, options, cb) {
-      options = options || {};
-      if (!DSUtils.isFunction(cb)) {
-        throw new IA('cb: Must be a function!');
-      }
-      if (!(resourceName in NeDB)) {
-        return cb(new NER(errors.REMOVE + resourceName));
-      } else if (!DSUtils.isObject(query)) {
-        return cb(new IA('query: Must be an object!'));
-      } else if (!DSUtils.isObject(options)) {
-        return cb(new IA('options: Must be an object!'));
-      } else {
-        NeDB[resourceName].remove(query, options, cb);
-      }
-    }
-
-    function create(resourceConfig, attrs) {
-      var deferred = $q.defer();
-      if ('idAttribute' in resourceConfig && resourceConfig.idAttribute in attrs) {
-        attrs._id = attrs[resourceConfig.idAttribute];
-      }
-      this.INSERT(resourceConfig.name, attrs, function (err, doc) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          if ('idAttribute' in resourceConfig) {
-            doc[resourceConfig.idAttribute] = doc._id;
-          }
-          deferred.resolve(doc);
-        }
-      });
-      return deferred.promise;
-    }
-
-    function destroy(resourceConfig, id) {
-      var deferred = $q.defer();
-      this.REMOVE(resourceConfig.name, {
-        _id: id
-      }, {}, function (err, doc) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(doc);
-        }
-      });
-      return deferred.promise;
-    }
-
-    function destroyAll(resourceConfig, params, options) {
-      params = params || {};
-      options = options || {};
-      options.multi = true;
-      params = defaults.queryTransform(resourceConfig.name, params);
-      var deferred = $q.defer();
-      this.REMOVE(resourceConfig.name, params, options, function (err, doc) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(doc);
-        }
-      });
-      return deferred.promise;
-    }
-
-    function find(resourceConfig, id) {
-      var deferred = $q.defer();
-      this.FINDONE(resourceConfig.name, id, function (err, doc) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(doc);
-        }
-      });
-      return deferred.promise;
-    }
-
-    function findAll(resourceConfig, params) {
-      params = params || {};
-      params = defaults.queryTransform(resourceConfig.name, params);
-      var deferred = $q.defer();
-      this.FIND(resourceConfig.name, params, function (err, docs) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(docs);
-        }
-      });
-      return deferred.promise;
-    }
-
-    function update(resourceConfig, id, attrs) {
-      if ('idAttribute' in resourceConfig) {
-        delete attrs[resourceConfig.idAttribute];
-      }
-      delete attrs._id;
-      var deferred = $q.defer();
-      this.UPDATE(resourceConfig.name, {
-        _id: id
-      }, attrs, {}, function (err, doc) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(doc);
-        }
-      });
-      return deferred.promise;
-    }
-
-    function updateAll(resourceConfig, attrs, params, options) {
-      if ('idAttribute' in resourceConfig) {
-        delete attrs[resourceConfig.idAttribute];
-      }
-      delete attrs._id;
-      params = params || {};
-      options = options || {};
-      options.multi = true;
-      params = defaults.queryTransform(resourceConfig.name, params);
-      var deferred = $q.defer();
-      this.UPDATE(resourceConfig.name, params, attrs, options, function (err, doc) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(doc);
-        }
-      });
-      return deferred.promise;
-    }
   }];
 }
 
-module.exports = DSNeDBAdapterProvider;
+angular.module('RequelPro').provider('DSNeDBAdapter', DSNeDBAdapterProvider);
