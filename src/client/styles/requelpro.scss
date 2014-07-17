@@ -3,9 +3,11 @@
 // Import base Bootstrap v3.0 styles
 @import "bootstrap";
 @import "requelpro/mixins";
+@import "requelpro/main";
 // Elements
 @import "requelpro/elements/fonts";
 @import "requelpro/elements/forms";
+@import "requelpro/elements/navMenu";
 // Routes
 @import "requelpro/routes/connect";
 @import "requelpro/routes/content";

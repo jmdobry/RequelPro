@@ -24,7 +24,7 @@
     "toolbar": true
   },
   "private": true,
-  "single-instance": false,
+  "single-instance": true,
   "no-edit-menu": true,
   "repositories": [
     {

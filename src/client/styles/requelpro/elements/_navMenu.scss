@@ -1,0 +1,42 @@
+#navMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  color: #fff;
+  background-color: $dark-grayBlue;
+}
+
+.navMenuDatabases, .navMenuItem {
+  height: 60px;
+  text-align: center;
+  display: inline-block;
+}
+
+.navMenuDatabases {
+  width: 200px;
+  top: -8px;
+  position: relative;
+  select {
+    height: 20px;
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+
+.navMenuItem {
+  width: 60px;
+  background-color: $dark-grayBlue;
+  &:hover {
+    background-color: $normal-grayBlue;
+    cursor: pointer;
+  }
+  &.active {
+    background-color: $normal-grayBlue;
+  }
+  i {
+    font-size: 30px;
+    margin-top: 7px;
+  }
+}

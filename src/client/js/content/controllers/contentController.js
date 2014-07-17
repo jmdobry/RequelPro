@@ -113,28 +113,10 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
     };
 
     try {
-      DS.find('connection', $state.params.id);
-
       $scope.$watch(function () {
         return DS.lastModified('connection', $state.params.id);
       }, function () {
         _this.connection = DS.get('connection', $state.params.id);
-
-        if (_this.connection) {
-          _this.connection.dbList()
-            .then(function (dbList) {
-              $timeout(function () {
-                $log.debug('dbList:', dbList);
-                _this.dbList = dbList;
-              });
-            })
-            .catch(function (err) {
-              $log.error(err);
-            })
-            .error(function (err) {
-              $log.error(err);
-            });
-        }
       });
 
       $scope.$watch('ContentCtrl.connection.db', function (db, prev) {

@@ -1,0 +1,26 @@
+<div id="navMenu">
+    <div class="navMenuDatabases">
+        <div class="form-group">
+            <label>Databases</label>
+            <select data-ng-options="db for db in dbList"
+                    data-ng-model="connection.db" data-ng-if="!error"
+                    id="db" name="db" class="form-control" data-disable="processing">
+                <option value="">Select a database...</option>
+            </select>
+
+            <div data-ng-if="error" class="alert alert-danger">
+                <div class="alert-content">Failed to retrieve databases!</div>
+            </div>
+        </div>
+    </div>
+    <div class="navMenuItem" data-ng-click="NMCtrl.navigate('content', { id: connection.id }, true)"
+            data-ng-class="{ active: state === 'content' }">
+        <div><i class="fa fa-table"></i></div>
+        <div>Content</div>
+    </div>
+    <div class="navMenuItem" data-ng-click="NMCtrl.navigate('new')"
+         data-ng-class="{ active: state === 'new' }">
+        <div><i class="fa fa-plus"></i></div>
+        <div>New</div>
+    </div>
+</div>

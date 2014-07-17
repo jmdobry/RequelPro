@@ -1,5 +1,4 @@
 #contentPage {
-  padding-top: 100px;
   .list-group-item {
     padding: 3px 6px;
   }
@@ -28,9 +27,9 @@
 #contentTableList {
   margin-bottom: 0;
   position: fixed;
-  top: 100px;
-  width: 200px;
+  top: 60px;
   left: 0;
+  width: 200px;
   .list-group-item {
     cursor: pointer;
     &:hover, &.active {
@@ -46,4 +45,11 @@
   bottom: 0;
   left: 0;
   width: 200px;
+}
+
+#contentTable {
+  position: fixed;
+  top: 60px;
+  left: 200px;
+  display: inline-block;
 }

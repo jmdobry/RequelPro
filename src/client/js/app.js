@@ -49,9 +49,12 @@ try {
           controllerAs: 'ContentCtrl',
           controller: 'ContentController',
           resolve: {
-            connection: ['DS', '$stateParams', function (DS, $stateParams) {
+            connection: ['DS', '$stateParams', '$rootScope', function (DS, $stateParams, $rootScope) {
               console.log('calling DS.find', $stateParams.id);
-              return DS.find('connection', $stateParams.id);
+              return DS.find('connection', $stateParams.id).then(function (connection) {
+                $rootScope.connection = connection;
+                return connection;
+              });
             }]
           }
         });
