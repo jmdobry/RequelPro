@@ -76,6 +76,20 @@ module.exports = {
       });
   },
 
+  deleteTable: function (db, table) {
+    var connection;
+    return this.connect()
+      .then(function (conn) {
+        connection = conn;
+        return r.db(db).tableDrop(table).run(conn);
+      })
+      .finally(function () {
+        if (connection) {
+          return connection.close();
+        }
+      });
+  },
+
   indexStatus: function (db, table, index) {
     var connection;
     return this.connect()

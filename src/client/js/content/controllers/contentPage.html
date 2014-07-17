@@ -2,23 +2,18 @@
     <div class="row">
         <div class="col-sm-2">
             <div class="panel panel-default">
-                <div class="panel-heading">
+                <div class="panel-heading" style="position: fixed; top: 0; left: 0; width: 200px; height: 100px;">
                     <h3 class="panel-title">Databases</h3>
 
                     <div class="form-group">
-                        <select data-ng-options="db for db in ContentCtrl.dbList" data-ng-model="ContentCtrl.db"
+                        <select data-ng-options="db for db in ContentCtrl.dbList"
+                                data-ng-model="ContentCtrl.connection.db"
                                 id="db" name="db" class="form-control" data-disable="ContentCtrl.processing">
                             <option value="">Select a database...</option>
                         </select>
                     </div>
                 </div>
-                <ul class="list-group" data-ng-class="{ processing: ContentCtrl.processing }">
-                    <li class="list-group-item" data-ng-class="{ active: ContentCtrl.table === table }"
-                        data-ng-repeat="table in ContentCtrl.tableList | orderBy:'toString()'"
-                        data-ng-click="ContentCtrl.table = table" data-disable="ContentCtrl.processing">
-                        {{ table }}
-                    </li>
-                </ul>
+                <content-table-list data-connection="ContentCtrl.connection"></content-table-list>
             </div>
         </div>
         <div class="col-sm-10">
@@ -44,4 +39,5 @@
             </div>
         </div>
     </div>
+    <content-table-info data-connection="ContentCtrl.connection"></content-table-info>
 </div>

@@ -1,0 +1,23 @@
+<div id="contentTableList" class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Tables</h3>
+
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="fa fa-search"></i>
+                </span>
+                <input type="text" class="form-control" id="filter" name="filter" placeholder="Filter"
+                       data-ng-model="CTLCtrl.filter"/>
+            </div>
+        </div>
+    </div>
+    <ul class="list-group" data-ng-class="{ processing: processing }">
+        <li class="list-group-item" data-ng-class="{ active: connection.table === table }"
+            data-ng-repeat="table in tableList | filter:CTLCtrl.filter | orderBy:'toString()'"
+            data-ng-click="connection.table = table" data-disable="processing"
+            data-right-click="CTLCtrl.openMenu($event, table)">
+            {{ table }}
+        </li>
+    </ul>
+</div>

@@ -1,11 +1,7 @@
 #contentPage {
   padding-top: 100px;
   .list-group-item {
-    cursor: pointer;
-    &:hover, &.active {
-      background-color: $brand-primary;
-      color: #fff;
-    }
+    padding: 3px 6px;
   }
   .processing {
     opacity: 0.6;
@@ -27,4 +23,27 @@
     height: 20px;
     overflow: hidden;
   }
+}
+
+#contentTableList {
+  margin-bottom: 0;
+  position: fixed;
+  top: 100px;
+  width: 200px;
+  left: 0;
+  .list-group-item {
+    cursor: pointer;
+    &:hover, &.active {
+      background-color: $brand-primary;
+      color: #fff;
+    }
+  }
+}
+
+#contentTableInfo {
+  margin-bottom: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 200px;
 }

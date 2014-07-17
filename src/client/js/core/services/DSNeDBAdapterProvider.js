@@ -47,20 +47,21 @@ function DSNeDBAdapterProvider() {
     var IA = DSErrors.IA;
     var NER = DSErrors.NER;
 
-    function FINDONE(resourceName, primaryKey, cb) {
+    function FINDONE(resourceName, query, cb) {
       if (!DSUtils.isFunction(cb)) {
         throw new IA('cb: Must be a function!');
       }
       if (!(resourceName in NeDB)) {
         return cb(new NER(errors.INSERT + resourceName));
-      } else if (!DSUtils.isString(FINDONE) && !DSUtils.isNumber(primaryKey)) {
-        return cb(new IA('primaryKey: Must be a string or number!'));
+      } else if (!DSUtils.isObject(query)) {
+        return cb(new IA('query: Must be an object!'));
       } else {
-        NeDB[resourceName].findOne(primaryKey, cb);
+        NeDB[resourceName].findOne(query, cb);
       }
     }
 
     function FIND(resourceName, query, cb) {
+      query = query || {};
       if (!DSUtils.isFunction(cb)) {
         throw new IA('cb: Must be a function!');
       }
@@ -184,7 +185,9 @@ function DSNeDBAdapterProvider() {
 
     function find(resourceConfig, id) {
       var deferred = $q.defer();
-      this.FINDONE(resourceConfig.name, id, function (err, doc) {
+      var options = {};
+      options[resourceConfig.idAttribute || '_id'] = id;
+      this.FINDONE(resourceConfig.name, options, function (err, doc) {
         if (err) {
           deferred.reject(err);
         } else {
@@ -272,15 +275,15 @@ function DSNeDBAdapterProvider() {
        * @id DSNeDBAdapter.methods:FINDONE
        * @name FINDONE
        * @description
-       * Wrapper for `Datastore#findOne(primaryKey, cb)`.
+       * Wrapper for `Datastore#findOne(query, cb)`.
        *
        * ## Signature:
        * ```js
-       * DSNeDBAdapter.FINDONE(resourceName, primaryKey, cb)
+       * DSNeDBAdapter.FINDONE(resourceName, query, cb)
        * ```
        *
        * @param {string} resourceName The resource type, e.g. 'user', 'comment', etc.
-       * @param {string|number} primaryKey The primaryKey of the entity to retrieve.
+       * @param {object} query The primaryKey query.
        * @param {function} cb Callback function.
        */
       FINDONE: FINDONE,
@@ -370,6 +373,7 @@ function DSNeDBAdapterProvider() {
        * @param {object} resourceConfig Properties:
        *
        * - `{string}` - `name` - The resource type, e.g. 'user', 'comment', etc.
+       * - `{string}` - `idAttribute` - The field to be used as the primary key.
        *
        * @param {string|number} id The primary key of the entity to retrieve.
        * @returns {Promise} Promise produced by the `$q` service.

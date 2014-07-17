@@ -1,0 +1,29 @@
+<div id="contentTableInfo" class="panel panel-primary" data-ng-show="connection.table">
+    <div class="panel-heading">
+        <h3 class="panel-title">Table Information</h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+            Type:
+            <small>{{ tableInfo.type }}</small>
+        </li>
+        <li class="list-group-item">
+            Name:
+            <small>{{ tableInfo.name }}</small>
+        </li>
+        <li class="list-group-item">
+            DB:
+            <small>{{ tableInfo.db.name }}</small>
+        </li>
+        <li class="list-group-item">
+            Primary Key:
+            <small>{{ tableInfo.primary_key }}</small>
+        </li>
+        <li class="list-group-item">
+            Indexes:
+            <small><span data-ng-repeat="index in tableInfo.indexes">
+            {{ index }}{{ !$last ? ', ' : '' }}
+            </span></small>
+        </li>
+    </ul>
+</div>

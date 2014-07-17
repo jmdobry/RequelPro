@@ -19,6 +19,8 @@ angular.module('RequelPro').controller('ConnectController', ['$scope', '$log', '
           if (connection.id) {
             $state.go('content', {
               id: connection.id
+            }).then(null, function (err) {
+              $log.error(err);
             });
           } else {
             DS.create('connection', connection)

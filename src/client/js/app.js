@@ -18,11 +18,22 @@ try {
   RequelPro.value('path', require('path'));
   RequelPro.value('Mousetrap', window.Mousetrap);
   RequelPro.value('NeDB', {});
+  RequelPro.value('r', require('rethinkdb'));
 
   RequelPro.config(['$logProvider', '$stateProvider', 'DSProvider', function ($logProvider, $stateProvider, DSProvider) {
     console.log('Begin RequelPro.config()');
 
     $logProvider.debugEnabled(true);
+
+    DSProvider.defaults.defaultAdapter = 'DSNeDBAdapter';
+    DSProvider.defaults.deserialize = function (resourceName, data) {
+      console.debug('\tdeserialize()', resourceName, data);
+      if (data.data) {
+        return data.data;
+      } else {
+        return data;
+      }
+    };
 
     try {
       $stateProvider
@@ -36,22 +47,18 @@ try {
           url: '/content/:id',
           templateUrl: 'content/controllers/contentPage.html',
           controllerAs: 'ContentCtrl',
-          controller: 'ContentController'
+          controller: 'ContentController',
+          resolve: {
+            connection: ['DS', '$stateParams', function (DS, $stateParams) {
+              console.log('calling DS.find', $stateParams.id);
+              return DS.find('connection', $stateParams.id);
+            }]
+          }
         });
 
     } catch (err) {
       console.error(err);
     }
-
-    DSProvider.defaults.defaultAdapter = 'DSNeDBAdapter';
-    DSProvider.defaults.deserialize = function (resourceName, data) {
-      console.debug('\tdeserialize()', resourceName, data);
-      if (data.data) {
-        return data.data;
-      } else {
-        return data;
-      }
-    };
 
     console.log('End RequelPro.config()');
   }]);
@@ -84,13 +91,6 @@ try {
         },
         methods: require(process.cwd() + '/server/models/Connection.js')
       });
-
-      DS.findAll('connection')
-        .then(function () {
-          $log.debug(arguments);
-        }, function (err) {
-          $log.error(err);
-        });
 
       function loadFavorites() {
         var favorites = [];

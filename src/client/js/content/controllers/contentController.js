@@ -29,7 +29,7 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
       _this.connection.connect()
         .then(function (conn) {
           connection = conn;
-          return r.db(_this.db).table(_this.table).get(_this.rows[index][_this.primaryKey]).update(_this.rows[index], { return_vals: true }).run(conn);
+          return r.db(_this.connection.db).table(_this.connection.table).get(_this.rows[index][_this.primaryKey]).update(_this.rows[index], { return_vals: true }).run(conn);
         })
         .then(function (cursor) {
           $timeout(function () {
@@ -137,26 +137,14 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
         }
       });
 
-      $scope.$watch('ContentCtrl.db', function (db) {
-        if (db && _this.connection) {
-          $log.debug('selected db:', db);
-          _this.connection.tableList(db)
-            .then(function (tableList) {
-              $timeout(function () {
-                $log.debug('tableList:', tableList);
-                _this.tableList = tableList;
-              });
-            })
-            .catch(function (err) {
-              $log.error(err);
-            })
-            .error(function (err) {
-              $log.error(err);
-            });
+      $scope.$watch('ContentCtrl.connection.db', function (db, prev) {
+        if (db && db !== prev) {
+          _this.connection.table = null;
+          _this.rows = [];
         }
       });
 
-      $scope.$watch('ContentCtrl.table', function (table) {
+      $scope.$watch('ContentCtrl.connection.table', function (table) {
         if (table && _this.connection) {
           var connection;
           var tableInfo;
@@ -164,11 +152,11 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
           _this.connection.connect()
             .then(function (conn) {
               connection = conn;
-              return _this.connection.tableInfo(_this.db, table);
+              return _this.connection.tableInfo(_this.connection.db, table);
             })
             .then(function (t) {
               tableInfo = t;
-              return r.db(_this.db).table(table).limit(1000).coerceTo('ARRAY').run(connection);
+              return r.db(_this.connection.db).table(table).limit(1000).coerceTo('ARRAY').run(connection);
             })
             .then(function (rows) {
               $timeout(function () {
