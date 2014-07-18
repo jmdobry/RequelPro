@@ -1,4 +1,4 @@
-<div id="navMenu">
+<div id="navMenu" class="am-fade-and-slide-top" data-ng-show="NMCtrl.show" data-ng-init="NMCtrl.show = false">
     <div class="navMenuDatabases">
         <div class="form-group">
             <label>Databases</label>
@@ -9,8 +9,8 @@
             </button>
         </div>
     </div>
-    <div class="navMenuItem" data-ng-click="NMCtrl.navigate('content', { id: connection.id }, true)"
-         data-ng-class="{ active: state === 'content' }">
+    <div class="navMenuItem" data-ng-click="!connection || NMCtrl.navigate('content', { id: connection.id }, true)"
+         data-ng-class="{ active: state === 'content', disabled: !connection }">
         <div><i class="fa fa-table"></i></div>
         <div>Content</div>
     </div>

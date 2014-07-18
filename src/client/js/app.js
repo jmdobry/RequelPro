@@ -66,8 +66,8 @@ try {
     console.log('End RequelPro.config()');
   }]);
 
-  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', '$state', 'DS', 'DSNeDBAdapter', 'path', 'NeDB',
-    function ($log, $rootScope, win, gui, $timeout, contextMenu, $state, DS, DSNeDBAdapter, path, NeDB) {
+  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', 'mainMenu', '$state', 'DS', 'DSNeDBAdapter', 'path', 'NeDB',
+    function ($log, $rootScope, win, gui, $timeout, contextMenu, mainMenu, $state, DS, DSNeDBAdapter, path, NeDB) {
       $log.debug('Begin RequelPro.run()');
 
       $state.go('new');

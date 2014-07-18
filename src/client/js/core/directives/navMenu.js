@@ -10,6 +10,8 @@ angular.module('RequelPro').directive('navMenu', function () {
     controllerAs: 'NMCtrl',
     controller: ['$scope', '$timeout', '$log', '$state', '$modal', function ($scope, $timeout, $log, $state, $modal) {
 
+      var _this = this;
+
       function showErrorModal(err) {
         $log.error(err);
         $modal({
@@ -37,6 +39,9 @@ angular.module('RequelPro').directive('navMenu', function () {
           $scope.connection.dbList()
             .then(function (dbList) {
               $timeout(function () {
+                if (dbList.length) {
+                  $scope.connection.db = dbList[0];
+                }
                 $scope.dbList = dbList;
               });
             })
@@ -56,6 +61,10 @@ angular.module('RequelPro').directive('navMenu', function () {
       }, function (name) {
         $scope.state = name;
       });
+
+      $timeout(function () {
+        _this.show = true;
+      }, 1200);
     }]
   };
 });

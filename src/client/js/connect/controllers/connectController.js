@@ -1,5 +1,5 @@
-angular.module('RequelPro').controller('ConnectController', ['$scope', '$log', '$state', 'DS', 'mout', '$window',
-  function ($scope, $log, $state, DS, mout, $window) {
+angular.module('RequelPro').controller('ConnectController', ['$scope', '$log', '$state', 'DS', 'mout', '$window', '$timeout',
+  function ($scope, $log, $state, DS, mout, $window, $timeout) {
     $log.debug('Begin ConnectController constructor');
 
     var _this = this;
@@ -80,6 +80,14 @@ angular.module('RequelPro').controller('ConnectController', ['$scope', '$log', '
       }, function () {
         _this.connections = DS.filter('connection');
       });
+
+      $timeout(function () {
+        _this.showForm = true;
+      }, 600);
+
+      $timeout(function () {
+        _this.showList = true;
+      }, 700);
 
       $log.debug('End ConnectController constructor');
     } catch (err) {

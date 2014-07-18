@@ -1,7 +1,8 @@
 <div id="connectPage">
     <div class="row">
         <div class="col-sm-4">
-            <div class="panel panel-default">
+            <div class="panel panel-default am-fade-and-slide-bottom" data-ng-show="ConnectCtrl.showList"
+                 data-ng-init="ConnectCtrl.showList = false">
                 <div class="panel-heading">
                     <h3 class="panel-title">Connections</h3>
                 </div>
@@ -34,7 +35,8 @@
             </div>
         </div>
         <div class="col-sm-4">
-            <form name="connectForm" id="connectForm" class="panel panel-default"
+            <form name="connectForm" id="connectForm" class="panel panel-default am-fade-and-slide-bottom"
+                  data-ng-show="ConnectCtrl.showForm" data-ng-init="ConnectCtrl.showForm = false"
                   data-ng-submit="ConnectCtrl.connect(ConnectCtrl.connection)">
                 <div class="panel-heading">
                     <h3 class="panel-title">Connection Details</h3>

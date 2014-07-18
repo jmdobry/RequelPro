@@ -4,8 +4,7 @@
   left: 0;
   width: 100%;
   height: 70px;
-  color: #fff;
-  background-color: $dark-grayBlue;
+  background-color: $lighter-gray;
 }
 
 .navMenuDatabases, .navMenuItem {
@@ -16,7 +15,7 @@
 
 .navMenuDatabases {
   width: 200px;
-  top: -3px;
+  top: -6px;
   position: relative;
   label {
     margin-bottom: 3px;
@@ -30,13 +29,15 @@
 
 .navMenuItem {
   width: 70px;
-  background-color: $dark-grayBlue;
+  background-color: $lighter-gray;
   &:hover {
-    background-color: $normal-grayBlue;
-    cursor: pointer;
+    color: $dark-gray;
   }
   &.active {
-    background-color: $normal-grayBlue;
+    background-color: $light-gray;
+  }
+  &.disabled {
+    background-color: $lightest-gray;
   }
   i {
     font-size: 30px;

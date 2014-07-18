@@ -1,12 +1,5 @@
 #connectPage {
   padding-top: 100px;
-  .list-group-item {
-    cursor: pointer;
-    &:hover, &.active {
-      background-color: $brand-primary;
-      color: #fff;
-    }
-  }
 }
 
 #connectForm {

@@ -1,0 +1,13 @@
+.list-group-item {
+  padding: 3px 6px;
+  cursor: default;
+  &:hover, &:focus {
+    text-decoration: none;
+    color: $black;
+    background-color: $lighter-gray;
+  }
+  &.active {
+    background-color: $brand-primary;
+    color: #fff;
+  }
+}
