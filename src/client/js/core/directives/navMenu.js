@@ -8,13 +8,28 @@ angular.module('RequelPro').directive('navMenu', function () {
     replace: true,
     templateUrl: 'core/directives/navMenu.html',
     controllerAs: 'NMCtrl',
-    controller: ['$scope', '$timeout', '$log', '$state', function ($scope, $timeout, $log, $state) {
+    controller: ['$scope', '$timeout', '$log', '$state', '$modal', function ($scope, $timeout, $log, $state, $modal) {
+
+      function showErrorModal(err) {
+        $log.error(err);
+        $modal({
+          title: 'Failed to retrieve databases!',
+          content: err.stack,
+          backdrop: 'static',
+          placement: 'center',
+          animation: 'danger am-flip-x'
+        });
+      }
 
       this.navigate = function (state, params, requiresConnection) {
         if (!requiresConnection || (requiresConnection && $scope.connection && $scope.connection.id)) {
           $state.go(state, params);
         }
       };
+
+      $scope.$watch('connection.db', function (db) {
+        console.log(db);
+      });
 
       $scope.$watch('connection.id', function (id, prev) {
         if (id && id !== prev) {
@@ -28,14 +43,8 @@ angular.module('RequelPro').directive('navMenu', function () {
             .finally(function () {
               $scope.processing = false;
             })
-            .catch(function (err) {
-              $log.error(err);
-              $scope.error = true;
-            })
-            .error(function (err) {
-              $log.error(err);
-              $scope.error = true;
-            });
+            .catch(showErrorModal)
+            .error(showErrorModal);
         } else if (!id) {
           $scope.dbList = [];
           $scope.processing = true;

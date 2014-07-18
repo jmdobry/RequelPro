@@ -1,5 +1,28 @@
 #mainView {
-  top: 60px;
+  top: 70px;
   left: 0;
   position: fixed;
+}
+
+#mainView.ng-enter, #mainView.ng-leave {
+  -webkit-transition:all .1s ease-in-out;
+  -moz-transition:all .1s ease-in-out;
+  -o-transition:all .1s ease-in-out;
+  transition:all .1s ease-in-out;
+}
+
+#mainView.ng-enter {
+  opacity: 0;
+}
+
+#mainView.ng-enter-active {
+  opacity: 1;
+}
+
+#mainView.ng-leave {
+  opacity: 1;
+}
+
+#mainView.ng-leave-active {
+  opacity: 0;
 }

@@ -26,11 +26,5 @@
     "load-grunt-tasks": "^0.6.0",
     "time-grunt": "^0.3.2"
   },
-  "dependencies": {
-    "rethinkdbdash": "^1.13.6",
-    "mout": "^0.9.1",
-    "nedb": "^0.10.6",
-    "rethinkdb": "^1.13.0-2"
-  },
   "private": true
 }

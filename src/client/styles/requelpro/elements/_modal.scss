@@ -1,0 +1,31 @@
+.modal {
+  overflow-y: auto;
+  &.danger {
+    .modal-header {
+      background-color: $brand-danger;
+      color: #fff;
+      @include border-top-radius(4px);
+    }
+    .modal-body {
+      background-color: $lightest-red;
+      color: $dark-red;
+    }
+    .modal-footer {
+      background-color: $brand-danger;
+      color: #fff;
+    }
+  }
+}
+
+.modal-content {
+  @include border-radius(6px);
+}
+
+.modal-body {
+  padding-bottom: 35px;
+  word-wrap: break-word;
+}
+
+.modal-footer {
+  margin-top: 0;
+}

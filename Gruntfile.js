@@ -3,6 +3,8 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
+  var mac = process.platform === 'darwin';
+
   grunt.initConfig({
     clean: {
       build: ['./build/'],
@@ -45,19 +47,24 @@ module.exports = function (grunt) {
       },
       dist: {
         options: {
-          win: true
+          mac: true,
+          win: true,
+          linux32: true,
+          linux64: true
         },
         src: ['./dist/**/*']
       },
       snapshot: {
         options: {
-          mac: true
+          mac: mac,
+          win: !mac
         },
         src: ['./dist/**/*']
       },
       dev: {
         options: {
-          mac: true
+          mac: mac,
+          win: !mac
         },
         src: ['./dist/**/*']
       }
@@ -105,6 +112,8 @@ module.exports = function (grunt) {
       css: {
         src: [
           'src/client/vendor/bower_components/normalize-css/normalize.css',
+          'src/client/vendor/bower_components/angular-motion/dist/angular-motion.css',
+          'src/client/vendor/bower_components/bootstrap-additions/dist/bootstrap-additions.css',
           'dist/client/styles/main.css'
         ],
         dest: 'dist/client/styles/main.css'
@@ -128,6 +137,10 @@ module.exports = function (grunt) {
           'src/client/vendor/bower_components/jquery/dist/jquery.js',
           'src/client/vendor/bower_components/angular/angular.js',
           'src/client/vendor/bower_components/angular-ui-router/release/angular-ui-router.js',
+          'src/client/vendor/bower_components/angular-animate/angular-animate.js',
+          'src/client/vendor/bower_components/angular-sanitize/angular-sanitize.js',
+          'src/client/vendor/bower_components/angular-strap/dist/angular-strap.js',
+          'src/client/vendor/bower_components/angular-strap/dist/angular-strap.tpl.js',
           'src/client/vendor/bower_components/angular-data/dist/angular-data.js',
           'src/client/vendor/bower_components/angular-cache/dist/angular-cache.js',
           'src/client/vendor/bower_components/mousetrap/mousetrap.js',
@@ -161,10 +174,13 @@ module.exports = function (grunt) {
     },
 
     shell: {
-      open: {
+      open_mac: {
         command: 'open ./build/releases/RequelPro/mac/RequelPro.app'
       },
-      close: {
+	    open_win: {
+		    command: '"build/releases/RequelPro/win/RequelPro/RequelPro.exe" &'
+	    },
+      close_mac: {
         command: 'ps -ef | grep build/releases/RequelPro/mac/RequelPro.app/Contents/MacOS/node-webkit | grep -v grep | awk \'{print $2}\' | xargs kill -9'
       }
     }
@@ -180,13 +196,20 @@ module.exports = function (grunt) {
     'concat'
   ]);
 
-  grunt.registerTask('build', [
-    'shell:close',
+  var buildTasks = [
     'prebuild',
     'clean:releases',
-    'nodewebkit:dev',
-    'shell:open'
-  ]);
+    'nodewebkit:dev'
+  ];
+
+  if (process.platform === 'darwin') {
+    buildTasks.unshift('shell:close_mac');
+    buildTasks.push('shell:open_mac');
+  } else {
+    buildTasks.push('shell:open_win');
+  }
+
+  grunt.registerTask('build', buildTasks);
 
   grunt.registerTask('snapshot', [
     'prebuild',

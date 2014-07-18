@@ -9,7 +9,7 @@ try {
   win.height = window.screen.availHeight;
   win.width = window.screen.availWidth;
 
-  var RequelPro = angular.module('RequelPro', ['ui.router', 'templates-app', 'angular-data.DSCacheFactory', 'angular-data.DS']);
+  var RequelPro = angular.module('RequelPro', ['ui.router', 'templates-app', 'angular-data.DSCacheFactory', 'angular-data.DS', 'mgcrea.ngStrap', 'ngAnimate', 'ngSanitize']);
 
   RequelPro.value('gui', gui);
   RequelPro.value('win', win);

@@ -9,7 +9,15 @@
       "web": "http://www.requelpro.com"
     }
   ],
-  "keywords": ["RethinkDB", "ReQL", "Database", "Query", "Inspector", "Reheat", "Model"],
+  "keywords": [
+    "RethinkDB",
+    "ReQL",
+    "Database",
+    "Query",
+    "Inspector",
+    "Reheat",
+    "Model"
+  ],
   "main": "./client/index.html",
   "window": {
     "title": "Requel Pro",
@@ -31,5 +39,10 @@
       "type": "git",
       "url": "git@github.com:jmdobry/RequelPro.git"
     }
-  ]
+  ],
+  "dependencies": {
+    "mout": "^0.9.1",
+    "nedb": "^0.10.6",
+    "rethinkdb": "^1.13.0-2"
+  }
 }

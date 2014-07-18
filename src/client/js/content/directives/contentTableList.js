@@ -22,7 +22,7 @@ angular.module('RequelPro').directive('contentTableList', [
       replace: true,
       controllerAs: 'CTLCtrl',
       templateUrl: 'content/directives/contentTableList.html',
-      controller: ['$scope', '$log', '$timeout', 'mout', function ($scope, $log, $timeout, mout) {
+      controller: ['$scope', '$log', '$timeout', 'mout', '$modal', function ($scope, $log, $timeout, mout, $modal) {
 
         var _this = this;
 
@@ -37,6 +37,18 @@ angular.module('RequelPro').directive('contentTableList', [
 
         menu.append(deleteTable);
 
+        function showErrorModal(err, table) {
+          $log.error(err);
+          $modal({
+            title: 'Failed to delete <strong>' + table + '</strong> table!',
+            content: err.stack,
+            backdrop: 'static',
+            placement: 'center',
+            html: true,
+            animation: 'danger am-flip-x'
+          });
+        }
+
         this.deleteTable = function (table) {
           return $scope.connection.deleteTable($scope.connection.db, table)
             .then(function () {
@@ -46,14 +58,20 @@ angular.module('RequelPro').directive('contentTableList', [
                 $log.info('Successfully deleted:', table);
               });
             })
-            .catch($log.error)
-            .error($log.error);
+            .catch(function (err) {
+              showErrorModal(err, table);
+            })
+            .error(function (err) {
+              showErrorModal(err, table);
+            });
         };
 
         this.openMenu = function ($event, table) {
           this.contextTable = table;
           $event.preventDefault();
+          $event.stopPropagation();
           menu.popup($event.originalEvent.x, $event.originalEvent.y);
+          return false;
         };
 
         $scope.$watch('connection.db', function (db) {

@@ -18,7 +18,12 @@
     "bootstrap-sass": "https://github.com/thomas-mcdonald/bootstrap-sass.git#v3.0.2.1",
     "angular-ui-router": "~0.2.10",
     "angular-data": "~0.9.1",
-    "angular-cache": "~3.0.3"
+    "angular-cache": "~3.0.3",
+    "angular-strap": "~2.0.3",
+    "angular-motion": "~0.3.3",
+    "angular-animate": "~1.2.20",
+    "bootstrap-additions": "~0.2.3",
+    "angular-sanitize": "~1.2.20"
   },
   "private": true
 }
