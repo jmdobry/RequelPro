@@ -28,7 +28,7 @@ try {
     DSProvider.defaults.defaultAdapter = 'DSNeDBAdapter';
     DSProvider.defaults.deserialize = function (resourceName, data) {
       console.debug('\tdeserialize()', resourceName, data);
-      if (data.data) {
+      if (data && data.data) {
         return data.data;
       } else {
         return data;
@@ -41,7 +41,12 @@ try {
           url: '/new',
           templateUrl: 'connect/controllers/connectPage.html',
           controller: 'ConnectController',
-          controllerAs: 'ConnectCtrl'
+          controllerAs: 'ConnectCtrl',
+          resolve: {
+            favorites: ['DS', function (DS) {
+              return DS.findAll('favorite');
+            }]
+          }
         })
         .state('content', {
           url: '/content/:id',
@@ -50,7 +55,6 @@ try {
           controller: 'ContentController',
           resolve: {
             connection: ['DS', '$stateParams', '$rootScope', function (DS, $stateParams, $rootScope) {
-              console.log('calling DS.find', $stateParams.id);
               return DS.find('connection', $stateParams.id).then(function (connection) {
                 $rootScope.connection = connection;
                 return connection;
@@ -70,8 +74,6 @@ try {
     function ($log, $rootScope, win, gui, $timeout, contextMenu, mainMenu, $state, DS, DSNeDBAdapter, path, NeDB) {
       $log.debug('Begin RequelPro.run()');
 
-      $state.go('new');
-
       DS.adapters.DSNeDBAdapter = DSNeDBAdapter;
 
       var Datastore = require('nedb');
@@ -79,46 +81,31 @@ try {
 
       $log.debug('nedb datapath:', datapath);
 
-      NeDB.connection = new Datastore({
-        filename: path.join(datapath, 'connection.db'),
+      NeDB.favorite = new Datastore({
+        filename: path.join(datapath, 'favorite.db'),
         autoload: true,
         error: function (err) {
           $log.error(err);
         }
       });
       DS.defineResource({
+        name: 'favorite',
+        methods: {}
+      });
+      DS.defineResource({
         name: 'connection',
-        afterCreate: function (resourceName, attrs, cb) {
-          $log.debug('create', resourceName, attrs);
-          cb(null, attrs);
-        },
         methods: require(process.cwd() + '/server/models/Connection.js')
       });
 
-      function loadFavorites() {
-        var favorites = [];
-        try {
-          var f = localStorage.getItem('favorites');
-          if (f) {
-            favorites = JSON.parse(f);
-          } else {
-            localStorage.setItem('favorites', favorites);
-          }
-          $log.debug('Loaded favorites: ', favorites);
-        } catch (err) {
-          $log.error(err);
-          $log.error('Failed to load favorites!');
-        }
-        return favorites;
-      }
+      DS.bindAll($rootScope, 'connections', 'connection', {});
 
-      $rootScope.favorites = loadFavorites();
+      $timeout(function () {
+        $state.go('new');
+      }, 100);
 
       $timeout(function () {
         $log.debug('Show window');
         win.show();
-
-
       }, 500);
 
       $log.debug('End RequelPro.run()');

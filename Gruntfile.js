@@ -224,8 +224,8 @@ module.exports = function (grunt) {
     'nodewebkit:dist'
   ]);
 
-  grunt.registerTask('o', ['shell:open']);
-  grunt.registerTask('c', ['shell:close']);
+  grunt.registerTask('o', ['shell:open_mac']);
+  grunt.registerTask('c', ['shell:close_mac']);
 
   grunt.registerTask('default', [
     'build'

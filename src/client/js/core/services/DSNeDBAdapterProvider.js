@@ -42,7 +42,7 @@ function DSNeDBAdapterProvider() {
     }
   };
 
-  this.$get = ['$q', '$log', 'DSUtils', 'DSErrors', 'NeDB', function ($q, $log, DSUtils, DSErrors, NeDB) {
+  this.$get = ['$q', 'DSUtils', 'DSErrors', 'NeDB', function ($q, DSUtils, DSErrors, NeDB) {
 
     var IA = DSErrors.IA;
     var NER = DSErrors.NER;
@@ -198,16 +198,13 @@ function DSNeDBAdapterProvider() {
     }
 
     function findAll(resourceConfig, params) {
-      $log.debug('Begin DSNeDBAdapter.findAll()', resourceConfig, params);
       params = params || {};
       params = defaults.queryTransform(resourceConfig.name, params);
       var deferred = $q.defer();
       this.FIND(resourceConfig.name, params, function (err, docs) {
         if (err) {
-          $log.error('DSNeDBAdapter.findAll()', err);
           deferred.reject(err);
         } else {
-          $log.debug('DSNeDBAdapter.findAll()', docs);
           deferred.resolve(docs);
         }
       });
@@ -215,6 +212,7 @@ function DSNeDBAdapterProvider() {
     }
 
     function update(resourceConfig, id, attrs) {
+      var _this = this;
       if (resourceConfig && resourceConfig.idAttribute) {
         delete attrs[resourceConfig.idAttribute];
       }
@@ -222,11 +220,17 @@ function DSNeDBAdapterProvider() {
       var deferred = $q.defer();
       this.UPDATE(resourceConfig.name, {
         _id: id
-      }, attrs, {}, function (err, doc) {
+      }, { $set: attrs }, {}, function (err) {
         if (err) {
           deferred.reject(err);
         } else {
-          deferred.resolve(doc);
+          _this.find(resourceConfig, id).then(function (doc) {
+            if (angular.isObject(doc)) {
+              deferred.resolve(doc);
+            } else {
+              deferred.reject(new Error('Not Found'));
+            }
+          }, deferred.reject);
         }
       });
       return deferred.promise;

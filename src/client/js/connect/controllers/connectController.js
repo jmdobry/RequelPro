@@ -1,12 +1,41 @@
-angular.module('RequelPro').controller('ConnectController', ['$scope', '$log', '$state', 'DS', 'mout', '$window', '$timeout',
-  function ($scope, $log, $state, DS, mout, $window, $timeout) {
+angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$scope', '$log', '$state', 'DS', 'mout', '$window', '$timeout', '$modal',
+  function ($rootScope, $scope, $log, $state, DS, mout, $window, $timeout, $modal) {
     $log.debug('Begin ConnectController constructor');
 
     var _this = this;
+    var Favorite = DS.definitions.favorite[DS.definitions.favorite.class];
     var Connection = DS.definitions.connection[DS.definitions.connection.class];
 
-    this.connect = function (connection) {
-      $log.debug('Begin ConnectController.connect()', connection);
+    function showErrorModal(err) {
+      $log.error(err);
+      $modal({
+        title: 'Failure!',
+        content: err.stack,
+        backdrop: 'static',
+        placement: 'center',
+        html: true,
+        animation: 'danger am-flip-x'
+      });
+    }
+
+    function showSuccessModal(message) {
+      $modal({
+        title: 'Success!',
+        content: message,
+        backdrop: 'static',
+        placement: 'center',
+        html: true,
+        animation: 'success am-flip-x'
+      });
+    }
+
+    this.connect = function (favorite) {
+      $log.debug('Begin ConnectController.connect()', favorite);
+
+      var connection = new Connection();
+      mout.object.deepMixIn(connection, favorite);
+
+      delete connection.id;
 
       connection.host = connection.host || '127.0.0.1';
       connection.port = connection.port || 28015;
@@ -16,69 +45,73 @@ angular.module('RequelPro').controller('ConnectController', ['$scope', '$log', '
           if (conn) {
             conn.close();
           }
-          if (connection.id) {
-            $state.go('content', {
-              id: connection.id
-            }).then(null, function (err) {
-              $log.error(err);
-            });
-          } else {
-            DS.create('connection', connection)
-              .then(function (connection) {
-                $state.go('content', {
-                  id: connection.id
-                });
-              }, function (err) {
-                $log.error(err);
-              }).finally(function () {
-                $log.debug('End ConnectController.connect()');
-              });
-          }
+          $rootScope.connection = DS.inject('connection', connection);
+
+          $state.go('content', {
+            id: connection.id
+          });
         })
-        .catch(function (err) {
-          $window.alert(err.message);
-        })
-        .error(function (err) {
-          $window.alert(err.message);
-        });
+        .catch(showErrorModal)
+        .error(showErrorModal);
     };
 
-    this.remove = function (connection) {
-      DS.destroy('connection', connection.id);
+    this.save = function (favorite) {
+
+      favorite.host = favorite.host || '127.0.0.1';
+      favorite.port = favorite.port || 28015;
+
+      $scope.processing = true;
+
+      if (favorite.id) {
+        DS.update('favorite', favorite.id, favorite)
+          .then(function () {
+            $scope.processing = false;
+          }, showErrorModal);
+      } else {
+        DS.create('favorite', favorite)
+          .then(function () {
+            $scope.processing = false;
+          }, showErrorModal);
+      }
     };
 
-    this.test = function (connection) {
+    this.remove = function (favorite) {
+      DS.destroy('favorite', favorite.id);
+    };
+
+    this.test = function (favorite) {
+      var connection = new Connection();
+      mout.object.deepMixIn(connection, favorite);
+
       connection.connect()
         .then(function (conn) {
           if (conn) {
             conn.close();
           }
-          $window.alert('Connection succeeded!');
+          showSuccessModal('Connection established!');
         })
-        .catch(function (err) {
-          $window.alert(err.message);
-        })
-        .error(function (err) {
-          $window.alert(err.message);
-        });
+        .catch(showErrorModal)
+        .error(showErrorModal);
     };
 
-    try {
-      this.newConnection = new Connection();
-      mout.object.deepMixIn(this.newConnection, {
+    this.newConnection = function () {
+      mout.object.deepMixIn(this.newFav, {
         host: '',
         port: '',
         db: '',
         authKey: ''
       });
-      this.connection = this.newConnection;
+      this.fav = this.newFav;
+    };
 
-      DS.findAll('connection');
+    try {
+      this.newFav = new Favorite();
+      this.newConnection();
 
       $scope.$watch(function () {
-        return DS.lastModified('connection');
+        return DS.lastModified('favorite');
       }, function () {
-        _this.connections = DS.filter('connection');
+        _this.favorites = DS.filter('favorite');
       });
 
       $timeout(function () {

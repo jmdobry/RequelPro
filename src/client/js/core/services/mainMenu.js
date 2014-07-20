@@ -38,44 +38,59 @@ angular.module('RequelPro').factory('mainMenu', ['$rootScope', 'gui', 'win', 'Mo
         newConnectionTab: new gui.MenuItem({
           label: 'New Connection Tab',
           click: function () {
-            console.log('New Connection Tab');
+            $timeout(function () {
+              $rootScope.$broadcast('newConnectionTab');
+            });
           }
         }),
         open: new gui.MenuItem({
           label: 'Open...',
           click: function () {
-            console.log('Open...');
+            $timeout(function () {
+              $rootScope.$broadcast('open');
+            });
           }
         }),
         openRecent: new gui.MenuItem({
           label: 'Open Recent',
           click: function () {
-            console.log('Open Recent');
+            $timeout(function () {
+              $rootScope.$broadcast('openRecent');
+            });
           }
         }),
         import: new gui.MenuItem({
           label: 'Import...',
           click: function () {
-            console.log('Import data');
             chooseFile('#import-file-dialog');
+            $timeout(function () {
+              $rootScope.$broadcast('import');
+            });
           }
         }),
         export: new gui.MenuItem({
           label: 'Export...',
           click: function () {
-            console.log('Export data');
+            $timeout(function () {
+              $rootScope.$broadcast('export');
+            });
           }
         }),
         closeWindow: new gui.MenuItem({
           label: 'Close Window',
           click: function () {
-            console.log('Import data');
+            $timeout(function () {
+              $rootScope.$broadcast('$destroy');
+              win.close();
+            });
           }
         }),
         closeTab: new gui.MenuItem({
           label: 'Close Tab',
           click: function () {
-            console.log('Export data');
+            $timeout(function () {
+              $rootScope.$broadcast('closeTab');
+            });
           }
         })
       };
@@ -391,6 +406,15 @@ angular.module('RequelPro').factory('mainMenu', ['$rootScope', 'gui', 'win', 'Mo
       if (process.platform === 'win32') {
         win.menu = mainMenu;
       }
+
+      $rootScope.$watch('connections.length', function (len) {
+        win.menu.items[0].submenu.items[10].enabled = len && len > 1;
+      });
+
+      win.menu.items[0].submenu.items[3].enabled = false;
+      win.menu.items[0].submenu.items[4].enabled = false;
+      win.menu.items[0].submenu.items[6].enabled = false;
+      win.menu.items[0].submenu.items[7].enabled = false;
 
       $rootScope.$watch('connection', function (connection) {
         win.menu.items[3].submenu.items[0].enabled = !!connection;

@@ -1,0 +1,10 @@
+<div id="navTabs" class="am-fade-and-slide-top" data-ng-show="NTCtrl.show" data-ng-init="NTCtrl.show = false">
+    <div class="navTabItem" data-ng-repeat="conn in NTCtrl.connections track by id"
+         data-ng-class="{ active: connection.id === conn.id }">
+        {{ conn.name }}
+    </div>
+    <div class="navMenuItem" data-ng-click="NTCtrl.navigate('new')"
+         data-ng-class="{ active: state === 'new' }">
+        <div><i class="fa fa-plus"></i> &nbsp;</div>
+    </div>
+</div>

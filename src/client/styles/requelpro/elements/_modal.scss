@@ -15,6 +15,21 @@
       color: #fff;
     }
   }
+  &.success {
+    .modal-header {
+      background-color: $brand-success;
+      color: #fff;
+      @include border-top-radius(4px);
+    }
+    .modal-body {
+      background-color: $lightest-green;
+      color: $dark-green;
+    }
+    .modal-footer {
+      background-color: $brand-success;
+      color: #fff;
+    }
+  }
 }
 
 .modal-content {
