@@ -52,11 +52,19 @@ function DSNeDBAdapterProvider() {
         throw new IA('cb: Must be a function!');
       }
       if (!(resourceName in NeDB)) {
-        return cb(new NER(errors.INSERT + resourceName));
+        return cb(new NER(errors.FINDONE + resourceName));
       } else if (!DSUtils.isObject(query)) {
         return cb(new IA('query: Must be an object!'));
       } else {
-        NeDB[resourceName].findOne(query, cb);
+        NeDB[resourceName].findOne(query, function (err, doc) {
+          if (err) {
+            return cb(err);
+          } else if (!doc) {
+            return cb(new Error('Not Found'));
+          } else {
+            return cb(null, doc);
+          }
+        });
       }
     }
 

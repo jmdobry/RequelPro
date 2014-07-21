@@ -1,6 +1,6 @@
 /* jshint camelcase: false */
-angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '$location', 'DS', '$state', '$timeout', 'mout',
-  function ($scope, $log, $location, DS, $state, $timeout, mout) {
+angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '$location', '$state', '$timeout', 'mout', 'Connection',
+  function ($scope, $log, $location, $state, $timeout, mout, Connection) {
     $log.debug('Begin ContentController constructor');
 
     var _this = this;
@@ -114,9 +114,9 @@ angular.module('RequelPro').controller('ContentController', ['$scope', '$log', '
 
     try {
       $scope.$watch(function () {
-        return DS.lastModified('connection', $state.params.id);
+        return Connection.lastModified($state.params.id);
       }, function () {
-        _this.connection = DS.get('connection', $state.params.id);
+        _this.connection = Connection.get($state.params.id);
       });
 
       $scope.$watch('ContentCtrl.connection.db', function (db, prev) {

@@ -8,17 +8,17 @@ angular.module('RequelPro').directive('navTabs', function () {
     replace: true,
     templateUrl: 'core/directives/navTabs.html',
     controllerAs: 'NTCtrl',
-    controller: ['$rootScope', '$scope', '$log', '$timeout', '$state', 'DS',
-      function ($rootScope, $scope, $log, $timeout, $state, DS) {
+    controller: ['$rootScope', '$scope', '$log', '$timeout', '$state', 'Connection',
+      function ($rootScope, $scope, $log, $timeout, $state, Connection) {
 
         var _this = this;
 
         _this.connections = [];
 
         $scope.$watch(function () {
-          return DS.lastModified('connection');
+          return Connection.lastModified();
         }, function () {
-          _this.connections = DS.filter('connection', {
+          _this.connections = Connection.filter({
             active: true
           });
 

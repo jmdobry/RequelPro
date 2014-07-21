@@ -1,10 +1,6 @@
-angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$scope', '$log', '$state', 'DS', 'mout', '$window', '$timeout', '$modal',
-  function ($rootScope, $scope, $log, $state, DS, mout, $window, $timeout, $modal) {
-    $log.debug('Begin ConnectController constructor');
-
+angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$scope', '$log', '$state', 'DS', 'mout', '$window', '$timeout', '$modal', 'Connection', 'Favorite',
+  function ($rootScope, $scope, $log, $state, DS, mout, $window, $timeout, $modal, Connection, Favorite) {
     var _this = this;
-    var Favorite = DS.definitions.favorite[DS.definitions.favorite.class];
-    var Connection = DS.definitions.connection[DS.definitions.connection.class];
 
     function showErrorModal(err) {
       $log.error(err);
@@ -30,12 +26,12 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
     }
 
     this.connect = function (favorite) {
-      $log.debug('Begin ConnectController.connect()', favorite);
-
-      var connection = new Connection();
+      $scope.processing = true;
+      var connection = Connection.createInstance();
       mout.object.deepMixIn(connection, favorite);
 
       delete connection.id;
+      delete connection._id;
 
       connection.host = connection.host || '127.0.0.1';
       connection.port = connection.port || 28015;
@@ -45,30 +41,36 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
           if (conn) {
             conn.close();
           }
-          $rootScope.connection = DS.inject('connection', connection);
+          connection.id = mout.random.guid();
+          DS.store.connection.completedQueries[connection.id] = new Date().getTime();
+          $rootScope.connection = Connection.inject(connection);
 
-          $state.go('content', {
-            id: connection.id
+          $timeout(function () {
+            $state.go('content', {
+              id: connection.id
+            }).then($log.debug, $log.error);
           });
+        })
+        .finally(function () {
+          $scope.processing = false;
         })
         .catch(showErrorModal)
         .error(showErrorModal);
     };
 
     this.save = function (favorite) {
-
       favorite.host = favorite.host || '127.0.0.1';
       favorite.port = favorite.port || 28015;
 
       $scope.processing = true;
 
       if (favorite.id) {
-        DS.update('favorite', favorite.id, favorite)
+        Favorite.update(favorite.id, favorite)
           .then(function () {
             $scope.processing = false;
           }, showErrorModal);
       } else {
-        DS.create('favorite', favorite)
+        Favorite.create(favorite)
           .then(function () {
             $scope.processing = false;
           }, showErrorModal);
@@ -80,7 +82,7 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
     };
 
     this.test = function (favorite) {
-      var connection = new Connection();
+      var connection = Connection.createInstance();
       mout.object.deepMixIn(connection, favorite);
 
       connection.connect()
@@ -105,24 +107,24 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
     };
 
     try {
-      this.newFav = new Favorite();
+      this.newFav = Favorite.createInstance();
       this.newConnection();
 
+      $log.debug('current favorite', this.fav);
+
       $scope.$watch(function () {
-        return DS.lastModified('favorite');
+        return Favorite.lastModified();
       }, function () {
-        _this.favorites = DS.filter('favorite');
+        _this.favorites = Favorite.filter();
       });
 
       $timeout(function () {
         _this.showForm = true;
-      }, 600);
+      }, 300);
 
       $timeout(function () {
         _this.showList = true;
-      }, 700);
-
-      $log.debug('End ConnectController constructor');
+      }, 400);
     } catch (err) {
       $log.error(err);
       $log.error('Failed to instantiate ConnectController!');
