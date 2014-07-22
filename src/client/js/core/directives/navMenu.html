@@ -9,14 +9,11 @@
             </button>
         </div>
     </div>
-    <div class="navMenuItem" data-ng-click="!connection || NMCtrl.navigate('content', { id: connection.id }, true)"
+    <div class="navMenuItem" data-ng-click="NMCtrl.navigate('content', { id: connection.id })"
          data-ng-class="{ active: state === 'content', disabled: !connection }">
-        <div><i class="fa fa-table"></i></div>
-        <div>Content</div>
-    </div>
-    <div class="navMenuItem" data-ng-click="NMCtrl.navigate('new')"
-         data-ng-class="{ active: state === 'new' }">
-        <div><i class="fa fa-plus"></i></div>
-        <div>New</div>
+        <span class="navMenuItemInner">
+            <span><i class="fa fa-table"></i></span>
+            <span>Content</span>
+        </span>
     </div>
 </div>

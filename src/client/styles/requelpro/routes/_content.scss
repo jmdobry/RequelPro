@@ -27,7 +27,6 @@
   top: 70px;
   left: 0;
   width: 200px;
-
   .panel-heading {
     padding: 0;
   }
@@ -55,4 +54,10 @@
   top: 70px;
   left: 200px;
   display: inline-block;
+}
+
+.showTabs {
+  #contentTableList, #contentTable {
+    top: 107px;
+  }
 }

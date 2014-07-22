@@ -67,13 +67,48 @@ try {
     console.log('End RequelPro.config()');
   }]);
 
-  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', 'mainMenu', '$state', 'DS', 'DSNeDBAdapter', 'Connection',
-    function ($log, $rootScope, win, gui, $timeout, contextMenu, mainMenu, $state, DS, DSNeDBAdapter, Connection) {
+  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', 'mainMenu', '$state', 'DS', 'DSNeDBAdapter', 'Connection', '$modal',
+    function ($log, $rootScope, win, gui, $timeout, contextMenu, mainMenu, $state, DS, DSNeDBAdapter, Connection, $modal) {
       $log.debug('Begin RequelPro.run()');
 
       DS.adapters.DSNeDBAdapter = DSNeDBAdapter;
 
       Connection.bindAll($rootScope, 'connections', {});
+
+      $rootScope.connections = [];
+      $rootScope.connection = null;
+
+      $rootScope.$watch(function () {
+        return $state.current.name;
+      }, function (name) {
+        $rootScope.state = name;
+      });
+
+      $rootScope.showErrorModal = function (title, message, stack) {
+        if (title && title.stack) {
+          message = title.message;
+          stack = title.stack;
+          title = null;
+        }
+        $log.error(title, message, stack);
+        var body = message || '';
+        if (body) {
+          body += '\n\n';
+        }
+        body += stack;
+
+        $modal({
+          title: title || 'Error!',
+          content: body,
+          backdrop: 'static',
+          placement: 'center',
+          animation: 'danger am-fade'
+        });
+      };
+
+      $rootScope.navigate = function (state, params) {
+        $state.go(state, params);
+      };
 
       $timeout(function () {
         $log.debug('Show window');

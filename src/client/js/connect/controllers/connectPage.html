@@ -7,7 +7,7 @@
                     <h3 class="panel-title">Favorites</h3>
                 </div>
                 <ul class="list-group">
-                    <li class="list-group-item" data-ng-class="{ active: !ConnectCtrl.fav.id && !processing }"
+                    <li class="list-group-item" data-ng-class="{ active: !ConnectCtrl.fav.id }"
                         data-ng-click="ConnectCtrl.newConnection()" data-ng-if="ConnectCtrl.favorites.length">
                         <h4 class="list-group-item-heading">
                             <i class="fa fa-plus"></i> New Connection
@@ -17,7 +17,7 @@
                             {{ ConnectCtrl.newFav.host || '127.0.0.1' }}:{{ ConnectCtrl.newFav.port || 28015 }}
                         </p>
                     </li>
-                    <li class="list-group-item" data-ng-class="{ active: ConnectCtrl.fav.id === fav.id && !processing }"
+                    <li class="list-group-item" data-ng-class="{ active: ConnectCtrl.fav.id === fav.id }"
                         data-ng-repeat="fav in ConnectCtrl.favorites track by fav.id"
                         data-ng-click="ConnectCtrl.fav = fav">
                         <h4 class="list-group-item-heading">

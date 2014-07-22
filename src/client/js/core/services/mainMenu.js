@@ -7,9 +7,11 @@
  ⏎ – \u23ce – the Return symbol
  ⌫ – \u232b – the Delete / Backspace symbol
  */
-angular.module('RequelPro').factory('mainMenu', ['$rootScope', 'gui', 'win', 'Mousetrap', 'process', '$log', '$timeout',
-  function ($rootScope, gui, win, Mousetrap, process, $log, $timeout) {
+angular.module('RequelPro').factory('mainMenu', ['$rootScope', 'gui', 'win', 'Mousetrap', 'process', '$log', '$timeout', '$state',
+  function ($rootScope, gui, win, Mousetrap, process, $log, $timeout, $state) {
+
     function createFileMenu(rootMenu, position) {
+
       function chooseFile(name) {
         var chooser = document.querySelector(name);
         chooser.addEventListener('change', function () {
@@ -39,7 +41,7 @@ angular.module('RequelPro').factory('mainMenu', ['$rootScope', 'gui', 'win', 'Mo
           label: 'New Connection Tab',
           click: function () {
             $timeout(function () {
-              $rootScope.$broadcast('newConnectionTab');
+              $state.go('new');
             });
           }
         }),
@@ -224,9 +226,18 @@ angular.module('RequelPro').factory('mainMenu', ['$rootScope', 'gui', 'win', 'Mo
         dropDatabase: new gui.MenuItem({
           label: 'Drop Database...',
           click: function () {
-            $timeout(function () {
-              $rootScope.$broadcast('dropDatabase');
-            });
+            if ($rootScope.connection) {
+              $rootScope.processing = true;
+              $rootScope.connection.dropDatabase($rootScope.connection.db)
+                .then(function () {
+                  delete $rootScope.connection.db;
+                })
+                .finally(function () {
+                  $rootScope.processing = false;
+                })
+                .catch($rootScope.showErrorModal)
+                .error($rootScope.showErrorModal);
+            }
           }
         }),
         renameDatabase: new gui.MenuItem({

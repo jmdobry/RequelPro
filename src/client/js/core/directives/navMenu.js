@@ -2,39 +2,19 @@ angular.module('RequelPro').directive('navMenu', function () {
   'use strict';
   return {
     restrict: 'E',
-    scope: {
-      connection: '='
-    },
     replace: true,
     templateUrl: 'core/directives/navMenu.html',
     controllerAs: 'NMCtrl',
-    controller: ['$scope', '$timeout', '$log', '$state', '$modal', function ($scope, $timeout, $log, $state, $modal) {
+    controller: ['$scope', '$timeout', function ($scope, $timeout) {
 
       var _this = this;
 
       function showErrorModal(err) {
-        $log.error(err);
-        $modal({
-          title: 'Failed to retrieve databases!',
-          content: err.stack,
-          backdrop: 'static',
-          placement: 'center',
-          animation: 'danger am-flip-x'
-        });
+        $scope.showErrorModal('Failed to retrieve databases!', err.message, err.stack);
       }
 
-      this.navigate = function (state, params, requiresConnection) {
-        if (!requiresConnection || (requiresConnection && $scope.connection && $scope.connection.id)) {
-          $state.go(state, params);
-        }
-      };
-
-      $scope.$watch('connection.db', function (db) {
-        console.log(db);
-      });
-
-      $scope.$watch('connection.id', function (id, prev) {
-        if (id && id !== prev) {
+      function getDbList() {
+        if ($scope.connection) {
           $scope.processing = true;
           $scope.connection.dbList()
             .then(function (dbList) {
@@ -50,16 +30,22 @@ angular.module('RequelPro').directive('navMenu', function () {
             })
             .catch(showErrorModal)
             .error(showErrorModal);
+        }
+      }
+
+      $scope.$watch('connection.db', function (cur, prev) {
+        if (!cur && prev || cur && !prev) {
+          getDbList();
+        }
+      });
+
+      $scope.$watch('connection.id', function (id, prev) {
+        if (id && id !== prev) {
+          getDbList();
         } else if (!id) {
           $scope.dbList = [];
           $scope.processing = true;
         }
-      });
-
-      $scope.$watch(function () {
-        return $state.current.name;
-      }, function (name) {
-        $scope.state = name;
       });
 
       $timeout(function () {

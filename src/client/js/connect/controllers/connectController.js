@@ -2,18 +2,6 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
   function ($rootScope, $scope, $log, $state, DS, mout, $window, $timeout, $modal, Connection, Favorite) {
     var _this = this;
 
-    function showErrorModal(err) {
-      $log.error(err);
-      $modal({
-        title: 'Failure!',
-        content: err.stack,
-        backdrop: 'static',
-        placement: 'center',
-        html: true,
-        animation: 'danger am-flip-x'
-      });
-    }
-
     function showSuccessModal(message) {
       $modal({
         title: 'Success!',
@@ -21,12 +9,12 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
         backdrop: 'static',
         placement: 'center',
         html: true,
-        animation: 'success am-flip-x'
+        animation: 'success am-fade'
       });
     }
 
     this.connect = function (favorite) {
-      $scope.processing = true;
+      $rootScope.processing = true;
       var connection = Connection.createInstance();
       mout.object.deepMixIn(connection, favorite);
 
@@ -52,28 +40,28 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
           });
         })
         .finally(function () {
-          $scope.processing = false;
+          $rootScope.processing = false;
         })
-        .catch(showErrorModal)
-        .error(showErrorModal);
+        .catch($scope.showErrorModal)
+        .error($scope.showErrorModal);
     };
 
     this.save = function (favorite) {
       favorite.host = favorite.host || '127.0.0.1';
       favorite.port = favorite.port || 28015;
 
-      $scope.processing = true;
+      $rootScope.processing = true;
 
       if (favorite.id) {
         Favorite.update(favorite.id, favorite)
-          .then(function () {
-            $scope.processing = false;
-          }, showErrorModal);
+          .then(null, $scope.showErrorModal).finally(function () {
+            $rootScope.processing = false;
+          });
       } else {
         Favorite.create(favorite)
-          .then(function () {
-            $scope.processing = false;
-          }, showErrorModal);
+          .then(null, $scope.showErrorModal).finally(function () {
+            $rootScope.processing = false;
+          });
       }
     };
 
@@ -85,6 +73,8 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
       var connection = Connection.createInstance();
       mout.object.deepMixIn(connection, favorite);
 
+      $rootScope.processing = true;
+
       connection.connect()
         .then(function (conn) {
           if (conn) {
@@ -92,8 +82,11 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
           }
           showSuccessModal('Connection established!');
         })
-        .catch(showErrorModal)
-        .error(showErrorModal);
+        .finally(function () {
+          $rootScope.processing = false;
+        })
+        .catch($scope.showErrorModal)
+        .error($scope.showErrorModal);
     };
 
     this.newConnection = function () {
@@ -109,8 +102,6 @@ angular.module('RequelPro').controller('ConnectController', ['$rootScope', '$sco
     try {
       this.newFav = Favorite.createInstance();
       this.newConnection();
-
-      $log.debug('current favorite', this.fav);
 
       $scope.$watch(function () {
         return Favorite.lastModified();
