@@ -1,21 +1,21 @@
 <div id="contentTableList" class="am-fade-and-slide-left panel panel-default" data-ng-show="tableList.length">
-    <div class="panel-heading">
-        <div class="form-group">
-            <div class="input-group">
+  <div class="panel-heading">
+    <div class="form-group">
+      <div class="input-group">
                 <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                 </span>
-                <input type="text" class="form-control" id="filter" name="filter" placeholder="Filter"
-                       data-ng-model="CTLCtrl.filter"/>
-            </div>
-        </div>
+        <input type="text" class="form-control" id="filter" name="filter" placeholder="Filter"
+               data-ng-model="CTLCtrl.filter"/>
+      </div>
     </div>
-    <ul class="list-group" data-ng-class="{ processing: processing }">
-        <li class="list-group-item" data-ng-class="{ active: connection.table === table }"
-            data-ng-repeat="table in tableList | filter:CTLCtrl.filter | orderBy:'toString()'"
-            data-ng-click="connection.table = table" data-disable="processing"
-            data-right-click="CTLCtrl.openMenu($event, table)">
-            {{ table }}
-        </li>
-    </ul>
+  </div>
+  <ul class="list-group" data-ng-class="{ processing: processing }">
+    <li class="list-group-item" data-ng-class="{ active: connection.table === table }"
+        data-ng-repeat="table in tableList | filter:CTLCtrl.filter | orderBy:'toString()'"
+        data-ng-click="connection.table = table" data-disable="processing"
+        data-right-click="CTLCtrl.openMenu($event, table)">
+      {{ table }}
+    </li>
+  </ul>
 </div>

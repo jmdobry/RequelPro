@@ -22,6 +22,7 @@
     "inject": true,
     "describe": true,
     "process": true,
+    "sweetAlert": true,
     "Mousetrap": true,
     "$": true,
     "React": true,

@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
 
-  require('load-grunt-tasks')(grunt);
+  require('jit-grunt')(grunt, {
+    nodewebkit: 'grunt-node-webkit-builder'
+  });
   require('time-grunt')(grunt);
 
   var mac = process.platform === 'darwin';
@@ -10,7 +12,11 @@ module.exports = function (grunt) {
       build: ['./build/'],
       dist: ['./dist/'],
       pre: ['./dist/client/vendor/', './dist/client/js/', './dist/client/styles/'],
-      releases: ['./build/releases/**/*']
+      releases: [
+        './build/RequelPro/osx/',
+        './build/RequelPro/osx32/',
+        './build/RequelPro/osx64/'
+      ]
     },
 
     jshint: {
@@ -37,17 +43,17 @@ module.exports = function (grunt) {
 
     nodewebkit: {
       options: {
-        version: '0.9.2',
+        version: '0.11.5',
         build_dir: './build',
         credits: './src/Credits.html',
-        mac: false,
+        osx: false,
         win: false,
         linux32: false,
         linux64: false
       },
       dist: {
         options: {
-          mac: true,
+          osx: true,
           win: true,
           linux32: true,
           linux64: true
@@ -56,15 +62,14 @@ module.exports = function (grunt) {
       },
       snapshot: {
         options: {
-          mac: mac,
+          osx: mac,
           win: !mac
         },
         src: ['./dist/**/*']
       },
       dev: {
         options: {
-          mac: mac,
-          win: !mac
+          platforms: ['osx']
         },
         src: ['./dist/**/*']
       }
@@ -101,9 +106,17 @@ module.exports = function (grunt) {
         },
         options: {
           includePaths: [
-            'src/client/vendor/bower_components/bootstrap-sass/vendor/assets/stylesheets/',
+            'src/client/vendor/bower_components/bootstrap-sass-official/assets/stylesheets/',
             'src/client/vendor/bower_components/font-awesome/scss/'
           ]
+        }
+      }
+    },
+
+    ngAnnotate: {
+      dist: {
+        files: {
+          'dist/client/js/app.js': ['dist/client/js/app.js']
         }
       }
     },
@@ -113,6 +126,8 @@ module.exports = function (grunt) {
         src: [
           'src/client/vendor/bower_components/normalize-css/normalize.css',
           'src/client/vendor/bower_components/angular-motion/dist/angular-motion.css',
+          'src/client/vendor/bower_components/AngularJS-Toaster/toaster.css',
+          'src/client/vendor/bower_components/sweetalert/lib/sweet-alert.css',
           'src/client/vendor/bower_components/bootstrap-additions/dist/bootstrap-additions.css',
           'dist/client/styles/main.css'
         ],
@@ -141,10 +156,11 @@ module.exports = function (grunt) {
           'src/client/vendor/bower_components/angular-sanitize/angular-sanitize.js',
           'src/client/vendor/bower_components/angular-strap/dist/angular-strap.js',
           'src/client/vendor/bower_components/angular-strap/dist/angular-strap.tpl.js',
-          'src/client/vendor/bower_components/angular-data/dist/angular-data.js',
-          'src/client/vendor/bower_components/angular-cache/dist/angular-cache.js',
-          'src/client/vendor/bower_components/mousetrap/mousetrap.js',
-          'src/client/vendor/bower_components/mousetrap/plugins/global-bind/mousetrap-global-bind.js'
+          'src/client/vendor/bower_components/AngularJS-Toaster/toaster.js',
+          'src/client/vendor/bower_components/sweetalert/lib/sweet-alert.js',
+          'src/client/vendor/bower_components/js-data/dist/js-data.js',
+          'src/client/vendor/bower_components/js-data-angular/dist/js-data-angular.js',
+          'src/client/vendor/bower_components/angular-cache/dist/angular-cache.js'
         ],
         dest: 'dist/client/js/plugins.js'
       }
@@ -175,13 +191,13 @@ module.exports = function (grunt) {
 
     shell: {
       open_mac: {
-        command: 'open ./build/releases/RequelPro/mac/RequelPro.app'
+        command: 'open ./build/RequelPro/osx/RequelPro.app'
       },
-	    open_win: {
-		    command: '"build/releases/RequelPro/win/RequelPro/RequelPro.exe" &'
-	    },
+      open_win: {
+        command: '"build/releases/RequelPro/win/RequelPro/RequelPro.exe" &'
+      },
       close_mac: {
-        command: 'ps -ef | grep build/releases/RequelPro/mac/RequelPro.app/Contents/MacOS/node-webkit | grep -v grep | awk \'{print $2}\' | xargs kill -9'
+        command: 'ps -ef | grep build/RequelPro/osx/RequelPro.app/Contents/MacOS/node-webkit | grep -v grep | awk \'{print $2}\' | xargs kill -9'
       }
     }
   });
@@ -193,7 +209,8 @@ module.exports = function (grunt) {
     'clean:pre',
     'html2js',
     'sass',
-    'concat'
+    'concat',
+    'ngAnnotate'
   ]);
 
   var buildTasks = [

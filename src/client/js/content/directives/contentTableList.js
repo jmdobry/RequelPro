@@ -4,7 +4,7 @@ angular.module('RequelPro').directive('rightClick', function ($parse) {
     $el.on('contextmenu', function (event) {
       $scope.$apply(function () {
         event.preventDefault();
-        fn($scope, {$event: event});
+        fn($scope, { $event: event });
       });
     });
     $scope.$on('$destroy', function () {
@@ -22,7 +22,7 @@ angular.module('RequelPro').directive('contentTableList', [
       replace: true,
       controllerAs: 'CTLCtrl',
       templateUrl: 'content/directives/contentTableList.html',
-      controller: ['$scope', '$log', '$timeout', 'mout', '$modal', function ($scope, $log, $timeout, mout, $modal) {
+      controller: function ($scope, $log, $timeout, mout, $rootScope) {
 
         var _this = this;
 
@@ -37,18 +37,6 @@ angular.module('RequelPro').directive('contentTableList', [
 
         menu.append(deleteTable);
 
-        function showErrorModal(err, table) {
-          $log.error(err);
-          $modal({
-            title: 'Failed to delete <strong>' + table + '</strong> table!',
-            content: err.stack,
-            backdrop: 'static',
-            placement: 'center',
-            html: true,
-            animation: 'danger am-flip-x'
-          });
-        }
-
         this.deleteTable = function (table) {
           return $scope.connection.deleteTable($scope.connection.db, table)
             .then(function () {
@@ -56,13 +44,14 @@ angular.module('RequelPro').directive('contentTableList', [
                 mout.array.remove($scope.tableList, table);
                 $scope.connection.table = null;
                 $log.info('Successfully deleted:', table);
+                // TODO: Show success toast
               });
             })
             .catch(function (err) {
-              showErrorModal(err, table);
+              $rootScope.showError('Failed to delete "' + table + '"!', err.msg || err);
             })
             .error(function (err) {
-              showErrorModal(err, table);
+              $rootScope.showError('Failed to delete "' + table + '"!', err.msg || err);
             });
         };
 
@@ -90,7 +79,7 @@ angular.module('RequelPro').directive('contentTableList', [
               .error($log.error);
           }
         });
-      }]
+      }
     };
   }
 ]);

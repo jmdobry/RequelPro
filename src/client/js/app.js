@@ -9,32 +9,30 @@ try {
   win.height = window.screen.availHeight;
   win.width = window.screen.availWidth;
 
-  var RequelPro = angular.module('RequelPro', ['ui.router', 'templates-app', 'angular-data.DSCacheFactory', 'angular-data.DS', 'mgcrea.ngStrap', 'ngAnimate', 'ngSanitize']);
+  var RequelPro = angular.module('RequelPro', [
+    'ui.router',
+    'templates-app',
+    'angular-data.DSCacheFactory',
+    'js-data',
+    'toaster',
+    'mgcrea.ngStrap',
+    'ngAnimate',
+    'ngSanitize'
+  ]);
 
   RequelPro.value('gui', gui);
   RequelPro.value('win', win);
   RequelPro.value('mout', require('mout'));
   RequelPro.value('process', window.process);
   RequelPro.value('path', require('path'));
-  RequelPro.value('Mousetrap', window.Mousetrap);
   RequelPro.value('NeDB', {});
   RequelPro.value('r', require('rethinkdb'));
 
-  RequelPro.config(['$logProvider', '$stateProvider', 'DSProvider', function ($logProvider, $stateProvider, DSProvider) {
+  RequelPro.config(function ($logProvider, $stateProvider) {
     console.log('Begin RequelPro.config()');
 
     try {
       $logProvider.debugEnabled(true);
-
-      DSProvider.defaults.defaultAdapter = 'DSNeDBAdapter';
-      DSProvider.defaults.deserialize = function (resourceName, data) {
-        console.debug('\tdeserialize()', resourceName, data);
-        if (data && data.data) {
-          return data.data;
-        } else {
-          return data;
-        }
-      };
 
       $stateProvider
         .state('new', {
@@ -48,16 +46,40 @@ try {
             }]
           }
         })
+        .state('structure', {
+          url: '/structure/:id',
+          templateUrl: 'structure/controllers/structurePage.html',
+          controllerAs: 'StructureCtrl',
+          controller: 'StructureController',
+          resolve: {
+            connection: function (Connection, $stateParams, $rootScope) {
+              $rootScope.connection = Connection.get($stateParams.id);
+              return $rootScope.connection;
+            }
+          }
+        })
         .state('content', {
           url: '/content/:id',
           templateUrl: 'content/controllers/contentPage.html',
           controllerAs: 'ContentCtrl',
           controller: 'ContentController',
           resolve: {
-            connection: ['Connection', '$stateParams', '$rootScope', function (Connection, $stateParams, $rootScope) {
+            connection: function (Connection, $stateParams, $rootScope) {
               $rootScope.connection = Connection.get($stateParams.id);
               return $rootScope.connection;
-            }]
+            }
+          }
+        })
+        .state('relations', {
+          url: '/relations/:id',
+          templateUrl: 'relations/controllers/relationsPage.html',
+          controllerAs: 'RelationsCtrl',
+          controller: 'RelationsController',
+          resolve: {
+            connection: function (Connection, $stateParams, $rootScope) {
+              $rootScope.connection = Connection.get($stateParams.id);
+              return $rootScope.connection;
+            }
           }
         });
     } catch (err) {
@@ -65,60 +87,61 @@ try {
     }
 
     console.log('End RequelPro.config()');
-  }]);
+  });
 
-  RequelPro.run(['$log', '$rootScope', 'win', 'gui', '$timeout', 'contextMenu', 'mainMenu', '$state', 'DS', 'DSNeDBAdapter', 'Connection', '$modal',
-    function ($log, $rootScope, win, gui, $timeout, contextMenu, mainMenu, $state, DS, DSNeDBAdapter, Connection, $modal) {
-      $log.debug('Begin RequelPro.run()');
+  RequelPro.run(function ($log, $rootScope, win, gui, $timeout, contextMenu, mainMenu, $state, DS, DSNeDBAdapter, Connection) {
+    $log.debug('Begin RequelPro.run()');
 
-      DS.adapters.DSNeDBAdapter = DSNeDBAdapter;
+    DS.registerAdapter('nedb', DSNeDBAdapter, { default: true });
 
-      Connection.bindAll($rootScope, 'connections', {});
+    $rootScope.$watch(function () {
+      return Connection.lastModified();
+    }, function () {
+      $rootScope.connections = Connection.filter();
+    });
 
-      $rootScope.connections = [];
-      $rootScope.connection = null;
+    $rootScope.connections = [];
+    $rootScope.connection = null;
 
-      $rootScope.$watch(function () {
-        return $state.current.name;
-      }, function (name) {
-        $rootScope.state = name;
+    $rootScope.$watch(function () {
+      return $state.current.name;
+    }, function (name) {
+      $rootScope.state = name;
+    });
+
+    $rootScope.showError = function (title, msg) {
+      $log.error(title || 'error', msg || '');
+      sweetAlert({
+        type: 'error',
+        title: title || 'Error!',
+        text: msg || '',
+        confirmButtonColor: '#f65b4f',
+        confirmButtonText: 'Okay'
       });
+    };
 
-      $rootScope.showErrorModal = function (title, message, stack) {
-        if (title && title.stack) {
-          message = title.message;
-          stack = title.stack;
-          title = null;
-        }
-        $log.error(title, message, stack);
-        var body = message || '';
-        if (body) {
-          body += '\n\n';
-        }
-        body += stack;
+    $rootScope.showSuccess = function (title, msg) {
+      sweetAlert({
+        type: 'success',
+        title: title || 'Success!',
+        text: msg || '',
+        confirmButtonColor: '#1fa589',
+        confirmButtonText: 'Okay'
+      });
+    };
 
-        $modal({
-          title: title || 'Error!',
-          content: body,
-          backdrop: 'static',
-          placement: 'center',
-          animation: 'danger am-fade'
-        });
-      };
+    $rootScope.navigate = function (state, params) {
+      $state.go(state, params);
+    };
 
-      $rootScope.navigate = function (state, params) {
-        $state.go(state, params);
-      };
+    $timeout(function () {
+      $log.debug('Show window');
+      win.show();
+      $state.go('new');
+    }, 200);
 
-      $timeout(function () {
-        $log.debug('Show window');
-        win.show();
-        $state.go('new');
-      }, 200);
-
-      $log.debug('End RequelPro.run()');
-    }
-  ]);
+    $log.debug('End RequelPro.run()');
+  });
 } catch
   (err) {
   console.error(err);

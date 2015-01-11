@@ -5,13 +5,9 @@ angular.module('RequelPro').directive('navMenu', function () {
     replace: true,
     templateUrl: 'core/directives/navMenu.html',
     controllerAs: 'NMCtrl',
-    controller: ['$scope', '$timeout', function ($scope, $timeout) {
+    controller: function ($scope, $rootScope, $timeout) {
 
       var _this = this;
-
-      function showErrorModal(err) {
-        $scope.showErrorModal('Failed to retrieve databases!', err.message, err.stack);
-      }
 
       function getDbList() {
         if ($scope.connection) {
@@ -28,8 +24,12 @@ angular.module('RequelPro').directive('navMenu', function () {
             .finally(function () {
               $scope.processing = false;
             })
-            .catch(showErrorModal)
-            .error(showErrorModal);
+            .catch(function (err) {
+              $rootScope.showError('Failed to retrieve databases!', err.msg || err);
+            })
+            .error(function (err) {
+              $rootScope.showError('Failed to retrieve databases!', err.msg || err);
+            });
         }
       }
 
@@ -51,6 +51,6 @@ angular.module('RequelPro').directive('navMenu', function () {
       $timeout(function () {
         _this.show = true;
       }, 1200);
-    }]
+    }
   };
 });

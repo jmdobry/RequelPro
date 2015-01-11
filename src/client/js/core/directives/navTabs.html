@@ -1,10 +1,10 @@
 <div id="navTabs" class="am-fade-and-slide-top" data-ng-show="showTabs">
-    <div class="navTabItem" data-ng-repeat="conn in connections track by conn.id"
-         data-ng-class="{ active: connection.id === conn.id }"
-         data-ng-click="navigate('content', { id: conn.id })">
-        {{ conn.host }}/{{ conn.name }}
-    </div>
-    <div class="navTabItem" data-ng-click="navigate('new')" data-ng-class="{ active: state === 'new' }">
-        <div><i class="fa fa-plus" style="margin-left: 8px;"></i> &nbsp;</div>
-    </div>
+  <div class="navTabItem" data-ng-repeat="conn in connections track by conn.id"
+       data-ng-class="{ active: connection.id === conn.id }"
+       data-ng-click="navigate('content', { id: conn.id })">
+    {{ conn.host }}/{{ conn.name }}
+  </div>
+  <div class="navTabItem" data-ng-click="navigate('new')" data-ng-class="{ active: state === 'new' }">
+    <div><i class="fa fa-plus" style="margin-left: 8px;"></i> &nbsp;</div>
+  </div>
 </div>

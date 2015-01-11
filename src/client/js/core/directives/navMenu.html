@@ -1,19 +1,33 @@
 <div id="navMenu" class="am-fade-and-slide-top" data-ng-show="NMCtrl.show" data-ng-init="NMCtrl.show = false">
-    <div class="navMenuDatabases">
-        <div class="form-group">
-            <label>Databases</label>
-            <button type="button" id="dbSelect" class="btn btn-default" data-ng-model="connection.db"
-                    data-ng-options="db as db for db in dbList | orderBy:'toString()'" data-bs-select
-                    data-animation="am-flip-x" data-placeholder="Select a database..." data-disable="processing"
-                    data-container="body">
-            </button>
-        </div>
+  <div class="navMenuDatabases">
+    <div class="form-group">
+      <label>Databases</label>
+      <button type="button" id="dbSelect" class="btn btn-default" data-ng-model="connection.db"
+              data-ng-options="db as db for db in dbList | orderBy:'toString()'" data-bs-select
+              data-animation="am-flip-x" data-placeholder="Select a database..." data-disable="processing"
+              data-container="body">
+      </button>
     </div>
-    <div class="navMenuItem" data-ng-click="NMCtrl.navigate('content', { id: connection.id })"
-         data-ng-class="{ active: state === 'content', disabled: !connection }">
+  </div>
+  <div class="navMenuItem" data-ng-click="navigate('structure', { id: connection.id })"
+       data-ng-class="{ active: state === 'structure', disabled: !connection }">
+        <span class="navMenuItemInner">
+            <span><i class="fa fa-database"></i></span>
+            <span>Structure</span>
+        </span>
+  </div>
+  <div class="navMenuItem" data-ng-click="navigate('content', { id: connection.id })"
+       data-ng-class="{ active: state === 'content', disabled: !connection }">
         <span class="navMenuItemInner">
             <span><i class="fa fa-table"></i></span>
             <span>Content</span>
         </span>
-    </div>
+  </div>
+  <div class="navMenuItem" data-ng-click="navigate('relations', { id: connection.id })"
+       data-ng-class="{ active: state === 'relations', disabled: !connection }">
+        <span class="navMenuItemInner">
+            <span><i class="fa fa-sitemap"></i></span>
+            <span>Relations</span>
+        </span>
+  </div>
 </div>
