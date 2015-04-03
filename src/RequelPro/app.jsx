@@ -5,7 +5,6 @@
 
 //try {
 // styles
-import normalize from 'normalize.css';
 import fontawesome from 'font-awesome-webpack';
 import styles from './app.scss';
 
@@ -16,6 +15,13 @@ import Router from 'react-router';
 
 // routes
 import Connect from './routes/connect/connect.jsx';
+
+// services
+import MainMenu from './services/mainMenu.js';
+import ContextMenu from './services/contextMenu.js';
+
+// models
+import Connection from './models/connection.jsx';
 
 let { Route, DefaultRoute, RouteHandler, Link } = Router;
 
@@ -39,6 +45,28 @@ let App = React.createClass({
     return (
       <div>
         <div className="content">
+          <div className="icon-bar five-up">
+            <a className="item">
+              <i className="fa fa-list"></i>
+              <label>Databases</label>
+            </a>
+            <a className="item">
+              <i className="fa fa-database"></i>
+              <label>Structure</label>
+            </a>
+            <a className="item">
+              <i className="fa fa-table"></i>
+              <label>Content</label>
+            </a>
+            <a className="item">
+              <i className="fa fa-sitemap"></i>
+              <label>Relations</label>
+            </a>
+            <a className="item">
+              <i className="fa fa-info"></i>
+              <label>Table Info</label>
+            </a>
+          </div>
           <RouteHandler/>
         </div>
       </div>

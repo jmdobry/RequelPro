@@ -22,3 +22,9 @@ dist/
 build/
 
 cache/
+
+*.woff2
+*.woff
+*.ttf
+*.svg
+*.eot

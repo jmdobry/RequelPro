@@ -74,22 +74,17 @@ module.exports = function (grunt) {
           {
             expand: true,
             flatten: true,
-            cwd: 'src/styles/',
-            src: ['**'],
-            dest: 'dist/styles/'
-          },
-          {
-            expand: true,
-            flatten: true,
-            cwd: 'src/vendor/bower_components/font-awesome/fonts/',
-            src: ['**'],
-            dest: 'dist/fonts/'
-          },
-          {
-            expand: true,
-            flatten: true,
-            cwd: 'src/',
-            src: ['*.html', 'LICENSE', '*.json'],
+            cwd: './',
+            src: [
+              'src/*.html',
+              'LICENSE',
+              'package.json',
+              '*.woff2',
+              '*.tff',
+              '*.svg',
+              '*.woff',
+              '*.eot'
+            ],
             dest: 'dist/'
           }
         ]
@@ -104,7 +99,10 @@ module.exports = function (grunt) {
           target: 'node-webkit'
         },
         externals: {
-          'nw.gui': 'commonjs nw.gui'
+          'nw.gui': 'commonjs nw.gui',
+          'rethinkdb': 'commonjs rethinkdb',
+          'js-data-schema': 'commonjs js-data-schema',
+          'path': 'commonjs path'
         },
         module: {
           loaders: [
@@ -116,7 +114,7 @@ module.exports = function (grunt) {
             { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader' },
             // transpile ES6 to ES5
             {
-              test: /(.+)\.jsx$/,
+              test: /(.+)\.js(x)?$/,
               exclude: /node_modules/,
               loader: 'babel-loader?blacklist=useStrict'
             },
@@ -125,11 +123,7 @@ module.exports = function (grunt) {
               test: /\.scss$/,
               loader: 'style!raw!sass?outputStyle=compressed&' +
               'includePaths[]=' +
-              (path.resolve(__dirname, './src/node_modules/bootstrap-sass/assets/stylesheets')) + '&' +
-              'includePaths[]=' +
-              (path.resolve(__dirname, './src/node_modules/font-awesome/scss')) + '&' +
-              'includePaths[]=' +
-              (path.resolve(__dirname, './src/node_modules/normalize.css'))
+              (path.resolve(__dirname, './node_modules/zurb-foundation/scss'))
             }
           ],
           postLoaders: [

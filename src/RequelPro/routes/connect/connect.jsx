@@ -5,15 +5,15 @@ let Connect = React.createClass({
   render: function () {
     return (
       <div id="connectPage">
-        <div class="row">
-          <div class="col-sm-4">
-            <div class="panel panel-default am-fade-and-slide-bottom" data-ng-show="ConnectCtrl.showList"
+        <div className="row">
+          <div className="small-4 columns">
+            <div className="panel panel-default am-fade-and-slide-bottom" data-ng-show="ConnectCtrl.showList"
               data-ng-init="ConnectCtrl.showList = false">
-              <div class="panel-heading">
-                <h3 class="panel-title">Favorites</h3>
+              <div className="panel-heading">
+                <h3 className="panel-title">Favorites</h3>
               </div>
-              <ul class="list-group">
-                <li class="list-group-item" data-ng-class="{ active: !ConnectCtrl.fav.id }"
+              <ul className="list-group">
+                <li className="list-group-item" data-ng-class="{ active: !ConnectCtrl.fav.id }"
                   data-ng-click="ConnectCtrl.newConnection()" data-ng-if="ConnectCtrl.favorites.length">
                   <h4 class="list-group-item-heading">
                     <i class="fa fa-plus"></i>
@@ -46,7 +46,7 @@ let Connect = React.createClass({
               </ul>
             </div>
           </div>
-          <div class="col-sm-4">
+          <div className="small-4 columns">
             <form name="connectForm" id="connectForm" class="panel panel-default am-fade-and-slide-bottom"
               data-ng-show="ConnectCtrl.showForm" data-ng-init="ConnectCtrl.showForm = false"
               data-ng-submit="ConnectCtrl.connect(ConnectCtrl.fav)">
