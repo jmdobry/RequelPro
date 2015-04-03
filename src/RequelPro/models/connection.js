@@ -5,11 +5,12 @@ import r from 'rethinkdb';
 import path from 'path';
 
 let datapath = gui.App.dataPath + '/nedb';
+let currentConnection = null;
 
 store.connection = new Datastore({
   filename: path.join(datapath, 'connection.db'),
   autoload: true,
-  error: function (err) {
+  error: err => {
     console.error(err);
   }
 });
@@ -18,13 +19,13 @@ let Connection = store.defineResource({
   name: 'connection',
   methods: {
     dbList() {
-      var connection;
+      let connection = null;
       return this.connect()
-        .then(function (conn) {
+        .then(conn => {
           connection = conn;
           return r.dbList().run(conn);
         })
-        .finally(function () {
+        .finally(() => {
           if (connection) {
             return connection.close();
           }
@@ -32,13 +33,13 @@ let Connection = store.defineResource({
     },
 
     tableList(db) {
-      var connection;
+      let connection = null;
       return this.connect()
-        .then(function (conn) {
+        .then(conn => {
           connection = conn;
           return r.db(db).tableList().run(conn);
         })
-        .finally(function () {
+        .finally(() => {
           if (connection) {
             return connection.close();
           }
@@ -46,13 +47,13 @@ let Connection = store.defineResource({
     },
 
     tableInfo(db, table) {
-      var connection;
+      let connection = null;
       return this.connect()
-        .then(function (conn) {
+        .then(conn => {
           connection = conn;
           return r.db(db).table(table).info().run(conn);
         })
-        .finally(function () {
+        .finally(() => {
           if (connection) {
             return connection.close();
           }
@@ -60,13 +61,13 @@ let Connection = store.defineResource({
     },
 
     deleteTable(db, table) {
-      var connection;
+      let connection = null;
       return this.connect()
-        .then(function (conn) {
+        .then(conn => {
           connection = conn;
           return r.db(db).tableDrop(table).run(conn);
         })
-        .finally(function () {
+        .finally(() => {
           if (connection) {
             return connection.close();
           }
@@ -74,9 +75,9 @@ let Connection = store.defineResource({
     },
 
     indexStatus(db, table, index) {
-      var connection;
+      let connection = null;
       return this.connect()
-        .then(function (conn) {
+        .then(conn => {
           connection = conn;
           if (index) {
             return r.db(db).table(table).indexStatus(index).run(conn);
@@ -84,7 +85,7 @@ let Connection = store.defineResource({
             return r.db(db).table(table).indexStatus().run(conn);
           }
         })
-        .finally(function () {
+        .finally(() => {
           if (connection) {
             return connection.close();
           }
@@ -92,7 +93,7 @@ let Connection = store.defineResource({
     },
 
     connect() {
-      var options = {
+      let options = {
         host: this.host || '127.0.0.1',
         port: this.port || 28015
       };
@@ -107,6 +108,13 @@ let Connection = store.defineResource({
 
       return r.connect(options);
     }
+  },
+  current() {
+    return currentConnection;
+  },
+  set(connection) {
+    currentConnection = connection;
+    return currentConnection;
   }
 });
 

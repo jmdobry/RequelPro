@@ -33,7 +33,7 @@ function Menu() {
 
   let selectAll = new gui.MenuItem({
     label: 'Select All',
-    click: function () {
+    click: () => {
       document.execCommand('selectAll');
     },
     key: 'a',
@@ -50,7 +50,7 @@ function Menu() {
 
 let menu = new Menu();
 
-$(document).on('contextmenu', function (e) {
+$(document).on('contextmenu', e => {
   e.preventDefault();
   menu.popup(e.originalEvent.x, e.originalEvent.y);
 });

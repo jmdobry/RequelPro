@@ -1,7 +1,24 @@
 import styles from './connect.scss';
 import React from 'react';
+import Favorite from '../../models/favorite.js';
 
 let Connect = React.createClass({
+  getInitialState() {
+    // Pull the initial list of users
+    // from Firebase
+    Favorite.findAll();
+
+    return { favorites: Favorite.getAll() };
+  },
+  onChange() {
+    this.setState({ favorites: Favorite.getAll() });
+  },
+  componentDidMount() {
+    Favorite.on('change', this.onChange);
+  },
+  componentWillUnmount() {
+    Favorite.off('change', this.onChange);
+  },
   render: function () {
     return (
       <div id="connectPage">
@@ -113,7 +130,6 @@ let Connect = React.createClass({
           </div>
         </div>
       </div>
-
     );
   }
 });

@@ -3,7 +3,6 @@
 //import path from 'path';
 //import mout from 'mout';
 
-//try {
 // styles
 import fontawesome from 'font-awesome-webpack';
 import styles from './app.scss';
@@ -12,16 +11,22 @@ import styles from './app.scss';
 import gui from 'nw.gui';
 import React from 'react';
 import Router from 'react-router';
+import classnames from 'classnames';
 
 // routes
 import Connect from './routes/connect/connect.jsx';
+import Structure from './routes/structure/structure.jsx';
+import Content from './routes/content/content.jsx';
+import Relations from './routes/relations/relations.jsx';
+import Info from './routes/info/info.jsx';
 
 // services
 import MainMenu from './services/mainMenu.js';
 import ContextMenu from './services/contextMenu.js';
 
 // models
-import Connection from './models/connection.jsx';
+import Connection from './models/connection.js';
+import Favorite from './models/favorite.js';
 
 let { Route, DefaultRoute, RouteHandler, Link } = Router;
 
@@ -40,8 +45,22 @@ let App = React.createClass({
     router: React.PropTypes.func.isRequired
   },
 
-  render: function () {
+  getInitialState() {
+    return { id: 1, connection: Connection.current() };
+  },
+
+  onLinkClick() {
+    if (!this.state.connection) {
+      return false;
+    }
+  },
+
+  render() {
     let activeTab = this.context.router.getCurrentParams().tab;
+    let classes = classnames({
+      item: true,
+      disabled: !this.state.connection
+    });
     return (
       <div>
         <div className="content">
@@ -50,22 +69,22 @@ let App = React.createClass({
               <i className="fa fa-list"></i>
               <label>Databases</label>
             </a>
-            <a className="item">
+            <Link className={classes} to="structure" params={{ id: this.state.id }} onClick={this.onLinkClick}>
               <i className="fa fa-database"></i>
               <label>Structure</label>
-            </a>
-            <a className="item">
+            </Link>
+            <Link className={classes} to="content" params={{ id: this.state.id }} onClick={this.onLinkClick}>
               <i className="fa fa-table"></i>
               <label>Content</label>
-            </a>
-            <a className="item">
+            </Link>
+            <Link className={classes} to="relations" params={{ id: this.state.id }} onClick={this.onLinkClick}>
               <i className="fa fa-sitemap"></i>
               <label>Relations</label>
-            </a>
-            <a className="item">
+            </Link>
+            <Link className={classes} to="info" params={{ id: this.state.id }} onClick={this.onLinkClick}>
               <i className="fa fa-info"></i>
               <label>Table Info</label>
-            </a>
+            </Link>
           </div>
           <RouteHandler/>
         </div>
@@ -77,34 +96,14 @@ let App = React.createClass({
 let routes = (
   <Route handler={App} path="/">
     <DefaultRoute handler={Connect} />
+    <Route name="structure" path="/structure/:id" handler={Structure} />
+    <Route name="content" path="/content/:id" handler={Content} />
+    <Route name="relations" path="/relations/:id" handler={Relations} />
+    <Route name="info" path="/info/:id" handler={Info} />
   </Route>
 );
 
-//var RequelPro = angular.module('RequelPro', [
-//  'ui.router',
-//  'templates-app',
-//  'angular-data.DSCacheFactory',
-//  'js-data',
-//  'toaster',
-//  'mgcrea.ngStrap',
-//  'ngAnimate',
-//  'ngSanitize'
-//]);
-//
-//RequelPro.value('gui', gui);
-//RequelPro.value('win', win);
-//RequelPro.value('mout', require('mout'));
-//RequelPro.value('process', window.process);
-//RequelPro.value('path', require('path'));
-//RequelPro.value('NeDB', {});
-//RequelPro.value('r', require('rethinkdb'));
-//
-//RequelPro.config(function ($logProvider, $stateProvider) {
-//  console.log('Begin RequelPro.config()');
-//
 //  try {
-//    $logProvider.debugEnabled(true);
-//
 //    $stateProvider
 //      .state('new', {
 //        url: '/',
@@ -156,13 +155,7 @@ let routes = (
 //  } catch (err) {
 //    console.error(err);
 //  }
-//
-//  console.log('End RequelPro.config()');
-//});
 
-//RequelPro.run(function ($log, $rootScope, win, gui, $timeout, contextMenu, mainMenu, $state, DS, DSNeDBAdapter, Connection) {
-//  $log.debug('Begin RequelPro.run()');
-//
 //  DS.registerAdapter('nedb', DSNeDBAdapter, { default: true });
 //
 //  $rootScope.$watch(function () {
@@ -205,21 +198,11 @@ let routes = (
 //    $state.go(state, params);
 //  };
 //
-//  $timeout(function () {
-setTimeout(function () {
+setTimeout(() => {
   console.log('Show window');
   win.show();
-  Router.run(routes, function (Handler) {
+  Router.run(routes, Handler => {
     React.render(<Handler/>, document.getElementById('mainView'));
   });
 
 }, 200);
-//      $state.go('new');
-//    }, 200);
-//
-//    $log.debug('End RequelPro.run()');
-//  });
-//} catch
-//  (err) {
-//  console.error(err);
-//}
