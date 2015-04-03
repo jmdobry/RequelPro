@@ -11,7 +11,6 @@ import styles from './app.scss';
 import gui from 'nw.gui';
 import React from 'react';
 import Router from 'react-router';
-import classnames from 'classnames';
 
 // routes
 import Connect from './routes/connect/connect.jsx';
@@ -27,6 +26,10 @@ import ContextMenu from './services/contextMenu.js';
 // models
 import Connection from './models/connection.js';
 import Favorite from './models/favorite.js';
+
+// components
+import Navbar from './components/navbar/navbar.jsx';
+import Navtabs from './components/navtabs/navtabs.jsx';
 
 let { Route, DefaultRoute, RouteHandler, Link } = Router;
 
@@ -56,36 +59,11 @@ let App = React.createClass({
   },
 
   render() {
-    let activeTab = this.context.router.getCurrentParams().tab;
-    let classes = classnames({
-      item: true,
-      disabled: !this.state.connection
-    });
     return (
       <div>
         <div className="content">
-          <div className="icon-bar five-up">
-            <a className="item">
-              <i className="fa fa-list"></i>
-              <label>Databases</label>
-            </a>
-            <Link className={classes} to="structure" params={{ id: this.state.id }} onClick={this.onLinkClick}>
-              <i className="fa fa-database"></i>
-              <label>Structure</label>
-            </Link>
-            <Link className={classes} to="content" params={{ id: this.state.id }} onClick={this.onLinkClick}>
-              <i className="fa fa-table"></i>
-              <label>Content</label>
-            </Link>
-            <Link className={classes} to="relations" params={{ id: this.state.id }} onClick={this.onLinkClick}>
-              <i className="fa fa-sitemap"></i>
-              <label>Relations</label>
-            </Link>
-            <Link className={classes} to="info" params={{ id: this.state.id }} onClick={this.onLinkClick}>
-              <i className="fa fa-info"></i>
-              <label>Table Info</label>
-            </Link>
-          </div>
+          <Navbar/>
+          <Navtabs/>
           <RouteHandler/>
         </div>
       </div>

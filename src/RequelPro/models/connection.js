@@ -7,14 +7,6 @@ import path from 'path';
 let datapath = gui.App.dataPath + '/nedb';
 let currentConnection = null;
 
-store.connection = new Datastore({
-  filename: path.join(datapath, 'connection.db'),
-  autoload: true,
-  error: err => {
-    console.error(err);
-  }
-});
-
 let Connection = store.defineResource({
   name: 'connection',
   methods: {
@@ -110,11 +102,19 @@ let Connection = store.defineResource({
     }
   },
   current() {
-    return currentConnection;
+    return currentConnection || { id: 'none' };
   },
   set(connection) {
-    currentConnection = connection;
+    currentConnection = !connection ? null : connection;
     return currentConnection;
+  }
+});
+
+Connection.db = new Datastore({
+  filename: path.join(datapath, 'connection.db'),
+  autoload: true,
+  error: err => {
+    console.error(err);
   }
 });
 
