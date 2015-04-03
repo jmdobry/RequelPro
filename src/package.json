@@ -18,10 +18,10 @@
     "Reheat",
     "Model"
   ],
-  "main": "./client/index.html",
+  "main": "./index.html",
   "window": {
     "title": "Requel Pro",
-    "show": false,
+    "show": true,
     "position": "center",
     "resizeable": true,
     "width": 900,
@@ -41,8 +41,13 @@
     }
   ],
   "dependencies": {
+    "bootstrap-sass": "^3.3.4",
+    "font-awesome": "^4.3.0",
     "mout": "0.11.0",
-    "nedb": "1.1.1",
-    "rethinkdb": "1.15.0  "
+    "nedb": "1.1.2",
+    "normalize.css": "^3.0.3",
+    "react": "0.13.1",
+    "react-router": "0.13.2",
+    "rethinkdb": "1.15.x"
   }
 }

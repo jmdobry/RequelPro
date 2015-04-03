@@ -6,6 +6,7 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   var mac = process.platform === 'darwin';
+  var path = require('path');
 
   grunt.initConfig({
     clean: {
@@ -19,31 +20,9 @@ module.exports = function (grunt) {
       ]
     },
 
-    jshint: {
-      client: {
-        options: {
-          jshintrc: './src/client/.jshintrc'
-        },
-        src: [
-          './src/client/js/**/*.js'
-        ]
-      },
-      server: {
-        options: {
-          jshintrc: './src/server/.jshintrc',
-          ignores: [
-            './src/server/node_modules/**/*'
-          ]
-        },
-        src: [
-          './src/server/**/*.js'
-        ]
-      }
-    },
-
     nodewebkit: {
       options: {
-        version: '0.11.5',
+        version: '0.12.0',
         build_dir: './build',
         credits: './src/Credits.html',
         osx: false,
@@ -69,7 +48,7 @@ module.exports = function (grunt) {
       },
       dev: {
         options: {
-          platforms: ['osx']
+          platforms: ['osx64']
         },
         src: ['./dist/**/*']
       }
@@ -77,46 +56,90 @@ module.exports = function (grunt) {
 
     copy: {
       dist: {
-        expand: true,
-        flatten: false,
-        cwd: 'src/',
-        src: ['**/*', '!**/vendor/', '!**/js/'],
-        dest: 'dist/'
-      },
-      'fonts': {
-        expand: true,
-        flatten: true,
-        cwd: 'src/client/fonts/',
-        src: ['**'],
-        dest: 'dist/client/fonts/'
-      },
-      'font-awesome': {
-        expand: true,
-        flatten: true,
-        cwd: 'src/client/vendor/bower_components/font-awesome/fonts/',
-        src: ['**'],
-        dest: 'dist/client/fonts/'
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            cwd: 'src/fonts/',
+            src: ['**'],
+            dest: 'dist/fonts/'
+          },
+          {
+            expand: true,
+            flatten: true,
+            cwd: 'src/img/',
+            src: ['**'],
+            dest: 'dist/img/'
+          },
+          {
+            expand: true,
+            flatten: true,
+            cwd: 'src/styles/',
+            src: ['**'],
+            dest: 'dist/styles/'
+          },
+          {
+            expand: true,
+            flatten: true,
+            cwd: 'src/vendor/bower_components/font-awesome/fonts/',
+            src: ['**'],
+            dest: 'dist/fonts/'
+          },
+          {
+            expand: true,
+            flatten: true,
+            cwd: 'src/',
+            src: ['*.html', 'LICENSE', '*.json'],
+            dest: 'dist/'
+          }
+        ]
       }
     },
 
-    sass: {
-      dist: {
-        files: {
-          'dist/client/styles/main.css': 'src/client/styles/requelpro.scss'
+    webpack: {
+      client: {
+        entry: './src/RequelPro/app.jsx',
+        output: {
+          filename: './dist/js/app.js',
+          target: 'node-webkit'
         },
-        options: {
-          includePaths: [
-            'src/client/vendor/bower_components/bootstrap-sass-official/assets/stylesheets/',
-            'src/client/vendor/bower_components/font-awesome/scss/'
+        externals: {
+          'nw.gui': 'commonjs nw.gui'
+        },
+        module: {
+          loaders: [
+            { test: /\.css$/, loader: 'style-loader!css-loader' },
+            {
+              test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+              loader: 'url-loader?limit=10000&minetype=application/font-woff'
+            },
+            { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader' },
+            // transpile ES6 to ES5
+            {
+              test: /(.+)\.jsx$/,
+              exclude: /node_modules/,
+              loader: 'babel-loader?blacklist=useStrict'
+            },
+            // load scss files using the sass, raw, and style loaders with the given import paths
+            {
+              test: /\.scss$/,
+              loader: 'style!raw!sass?outputStyle=compressed&' +
+              'includePaths[]=' +
+              (path.resolve(__dirname, './src/node_modules/bootstrap-sass/assets/stylesheets')) + '&' +
+              'includePaths[]=' +
+              (path.resolve(__dirname, './src/node_modules/font-awesome/scss')) + '&' +
+              'includePaths[]=' +
+              (path.resolve(__dirname, './src/node_modules/normalize.css'))
+            }
+          ],
+          postLoaders: [
+            // jshint our files before transpilation
+            {
+              test: /(.+)\.js$/, // include .js files
+              exclude: /node_modules/, // exclude any and all files in the node_modules folder
+              loader: "jshint-loader?failOnHint=true"
+            }
           ]
-        }
-      }
-    },
-
-    ngAnnotate: {
-      dist: {
-        files: {
-          'dist/client/js/app.js': ['dist/client/js/app.js']
         }
       }
     },
@@ -125,44 +148,12 @@ module.exports = function (grunt) {
       css: {
         src: [
           'src/client/vendor/bower_components/normalize-css/normalize.css',
-          'src/client/vendor/bower_components/angular-motion/dist/angular-motion.css',
           'src/client/vendor/bower_components/AngularJS-Toaster/toaster.css',
           'src/client/vendor/bower_components/sweetalert/lib/sweet-alert.css',
           'src/client/vendor/bower_components/bootstrap-additions/dist/bootstrap-additions.css',
           'dist/client/styles/main.css'
         ],
         dest: 'dist/client/styles/main.css'
-      },
-      app: {
-        src: [
-          '.tmp/js/templates.js',
-          'src/client/js/app.js',
-          'src/client/js/mainMenu.js',
-          'src/client/js/core/**/*.js',
-          'src/client/js/connect/**/*.js',
-          'src/client/js/content/**/*.js'
-        ],
-        dest: 'dist/client/js/app.js'
-      },
-      plugins: {
-        options: {
-          separator: ';'
-        },
-        src: [
-          'src/client/vendor/bower_components/jquery/dist/jquery.js',
-          'src/client/vendor/bower_components/angular/angular.js',
-          'src/client/vendor/bower_components/angular-ui-router/release/angular-ui-router.js',
-          'src/client/vendor/bower_components/angular-animate/angular-animate.js',
-          'src/client/vendor/bower_components/angular-sanitize/angular-sanitize.js',
-          'src/client/vendor/bower_components/angular-strap/dist/angular-strap.js',
-          'src/client/vendor/bower_components/angular-strap/dist/angular-strap.tpl.js',
-          'src/client/vendor/bower_components/AngularJS-Toaster/toaster.js',
-          'src/client/vendor/bower_components/sweetalert/lib/sweet-alert.js',
-          'src/client/vendor/bower_components/js-data/dist/js-data.js',
-          'src/client/vendor/bower_components/js-data-angular/dist/js-data-angular.js',
-          'src/client/vendor/bower_components/angular-cache/dist/angular-cache.js'
-        ],
-        dest: 'dist/client/js/plugins.js'
       }
     },
 
@@ -179,38 +170,24 @@ module.exports = function (grunt) {
       }
     },
 
-    html2js: {
-      app: {
-        options: {
-          base: 'src/client/js/'
-        },
-        src: ['src/client/js/**/*.html'],
-        dest: '.tmp/js/templates.js'
-      }
-    },
-
     shell: {
       open_mac: {
-        command: 'open ./build/RequelPro/osx/RequelPro.app'
+        command: 'open ./build/RequelPro/osx64/RequelPro.app'
       },
       open_win: {
         command: '"build/releases/RequelPro/win/RequelPro/RequelPro.exe" &'
       },
       close_mac: {
-        command: 'ps -ef | grep build/RequelPro/osx/RequelPro.app/Contents/MacOS/node-webkit | grep -v grep | awk \'{print $2}\' | xargs kill -9'
+        command: 'ps -ef | grep build/RequelPro/osx64/RequelPro.app/Contents/MacOS/node-webkit | grep -v grep | awk \'{print $2}\' | xargs kill -9'
       }
     }
   });
 
   grunt.registerTask('prebuild', [
-    'jshint',
     'clean:dist',
+    'webpack',
     'copy',
-    'clean:pre',
-    'html2js',
-    'sass',
-    'concat',
-    'ngAnnotate'
+    'clean:pre'
   ]);
 
   var buildTasks = [
