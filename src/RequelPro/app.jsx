@@ -13,6 +13,7 @@ import Structure from './routes/structure/structure.jsx';
 import Content from './routes/content/content.jsx';
 import Relations from './routes/relations/relations.jsx';
 import Info from './routes/info/info.jsx';
+import Query from './routes/query/query.jsx';
 
 // services
 import MainMenu from './services/mainMenu.js';
@@ -38,21 +39,33 @@ win.height = window.screen.availHeight;
 win.width = window.screen.availWidth;
 
 let App = React.createClass({
-
   contextTypes: {
-    router: React.PropTypes.func.isRequired
+    router: React.PropTypes.func
   },
-
-  getInitialState() {
-    return { id: 1, connection: Connection.current() };
+  /*
+   * Lifecycle
+   */
+  componentDidMount() {
+    Connection.on('newTab', this.onNewTab);
   },
-
+  componentWillUnmount() {
+    Connection.off('newTab', this.onNewTab);
+  },
+  /*
+   * Event Handlers
+   */
+  onNewTab() {
+    Connection.unset();
+    this.context.router.transitionTo('/');
+  },
   onLinkClick() {
     if (!this.state.connection) {
       return false;
     }
   },
-
+  /*
+   * Methods
+   */
   render() {
     return (
       <div>
@@ -73,6 +86,7 @@ let routes = (
     <Route name="content" path="/content/:id" handler={Content} />
     <Route name="relations" path="/relations/:id" handler={Relations} />
     <Route name="info" path="/info/:id" handler={Info} />
+    <Route name="query" path="/query/:id" handler={Query} />
   </Route>
 );
 

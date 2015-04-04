@@ -1,13 +1,16 @@
 import styles from './connect.scss';
 import React from 'react';
-import $ from 'jQuery';
-import _ from 'lodash';
-import sweetalert from 'sweetalert';
+import guid from 'mout/random/guid';
+import alert from '../../services/alert.js';
 import Connection from '../../models/connection.js';
+import store from '../../services/store.js';
 import Favorite from '../../models/favorite.js';
 import Favorites from './favorites/favorites.jsx';
 
 let Connect = React.createClass({
+  /*
+   * Lifecycle
+   */
   getInitialState() {
     // Pull the initial list of users
     // from Firebase
@@ -18,6 +21,17 @@ let Connect = React.createClass({
       fav: {}
     };
   },
+  componentDidMount() {
+    Favorite.on('change', this.onChange);
+    Favorite.on('fav', this.onChange);
+  },
+  componentWillUnmount() {
+    Favorite.off('change', this.onChange);
+    Favorite.off('fav', this.onChange);
+  },
+  /*
+   * Event Handlers
+   */
   onChange() {
     let fav = Favorite.current();
     this.setState({
@@ -28,14 +42,33 @@ let Connect = React.createClass({
       authKey: fav.authKey
     });
   },
-  componentDidMount() {
-    Favorite.on('change', this.onChange);
-    Favorite.on('fav', this.onChange);
+  onNameChange(e, n) {
+    let name = n || n === '' ? n : e.target.value;
+    if (!name) {
+      this.setState({
+        nameError: 'Name is required!',
+        name
+      });
+    } else {
+      this.setState({
+        nameError: null,
+        name
+      });
+    }
+    return name;
   },
-  componentWillUnmount() {
-    Favorite.off('change', this.onChange);
-    Favorite.off('fav', this.onChange);
+  onHostChange(e) {
+    this.setState({ host: e.target.value });
   },
+  onPortChange(e) {
+    this.setState({ port: e.target.value });
+  },
+  onAuthKeyChange(e) {
+    this.setState({ authKey: e.target.value });
+  },
+  /*
+   * Methods
+   */
   getValues() {
     return {
       name: React.findDOMNode(this.refs.name).value,
@@ -60,70 +93,51 @@ let Connect = React.createClass({
       Favorite.create(options);
     }
   },
-  onNameChange(e, n) {
-    let name = n || e.target.value;
-    if (!name) {
-      this.setState({
-        nameError: 'Name is required!',
-        name
-      });
-    } else {
-      this.setState({
-        nameError: null,
-        name
-      });
-    }
-    return name;
-  },
-  onHostChange(e) {
-    this.setState({ host: e.target.value });
-  },
-  onPortChange(e) {
-    this.setState({ port: e.target.value });
-  },
-  onAuthKeyChange(e) {
-    this.setState({ authKey: e.target.value });
-  },
   testConnection() {
     Connection.testConnection(this.getValues())
-      .then(() => {
-        sweetalert({
-          type: 'success',
-          title: 'Connection established!',
-          confirmButtonColor: '#1fa589',
-          confirmButtonText: 'Okay'
-        });
+      .then(() => alert.success('Connection established!'))
+      .catch(err => alert.error('Failed to connect!', err));
+  },
+  connect(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    let connection = Connection.createInstance(this.getValues());
+
+    connection.host = connection.host || '127.0.0.1';
+    connection.port = connection.port || 28015;
+
+    connection.connect()
+      .then(conn => {
+        if (conn) {
+          conn.close();
+        }
+        connection.id = guid();
+        store.store.connection.completedQueries[connection.id] = new Date().getTime();
+        Connection.set(Connection.inject(connection));
+        Favorite.unset();
       })
-      .catch(err => {
-        sweetalert({
-          type: 'error',
-          title: 'Failed to connect!',
-          text: err.msg || err,
-          confirmButtonColor: '#f65b4f',
-          confirmButtonText: 'Okay'
-        });
-      });
+      .catch(err => alert.error('Failed to connect!', err));
   },
   render() {
     return (
       <div id="connectPage">
         <div className="row">
-          <div className="large-4 large-offset-2 columns">
+          <div className="large-3 medium-4 columns">
             <Favorites/>
           </div>
-          <div className="large-4 columns end">
+          <div className="large-4 large-offset-1 medium-6 columns end">
             <form name="connectForm" id="connectForm" className="panel radius" onSubmit={this.connect}>
               <h4>Connection Details</h4>
               <hr/>
               <div className="row">
-                <div className="small-12 columns">
+                <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
-                    <div className="small-3 large-1 columns">
+                    <div className="medium-1 columns">
                       <span className={'prefix' + (this.state.nameError ? ' error' : '')}>
                         <i className="fa fa-bookmark"></i>
                       </span>
                     </div>
-                    <div className="small-10 large-11 columns">
+                    <div className="medium-11 columns">
                       <input type="text" placeholder="name this connection..." ref="name" value={this.state.name}
                         className={this.state.nameError ? 'error' : ''} onChange={this.onNameChange}/>
                     </div>
@@ -133,14 +147,14 @@ let Connect = React.createClass({
               </div>
 
               <div className="row">
-                <div className="small-12 columns">
+                <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
-                    <div className="small-3 large-1 columns">
+                    <div className="medium-1 columns">
                       <span className="prefix">
                         <i className="fa fa-database"></i>
                       </span>
                     </div>
-                    <div className="small-10 large-11 columns">
+                    <div className="medium-11 columns">
                       <input type="text" placeholder="127.0.0.1" ref="host" value={this.state.host} onChange={this.onHostChange}/>
                     </div>
                   </div>
@@ -148,14 +162,14 @@ let Connect = React.createClass({
               </div>
 
               <div className="row">
-                <div className="small-12 columns">
+                <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
-                    <div className="small-3 large-1 columns">
+                    <div className="medium-1 columns">
                       <span className="prefix">
                         <i className="fa fa-anchor"></i>
                       </span>
                     </div>
-                    <div className="small-10 large-11 columns">
+                    <div className="medium-11 columns">
                       <input type="text" placeholder="28015" ref="port" value={this.state.port} onChange={this.onPortChange}/>
                     </div>
                   </div>
@@ -163,14 +177,14 @@ let Connect = React.createClass({
               </div>
 
               <div className="row">
-                <div className="small-12 columns">
+                <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
-                    <div className="small-3 large-1 columns">
+                    <div className="medium-1 columns">
                       <span className="prefix">
                         <i className="fa fa-key"></i>
                       </span>
                     </div>
-                    <div className="small-10 large-11 columns">
+                    <div className="medium-11 columns">
                       <input type="password" ref="authKey" value={this.state.authKey} onChange={this.onAuthKeyChange}/>
                     </div>
                   </div>
@@ -180,7 +194,7 @@ let Connect = React.createClass({
               <ul className="button-group even-3 radius">
                 <li>
                   <button type="button" className="button tiny" onClick={this.save}>
-                  {this.state.fav.id || this.state.processing ? 'Save' : 'Save to Favorites'}
+                  {this.state.fav.id ? 'Save' : 'Save to Favorites'}
                   </button>
                 </li>
                 <li>

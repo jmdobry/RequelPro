@@ -23,6 +23,7 @@
   "main": "./index.html",
   "window": {
     "title": "Requel Pro",
+    "icon": "img/requelpro.png",
     "show": true,
     "position": "center",
     "resizeable": true,

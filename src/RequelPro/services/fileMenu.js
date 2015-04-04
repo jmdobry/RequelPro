@@ -1,4 +1,5 @@
 import gui from 'nw.gui';
+import Connection from '../models/connection.js';
 
 let win = gui.Window.get();
 
@@ -29,9 +30,7 @@ FileMenu.submenu.append(new gui.MenuItem({
 FileMenu.submenu.append(new gui.MenuItem({
   label: 'New Connection Tab',
   click() {
-    setTimeout(() => {
-      //$state.go('new');
-    });
+    Connection.emit('newTab');
   },
   key: 't',
   modifiers: 'cmd'
@@ -84,19 +83,16 @@ FileMenu.submenu.append(new gui.MenuItem({
   label: 'Close Window',
   click() {
     setTimeout(() => {
-      console.log('$destroy');
       win.close();
     });
   },
   key: 'w',
-  modifiers: 'cmd-shift'
+  modifiers: 'cmd'
 }));
 FileMenu.submenu.append(new gui.MenuItem({
   label: 'Close Tab',
   click() {
-    setTimeout(() => {
-      console.log('closeTab');
-    });
+    Connection.emit('closeTab');
   },
   key: 'w',
   modifiers: 'cmd-shift'

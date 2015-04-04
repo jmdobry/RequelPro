@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import Favorite from '../../../models/favorite.js';
 
 let Favorites = React.createClass({
@@ -28,7 +27,7 @@ let Favorites = React.createClass({
     Favorite.off('fav', this.onChange);
   },
   newConnection() {
-    Favorite.set();
+    Favorite.unset();
   },
   selectFavorite(favorite, e) {
     e.preventDefault();
@@ -39,7 +38,7 @@ let Favorites = React.createClass({
     e.preventDefault();
     e.stopPropagation();
     Favorite.destroy(favorite);
-    Favorite.set();
+    Favorite.unset();
   },
   render() {
     return (

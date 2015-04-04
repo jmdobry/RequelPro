@@ -1,8 +1,14 @@
+@import "../../styles/variables";
+
 #connectPage {
   padding-top: 100px;
   label.prefix, span.prefix {
-    background: #5da489;
-    border-color: #5da489;
+    background: $success-color;
+    border-color: $success-color;
     color: #fff;
+    &.error {
+      background: $normal-red;
+      border-color: $normal-red;
+    }
   }
 }

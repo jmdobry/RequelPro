@@ -114,9 +114,14 @@ let Connection = store.defineResource({
     return currentConnection || { id: 'none' };
   },
   set(connection) {
-    currentConnection = !connection ? null : connection;
-    setTimeout(() => this.emit('connect', currentConnection));
+    connection.section = currentConnection ? currentConnection.section || 'content' : 'content';
+    currentConnection = connection;
+    setTimeout(() => this.emit('connect'));
     return currentConnection;
+  },
+  unset() {
+    currentConnection = null;
+    setTimeout(() => this.emit('connect'));
   },
   testConnection(options) {
     let connection = this.createInstance(options);

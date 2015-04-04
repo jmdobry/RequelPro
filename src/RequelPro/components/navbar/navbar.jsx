@@ -4,7 +4,9 @@ import classnames from 'classnames';
 import Connection from '../../models/connection.js';
 
 let Navbar = React.createClass({
-
+  /*
+   * Lifecycle
+   */
   getInitialState() {
     return {
       connection: Connection.current(),
@@ -12,43 +14,55 @@ let Navbar = React.createClass({
         { icon: 'database', label: 'Structure', name: 'structure' },
         { icon: 'table', label: 'Content', name: 'content' },
         { icon: 'sitemap', label: 'Relations', name: 'relations' },
-        { icon: 'info', label: 'Table Info', name: 'info' }
+        { icon: 'info', label: 'Table Info', name: 'info' },
+        { icon: 'terminal', label: 'Query', name: 'query' }
       ]
     };
   },
-
-  onChange(...args) {
-    console.log(args);
-    this.setState({ connection: Connection.current() });
-  },
-
   componentDidMount() {
     Connection.on('connect', this.onChange);
   },
-
   componentWillUnmount() {
     Connection.off('connect', this.onChange);
   },
-
-  onLinkClick() {
+  /*
+   * Event Handlers
+   */
+  onChange() {
+    this.setState({
+      connection: Connection.current()
+    });
+  },
+  onLinkClick(link, e) {
     if (this.state.connection.id === 'none') {
-      return false;
+      e.preventDefault();
+      e.stopPropagation();
+    } else {
+      let connection = Connection.current();
+      connection.section = link.name;
+      this.setState({ connection });
     }
   },
-
+  /*
+   * Methods
+   */
   render() {
-    let classes = classnames({
-      item: true,
-      disabled: this.state.connection.id === 'none'
+    this.state.links.forEach(link => {
+      link.classes = classnames({
+        item: true,
+        disabled: this.state.connection.id === 'none',
+        active: this.state.connection.section === link.name && this.state.connection.id !== 'none'
+      });
     });
     return (
-      <div className="icon-bar five-up">
+      <div className="icon-bar six-up">
         <a className="item">
           <i className="fa fa-list"></i>
           <label>Databases</label>
         </a>
       {this.state.links.map(link => {
-        return <Link key={link.name} className={classes} to={link.name} params={this.state.connection} onClick={this.onLinkClick}>
+        return <Link key={link.name} className={link.classes} to={link.name} params={this.state.connection}
+          onClick={e => this.onLinkClick(link, e)}>
           <i className={'fa fa-' + link.icon}></i>
           <label>{link.label}</label>
         </Link>

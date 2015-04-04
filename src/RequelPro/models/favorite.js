@@ -34,9 +34,13 @@ let Favorite = store.defineResource({
     return currentFavorite;
   },
   set(favorite) {
-    currentFavorite = !favorite ? null : favorite;
-    setTimeout(() => this.emit('fav', currentFavorite));
+    currentFavorite = favorite;
+    setTimeout(() => this.emit('fav'));
     return currentFavorite;
+  },
+  unset() {
+    currentFavorite = null;
+    setTimeout(() => this.emit('fav'));
   }
 });
 

@@ -1,0 +1,21 @@
+.sub-nav {
+  background-color: #F2F2F2;
+  padding: 5px !important;
+  top: -6px;
+  position: relative;
+  a {
+    display: inline-block;
+    cursor: pointer;
+  }
+  .delete-tab {
+    position: relative;
+    right: -10px;
+    top: -1px;
+    padding: 0;
+    font-size: 15px;
+  }
+}
+
+#navtab-plus {
+  padding: 0.28rem 1rem;
+}

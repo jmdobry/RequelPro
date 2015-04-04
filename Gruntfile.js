@@ -28,7 +28,8 @@ module.exports = function (grunt) {
         osx: false,
         win: false,
         linux32: false,
-        linux64: false
+        linux64: false,
+        macIcns: 'requelpro.icns'
       },
       dist: {
         options: {
