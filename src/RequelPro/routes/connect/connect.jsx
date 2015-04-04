@@ -1,6 +1,7 @@
 import styles from './connect.scss';
 import React from 'react';
 import $ from 'jQuery';
+import _ from 'lodash';
 import sweetalert from 'sweetalert';
 import Connection from '../../models/connection.js';
 import Favorite from '../../models/favorite.js';
@@ -52,7 +53,11 @@ let Connect = React.createClass({
     if (this.state.fav && this.state.fav.id) {
       Favorite.update(this.state.fav.id, this.getValues());
     } else {
-      Favorite.create(this.getValues());
+      let options = this.getValues();
+      options.host = options.host || '127.0.0.1';
+      options.port = options.port || 28015;
+      options.authKey = options.authKey || '';
+      Favorite.create(options);
     }
   },
   onNameChange(e, n) {
@@ -107,55 +112,72 @@ let Connect = React.createClass({
             <Favorites/>
           </div>
           <div className="large-4 columns end">
-            <form name="connectForm" id="connectForm" className="panel" onSubmit={this.connect}>
+            <form name="connectForm" id="connectForm" className="panel radius" onSubmit={this.connect}>
               <h4>Connection Details</h4>
-              <div className="row collapse">
-                <div className="small-3 large-1 columns">
-                  <span className={'prefix' + (this.state.nameError ? ' error' : '')}>
-                    <i className="fa fa-bookmark"></i>
-                  </span>
-                </div>
-                <div className="small-10 large-11 columns">
-                  <input type="text" placeholder="name this connection..." ref="name" value={this.state.name}
-                    className={this.state.nameError ? 'error' : ''} onChange={this.onNameChange}/>
-                </div>
-                <small className={this.state.nameError ? 'error' : 'hide'}>{this.state.nameError}</small>
-              </div>
-
-              <div className="row collapse">
-                <div className="small-3 large-1 columns">
-                  <span className="prefix">
-                    <i className="fa fa-database"></i>
-                  </span>
-                </div>
-                <div className="small-10 large-11 columns">
-                  <input type="text" placeholder="127.0.0.1" ref="host" value={this.state.host} onChange={this.onHostChange}/>
+              <hr/>
+              <div className="row">
+                <div className="small-12 columns">
+                  <div className="row collapse prefix-radius">
+                    <div className="small-3 large-1 columns">
+                      <span className={'prefix' + (this.state.nameError ? ' error' : '')}>
+                        <i className="fa fa-bookmark"></i>
+                      </span>
+                    </div>
+                    <div className="small-10 large-11 columns">
+                      <input type="text" placeholder="name this connection..." ref="name" value={this.state.name}
+                        className={this.state.nameError ? 'error' : ''} onChange={this.onNameChange}/>
+                    </div>
+                    <small className={this.state.nameError ? 'error' : 'hide'}>{this.state.nameError}</small>
+                  </div>
                 </div>
               </div>
 
-              <div className="row collapse">
-                <div className="small-3 large-1 columns">
-                  <span className="prefix">
-                    <i className="fa fa-anchor"></i>
-                  </span>
-                </div>
-                <div className="small-10 large-11 columns">
-                  <input type="text" placeholder="28015" ref="port" value={this.state.port} onChange={this.onPortChange}/>
+              <div className="row">
+                <div className="small-12 columns">
+                  <div className="row collapse prefix-radius">
+                    <div className="small-3 large-1 columns">
+                      <span className="prefix">
+                        <i className="fa fa-database"></i>
+                      </span>
+                    </div>
+                    <div className="small-10 large-11 columns">
+                      <input type="text" placeholder="127.0.0.1" ref="host" value={this.state.host} onChange={this.onHostChange}/>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="row collapse">
-                <div className="small-3 large-1 columns">
-                  <span className="prefix">
-                    <i className="fa fa-key"></i>
-                  </span>
+              <div className="row">
+                <div className="small-12 columns">
+                  <div className="row collapse prefix-radius">
+                    <div className="small-3 large-1 columns">
+                      <span className="prefix">
+                        <i className="fa fa-anchor"></i>
+                      </span>
+                    </div>
+                    <div className="small-10 large-11 columns">
+                      <input type="text" placeholder="28015" ref="port" value={this.state.port} onChange={this.onPortChange}/>
+                    </div>
+                  </div>
                 </div>
-                <div className="small-10 large-11 columns">
-                  <input type="password" ref="authKey" value={this.state.authKey} onChange={this.onAuthKeyChange}/>
+              </div>
+
+              <div className="row">
+                <div className="small-12 columns">
+                  <div className="row collapse prefix-radius">
+                    <div className="small-3 large-1 columns">
+                      <span className="prefix">
+                        <i className="fa fa-key"></i>
+                      </span>
+                    </div>
+                    <div className="small-10 large-11 columns">
+                      <input type="password" ref="authKey" value={this.state.authKey} onChange={this.onAuthKeyChange}/>
+                    </div>
+                  </div>
                 </div>
               </div>
               <hr/>
-              <ul className="button-group even-3">
+              <ul className="button-group even-3 radius">
                 <li>
                   <button type="button" className="button tiny" onClick={this.save}>
                   {this.state.fav.id || this.state.processing ? 'Save' : 'Save to Favorites'}

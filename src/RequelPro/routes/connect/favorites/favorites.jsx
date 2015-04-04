@@ -43,8 +43,8 @@ let Favorites = React.createClass({
   },
   render() {
     return (
-      <div className="panel">
-        <button className={'right button tiny' + (!this.state.fav.id ? ' disabled' : '')} onClick={this.newConnection}>
+      <div className="panel radius">
+        <button className={'right button radius tiny' + (!this.state.fav.id ? ' disabled' : '')} onClick={this.newConnection}>
           <i className="fa fa-bolt"></i>
         &nbsp;Quick Connect
         </button>
@@ -54,7 +54,7 @@ let Favorites = React.createClass({
           {this.state.favorites.map(favorite => {
             return <li key={favorite.id} className={this.state.fav === favorite ? 'active' : '' }>
               <a key={favorite.id} href="" className="clearfix" onClick={e => this.selectFavorite(favorite, e)}>
-                <span key={favorite.id} className="right button tiny alert" onClick={e => this.remove(favorite, e)}>
+                <span key={favorite.id} className="right button radius tiny alert" onClick={e => this.remove(favorite, e)}>
                   <i className="fa fa-trash-o">&nbsp;</i>
                 </span>
                 {favorite.name}&nbsp;

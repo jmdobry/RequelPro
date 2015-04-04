@@ -69,7 +69,7 @@ class DSNeDBAdapter {
   REMOVE(resourceConfig, query, options) {
     options = options || {};
     return new P((resolve, reject) => {
-      resourceConfig.remove(query, options, (err, doc) => {
+      resourceConfig.db.remove(query, options, (err, doc) => {
         if (err) {
           reject(err);
         } else {

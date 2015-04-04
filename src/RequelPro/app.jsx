@@ -1,8 +1,3 @@
-//import sweetalert from 'sweetalert';
-//import r from 'rethinkdb';
-//import path from 'path';
-//import mout from 'mout';
-
 // styles
 import fontawesome from 'font-awesome-webpack';
 import appStyles from './app.scss';
@@ -81,106 +76,9 @@ let routes = (
   </Route>
 );
 
-//  try {
-//    $stateProvider
-//      .state('new', {
-//        url: '/',
-//        templateUrl: 'connect/controllers/connectPage.html',
-//        controller: 'ConnectController',
-//        controllerAs: 'ConnectCtrl',
-//        resolve: {
-//          favorites: ['Favorite', function (Favorite) {
-//            return Favorite.findAll();
-//          }]
-//        }
-//      })
-//      .state('structure', {
-//        url: '/structure/:id',
-//        templateUrl: 'structure/controllers/structurePage.html',
-//        controllerAs: 'StructureCtrl',
-//        controller: 'StructureController',
-//        resolve: {
-//          connection: function (Connection, $stateParams, $rootScope) {
-//            $rootScope.connection = Connection.get($stateParams.id);
-//            return $rootScope.connection;
-//          }
-//        }
-//      })
-//      .state('content', {
-//        url: '/content/:id',
-//        templateUrl: 'content/controllers/contentPage.html',
-//        controllerAs: 'ContentCtrl',
-//        controller: 'ContentController',
-//        resolve: {
-//          connection: function (Connection, $stateParams, $rootScope) {
-//            $rootScope.connection = Connection.get($stateParams.id);
-//            return $rootScope.connection;
-//          }
-//        }
-//      })
-//      .state('relations', {
-//        url: '/relations/:id',
-//        templateUrl: 'relations/controllers/relationsPage.html',
-//        controllerAs: 'RelationsCtrl',
-//        controller: 'RelationsController',
-//        resolve: {
-//          connection: function (Connection, $stateParams, $rootScope) {
-//            $rootScope.connection = Connection.get($stateParams.id);
-//            return $rootScope.connection;
-//          }
-//        }
-//      });
-//  } catch (err) {
-//    console.error(err);
-//  }
-
-//  DS.registerAdapter('nedb', DSNeDBAdapter, { default: true });
-//
-//  $rootScope.$watch(function () {
-//    return Connection.lastModified();
-//  }, function () {
-//    $rootScope.connections = Connection.filter();
-//  });
-//
-//  $rootScope.connections = [];
-//  $rootScope.connection = null;
-//
-//  $rootScope.$watch(function () {
-//    return $state.current.name;
-//  }, function (name) {
-//    $rootScope.state = name;
-//  });
-//
-//  $rootScope.showError = function (title, msg) {
-//    $log.error(title || 'error', msg || '');
-//    sweetAlert({
-//      type: 'error',
-//      title: title || 'Error!',
-//      text: msg || '',
-//      confirmButtonColor: '#f65b4f',
-//      confirmButtonText: 'Okay'
-//    });
-//  };
-//
-//  $rootScope.showSuccess = function (title, msg) {
-//    sweetAlert({
-//      type: 'success',
-//      title: title || 'Success!',
-//      text: msg || '',
-//      confirmButtonColor: '#1fa589',
-//      confirmButtonText: 'Okay'
-//    });
-//  };
-//
-//  $rootScope.navigate = function (state, params) {
-//    $state.go(state, params);
-//  };
-//
 setTimeout(() => {
-  console.log('Show window');
   win.show();
   Router.run(routes, Handler => {
     React.render(<Handler/>, document.getElementById('mainView'));
   });
-
 }, 200);

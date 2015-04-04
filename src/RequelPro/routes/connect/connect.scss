@@ -1,7 +1,8 @@
 #connectPage {
   padding-top: 100px;
-}
-
-#connectForm {
-//  @include light-box-shadow();
+  label.prefix, span.prefix {
+    background: #5da489;
+    border-color: #5da489;
+    color: #fff;
+  }
 }

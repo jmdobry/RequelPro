@@ -72,11 +72,26 @@ $darkest-gray: #333333 !default;
 
 $black: #262626 !default;
 
+$rethinkdb-dark: #585755 !default;
+$rethinkdb-dark-blue: #1a2f37 !default;
+
 $icon-bar-font-size: 1rem;
 $icon-bar-icon-size: 1.6rem;
 $icon-bar-image-width: 1.875rem;
 $icon-bar-image-height: 1.875rem;
 $icon-bar-item-padding: 0.5rem;
 $icon-bar-disabled-opacity: 0.7;
+$icon-bar-bg: $rethinkdb-dark-blue !default;
+
+$panel-font-color: $rethinkdb-dark !default;
+
+$tooltip-bg: $rethinkdb-dark !default;
 
 $row-width: 100%;
+
+$primary-color: #41728b !default;
+$secondary-color: #e7e7e7 !default;
+$alert-color: $normal-red !default;
+$success-color: #5da489 !default;
+$warning-color: $normal-yellow !default;
+$info-color: $normal-blue !default;
