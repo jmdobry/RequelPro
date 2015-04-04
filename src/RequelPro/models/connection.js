@@ -9,6 +9,15 @@ let currentConnection = null;
 
 let Connection = store.defineResource({
   name: 'connection',
+  afterInject() {
+    Connection.emit('change');
+  },
+  afterEject() {
+    Connection.emit('change');
+  },
+  afterUpdate() {
+    Connection.emit('change');
+  },
   methods: {
     dbList() {
       let connection = null;
@@ -106,7 +115,16 @@ let Connection = store.defineResource({
   },
   set(connection) {
     currentConnection = !connection ? null : connection;
+    setTimeout(() => this.emit('connect', currentConnection));
     return currentConnection;
+  },
+  testConnection(options) {
+    let connection = this.createInstance(options);
+    return connection.connect().then(conn => {
+      if (conn) {
+        conn.close();
+      }
+    });
   }
 });
 

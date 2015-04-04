@@ -1,6 +1,5 @@
 @charset "UTF-8";
 @import "./styles/variables";
-
 @import "foundation/components/grid";
 @import "foundation/components/accordion";
 @import "foundation/components/alert-boxes";
@@ -38,6 +37,7 @@
 @import "foundation/components/type";
 @import "foundation/components/offcanvas";
 @import "foundation/components/visibility";
+@import "sweet-alert";
 
 //@import "../styles/requelpro/mixins";
 //@import "../styles/requelpro/main";
@@ -85,4 +85,52 @@ body {
 
 .container {
   width: 100% !important;
+}
+
+.side-nav {
+  padding: 0;
+  li {
+    font-size: 1.2rem;
+    a {
+      padding: 0;
+      .button {
+        margin: 0;
+      }
+    }
+  }
+}
+
+button, .button {
+  margin: 0;
+  &:focus {
+    outline: 0;
+  }
+  &:active {
+    background-color: darken($button-bg-hover, 10%);
+  }
+  &.secondary {
+    &:active {
+      background-color: darken($secondary-button-bg-hover, 10%);
+    }
+  }
+  &.success {
+    &:active {
+      background-color: darken($success-button-bg-hover, 10%);
+    }
+  }
+  &.alert {
+    &:active {
+      background-color: darken($alert-button-bg-hover, 10%);
+    }
+  }
+  &.warning {
+    &:active {
+      background-color: darken($warning-button-bg-hover, 10%);
+    }
+  }
+  &.info {
+    &:active {
+      background-color: darken($info-button-bg-hover, 10%);
+    }
+  }
 }

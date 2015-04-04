@@ -5,7 +5,7 @@
 
 // styles
 import fontawesome from 'font-awesome-webpack';
-import styles from './app.scss';
+import appStyles from './app.scss';
 
 // libs
 import gui from 'nw.gui';

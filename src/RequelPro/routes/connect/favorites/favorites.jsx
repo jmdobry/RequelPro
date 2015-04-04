@@ -1,5 +1,5 @@
 import React from 'react';
-import classnames from 'classnames';
+import _ from 'lodash';
 import Favorite from '../../../models/favorite.js';
 
 let Favorites = React.createClass({
@@ -10,69 +10,60 @@ let Favorites = React.createClass({
 
     return {
       favorites: Favorite.getAll(),
-      fav: {},
-      newFav: {}
+      fav: Favorite.current()
     };
   },
   onChange() {
-    this.setState({ favorites: Favorite.getAll() });
+    this.setState({
+      favorites: Favorite.getAll(),
+      fav: Favorite.current()
+    });
   },
   componentDidMount() {
     Favorite.on('change', this.onChange);
+    Favorite.on('fav', this.onChange);
   },
   componentWillUnmount() {
     Favorite.off('change', this.onChange);
+    Favorite.off('fav', this.onChange);
   },
   newConnection() {
-    this.setState({
-      newFav: {
-        host: '',
-        port: '',
-        db: '',
-        authKey: ''
-      }
-    });
-    this.setState({
-      fav: this.newFav
-    });
+    Favorite.set();
   },
-  render: function () {
-    let newConnectionClassNames = classnames({
-      active: !this.state.fav.id,
-      hide: !this.state.favorites.length
-    });
+  selectFavorite(favorite, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    Favorite.set(favorite);
+  },
+  remove(favorite, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    Favorite.destroy(favorite);
+    Favorite.set();
+  },
+  render() {
     return (
       <div className="panel">
-        <h3>Favorites</h3>
-        <ul>
-          <li className={newConnectionClassNames} onClick={this.newConnection}>
-            <h4>
-              <i className="fa fa-plus"></i>
-            New Connection
-            </h4>
-
-            <p>
-            {this.state.newFav.host || '127.0.0.1'}:{this.state.newFav.port || 28015}
-            </p>
-          </li>
-          <li class="list-group-item" data-ng-class="{ active: ConnectCtrl.fav.id === fav.id }"
-            data-ng-repeat="fav in ConnectCtrl.favorites track by fav.id"
-            data-ng-click="ConnectCtrl.fav = fav">
-            <h4 class="list-group-item-heading">
-              <span class="pull-right text-danger" data-ng-click="ConnectCtrl.remove(fav)">
-                <i class="fa fa-trash-o">&nbsp;</i>
-              </span>
-            fav.name
-            </h4>
-
-            <p class="list-group-item-text">
-            fav.host:fav.port
-            </p>
-          </li>
-          <li class="list-group-item" data-ng-if="!ConnectCtrl.favorites.length">
-            <h4 class="list-group-item-heading">
-            You have not added any favorites...
-            </h4>
+        <button className={'right button tiny' + (!this.state.fav.id ? ' disabled' : '')} onClick={this.newConnection}>
+          <i className="fa fa-bolt"></i>
+        &nbsp;Quick Connect
+        </button>
+        <h4>Favorites</h4>
+        <hr/>
+        <ul className="side-nav">
+          {this.state.favorites.map(favorite => {
+            return <li key={favorite.id} className={this.state.fav === favorite ? 'active' : '' }>
+              <a key={favorite.id} href="" className="clearfix" onClick={e => this.selectFavorite(favorite, e)}>
+                <span key={favorite.id} className="right button tiny alert" onClick={e => this.remove(favorite, e)}>
+                  <i className="fa fa-trash-o">&nbsp;</i>
+                </span>
+                {favorite.name}&nbsp;
+                <small>{favorite.host}:{favorite.port}</small>
+              </a>
+            </li>;
+          })}
+          <li className={this.state.favorites.length ? 'hide' : ''}>
+            <h6>You have not added any favorites...</h6>
           </li>
         </ul>
       </div>

@@ -123,7 +123,9 @@ module.exports = function (grunt) {
               test: /\.scss$/,
               loader: 'style!raw!sass?outputStyle=compressed&' +
               'includePaths[]=' +
-              (path.resolve(__dirname, './node_modules/zurb-foundation/scss'))
+              (path.resolve(__dirname, './node_modules/zurb-foundation/scss')) + '&' +
+              'includePaths[]=' +
+              (path.resolve(__dirname, './node_modules/sweetalert/lib'))
             }
           ],
           postLoaders: [

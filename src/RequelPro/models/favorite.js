@@ -4,6 +4,7 @@ import Datastore from 'nedb';
 import path from 'path';
 
 let datapath = gui.App.dataPath + '/nedb';
+let currentFavorite = null;
 
 let Favorite = store.defineResource({
   name: 'favorite',
@@ -12,6 +13,30 @@ let Favorite = store.defineResource({
   },
   afterEject() {
     Favorite.emit('change');
+  },
+  afterUpdate(Favorite, favorite, cb) {
+    Favorite.emit('change');
+    cb(null, favorite);
+  },
+  afterCreate(Favorite, favorite, cb) {
+    Favorite.set(favorite);
+    cb(null, favorite);
+  },
+  current() {
+    if (!currentFavorite) {
+      currentFavorite = {
+        host: '',
+        port: '',
+        db: '',
+        authKey: ''
+      };
+    }
+    return currentFavorite;
+  },
+  set(favorite) {
+    currentFavorite = !favorite ? null : favorite;
+    setTimeout(() => this.emit('fav', currentFavorite));
+    return currentFavorite;
   }
 });
 

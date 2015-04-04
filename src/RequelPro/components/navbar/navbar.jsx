@@ -48,7 +48,7 @@ let Navbar = React.createClass({
           <label>Databases</label>
         </a>
       {this.state.links.map(link => {
-        return <Link className={classes} to={link.name} params={this.state.connection} onClick={this.onLinkClick}>
+        return <Link key={link.name} className={classes} to={link.name} params={this.state.connection} onClick={this.onLinkClick}>
           <i className={'fa fa-' + link.icon}></i>
           <label>{link.label}</label>
         </Link>
