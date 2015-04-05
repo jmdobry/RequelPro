@@ -17,6 +17,7 @@ let Navbar = React.createClass({
     return {
       connection,
       database,
+      table: Table.current(),
       tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
     };
   },
@@ -43,10 +44,11 @@ let Navbar = React.createClass({
       tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
     });
   },
-  onSelect() {
-    let table = e.target.value;
+  onSelect(table, e) {
+    console.log(table);
+    e.preventDefault();
     this.setState({ table });
-    Table.set(Table.get(table));
+    Table.set(table);
   },
   /*
    * Methods
@@ -54,10 +56,15 @@ let Navbar = React.createClass({
   render() {
     return (
       <div id="tables" className="panel">
-      Tables
+        <h5>Tables</h5>
+        <hr/>
+        <ul className="side-nav">
         {this.state.tables.map(table => {
-          return <div key={table.id}>{table.id}</div>;
+          return <li key={table.id} classNames={table === this.state.table ? 'active' : ''}>
+            <a href="" onClick={e => this.onSelect(table, e)}>{table.id}</a>
+          </li>;
         })}
+        </ul>
       </div>
     );
   }

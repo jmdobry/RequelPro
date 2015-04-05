@@ -30,7 +30,7 @@ let Navbar = React.createClass({
   onChange() {
     let connection = Connection.current();
     let databases = Database.filter({ connectionId: connection.id });
-    if (!this.state.connection !== connection || (!this.state.databases.length && databases.length)) {
+    if (databases.length && (!this.state.connection !== connection || !this.state.databases.length)) {
       Database.set(databases[0]);
     }
     this.setState({

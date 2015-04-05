@@ -58,6 +58,7 @@ let Database = store.defineResource({
     return currentDatabase;
   },
   unset() {
+    Table.unset();
     currentDatabase = null;
     setTimeout(() => this.emit('db'));
   }

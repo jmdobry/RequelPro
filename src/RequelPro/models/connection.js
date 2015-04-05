@@ -4,6 +4,7 @@ import Datastore from 'nedb';
 import r from 'rethinkdb';
 import path from 'path';
 import Database from './database.js';
+import Table from './table.js';
 import alert from '../services/alert.js';
 
 let datapath = gui.App.dataPath + '/nedb';
@@ -92,9 +93,8 @@ let Connection = store.defineResource({
       return r.connect(options);
     },
 
-    testConnection(options) {
-      let connection = this.createInstance(options);
-      return connection.connect().then(conn => {
+    testConnection() {
+      return this.connect().then(conn => {
         if (conn) {
           conn.close();
         }
@@ -154,6 +154,8 @@ let Connection = store.defineResource({
     return currentConnection;
   },
   unset() {
+    Table.unset();
+    Database.unset();
     currentConnection = null;
     setTimeout(() => this.emit('connect'));
   }

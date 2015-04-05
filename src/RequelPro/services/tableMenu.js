@@ -8,9 +8,7 @@ TableMenu.submenu = new gui.Menu();
 TableMenu.submenu.append(new gui.MenuItem({
   label: 'Create Table...',
   click() {
-    setTimeout(() => {
-      console.log('createTable');
-    });
+    console.log('createTable');
   }
 }));
 TableMenu.submenu.append(new gui.MenuItem({
