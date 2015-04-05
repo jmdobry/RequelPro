@@ -1,0 +1,14 @@
+@import '../../styles/variables';
+
+#databases {
+  background: $rethinkdb-dark-blue;
+  height: 64px;
+  label {
+    text-align: center;
+    color: #fff;
+  }
+  select {
+    height: 1.75rem;
+    padding: 0 0 0 10px;
+  }
+}

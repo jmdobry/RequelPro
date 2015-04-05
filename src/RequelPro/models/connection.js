@@ -3,12 +3,22 @@ import gui from 'nw.gui';
 import Datastore from 'nedb';
 import r from 'rethinkdb';
 import path from 'path';
+import Database from './database.js';
+import alert from '../services/alert.js';
 
 let datapath = gui.App.dataPath + '/nedb';
 let currentConnection = null;
 
 let Connection = store.defineResource({
   name: 'connection',
+  relations: {
+    hasMany: {
+      database: {
+        foreignKey: 'connectionId',
+        localField: 'databases'
+      }
+    }
+  },
   afterInject() {
     Connection.emit('change');
   },
@@ -19,34 +29,6 @@ let Connection = store.defineResource({
     Connection.emit('change');
   },
   methods: {
-    dbList() {
-      let connection = null;
-      return this.connect()
-        .then(conn => {
-          connection = conn;
-          return r.dbList().run(conn);
-        })
-        .finally(() => {
-          if (connection) {
-            return connection.close();
-          }
-        });
-    },
-
-    tableList(db) {
-      let connection = null;
-      return this.connect()
-        .then(conn => {
-          connection = conn;
-          return r.db(db).tableList().run(conn);
-        })
-        .finally(() => {
-          if (connection) {
-            return connection.close();
-          }
-        });
-    },
-
     tableInfo(db, table) {
       let connection = null;
       return this.connect()
@@ -56,7 +38,7 @@ let Connection = store.defineResource({
         })
         .finally(() => {
           if (connection) {
-            return connection.close();
+            connection.close();
           }
         });
     },
@@ -108,6 +90,55 @@ let Connection = store.defineResource({
       }
 
       return r.connect(options);
+    },
+
+    testConnection(options) {
+      let connection = this.createInstance(options);
+      return connection.connect().then(conn => {
+        if (conn) {
+          conn.close();
+        }
+      });
+    },
+
+    getTables(db) {
+      let conn = null;
+      return this.connect()
+        .then(connection => {
+          conn = connection;
+          return r.db(db).tableList().run(conn);
+        })
+        .finally(() => {
+          if (conn) {
+            conn.close();
+          }
+        });
+    },
+
+    getDatabases() {
+      let conn = null;
+      return this.connect()
+        .then(connection => {
+          conn = connection;
+          return r.dbList().run(conn);
+        })
+        .then(databases => {
+          Database.ejectAll({
+            connectionId: this.id
+          });
+          return Database.inject(databases.map(database => {
+            return {
+              id: database,
+              connectionId: this.id
+            };
+          }));
+        })
+        .catch(err => alert.error('Failed to retrieve databases!', err))
+        .finally(() => {
+          if (conn) {
+            conn.close();
+          }
+        });
     }
   },
   current() {
@@ -117,19 +148,14 @@ let Connection = store.defineResource({
     connection.section = currentConnection ? currentConnection.section || 'content' : 'content';
     currentConnection = connection;
     setTimeout(() => this.emit('connect'));
+    if (Connection.is(currentConnection)) {
+      currentConnection.getDatabases();
+    }
     return currentConnection;
   },
   unset() {
     currentConnection = null;
     setTimeout(() => this.emit('connect'));
-  },
-  testConnection(options) {
-    let connection = this.createInstance(options);
-    return connection.connect().then(conn => {
-      if (conn) {
-        conn.close();
-      }
-    });
   }
 });
 

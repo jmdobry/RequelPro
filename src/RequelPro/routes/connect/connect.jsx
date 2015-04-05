@@ -94,7 +94,8 @@ let Connect = React.createClass({
     }
   },
   testConnection() {
-    Connection.testConnection(this.getValues())
+    let connection = Connection.createInstance(this.getValues());
+    connection.testConnection()
       .then(() => alert.success('Connection established!'))
       .catch(err => alert.error('Failed to connect!', err));
   },
@@ -125,7 +126,7 @@ let Connect = React.createClass({
           <div className="large-3 medium-4 columns">
             <Favorites/>
           </div>
-          <div className="large-4 large-offset-1 medium-6 columns end">
+          <div className="large-5 large-offset-2 medium-4 medium-offset-1 columns end">
             <form name="connectForm" id="connectForm" className="panel radius" onSubmit={this.connect}>
               <h4>Connection Details</h4>
               <hr/>
@@ -154,7 +155,7 @@ let Connect = React.createClass({
                         <i className="fa fa-database"></i>
                       </span>
                     </div>
-                    <div className="medium-11 columns">
+                    <div className="medium-11 columns end">
                       <input type="text" placeholder="127.0.0.1" ref="host" value={this.state.host} onChange={this.onHostChange}/>
                     </div>
                   </div>
@@ -169,7 +170,7 @@ let Connect = React.createClass({
                         <i className="fa fa-anchor"></i>
                       </span>
                     </div>
-                    <div className="medium-11 columns">
+                    <div className="medium-11 columns end">
                       <input type="text" placeholder="28015" ref="port" value={this.state.port} onChange={this.onPortChange}/>
                     </div>
                   </div>
@@ -184,7 +185,7 @@ let Connect = React.createClass({
                         <i className="fa fa-key"></i>
                       </span>
                     </div>
-                    <div className="medium-11 columns">
+                    <div className="medium-11 columns end">
                       <input type="password" ref="authKey" value={this.state.authKey} onChange={this.onAuthKeyChange}/>
                     </div>
                   </div>

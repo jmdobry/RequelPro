@@ -1,11 +1,15 @@
 .sub-nav {
   background-color: #F2F2F2;
   padding: 5px !important;
-  top: -6px;
   position: relative;
-  a {
-    display: inline-block;
-    cursor: pointer;
+  margin-bottom: 0;
+  z-index: 10000;
+  box-shadow: 1px 1px 8px -4px #000;
+  dd, dd.active {
+    a {
+      display: inline-block;
+      cursor: pointer;
+    }
   }
   .delete-tab {
     position: relative;

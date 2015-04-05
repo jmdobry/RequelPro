@@ -1,7 +1,6 @@
 @import "../../styles/variables";
 
 #connectPage {
-  padding-top: 100px;
   label.prefix, span.prefix {
     background: $success-color;
     border-color: $success-color;
@@ -11,4 +10,8 @@
       border-color: $normal-red;
     }
   }
+}
+
+#connectForm {
+  margin-top: 5rem;
 }

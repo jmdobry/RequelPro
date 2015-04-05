@@ -24,6 +24,7 @@ import Connection from './models/connection.js';
 import Favorite from './models/favorite.js';
 
 // components
+import Databases from './components/databases/databases.jsx';
 import Navbar from './components/navbar/navbar.jsx';
 import Navtabs from './components/navtabs/navtabs.jsx';
 
@@ -68,11 +69,24 @@ let App = React.createClass({
    */
   render() {
     return (
-      <div>
-        <div className="content">
-          <Navbar/>
-          <Navtabs/>
-          <RouteHandler/>
+      <div className="content">
+        <div id="headerRow" className="row">
+          <div className="columns large-3 medium-4">
+            <Databases/>
+          </div>
+          <div className="columns large-9 medium-8 end">
+            <Navbar/>
+          </div>
+        </div>
+        <div id="tabsRow" className="row">
+          <div className="columns medium-12">
+            <Navtabs/>
+          </div>
+        </div>
+        <div id="contentRow" className="row">
+          <div className="columns medium-12">
+            <RouteHandler/>
+          </div>
         </div>
       </div>
     );

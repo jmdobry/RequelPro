@@ -1,5 +1,7 @@
 import React from 'react';
 import Favorite from '../../../models/favorite.js';
+import styles from './favorites.scss';
+import layout from '../../../services/layout.js';
 
 let Favorites = React.createClass({
   getInitialState() {
@@ -21,6 +23,7 @@ let Favorites = React.createClass({
   componentDidMount() {
     Favorite.on('change', this.onChange);
     Favorite.on('fav', this.onChange);
+    layout.maximize('#favorites');
   },
   componentWillUnmount() {
     Favorite.off('change', this.onChange);
@@ -42,7 +45,7 @@ let Favorites = React.createClass({
   },
   render() {
     return (
-      <div className="panel radius">
+      <div className="panel" id="favorites">
         <button className={'right button radius tiny' + (!this.state.fav.id ? ' disabled' : '')} onClick={this.newConnection}>
           <i className="fa fa-bolt"></i>
         &nbsp;Quick Connect
