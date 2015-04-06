@@ -122,3 +122,8 @@ button, .button {
 .panel {
   margin-bottom: 0;
 }
+
+.side-area {
+  box-shadow: 1px 1px 12px -4px #000;
+  z-index: 500;
+}

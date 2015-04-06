@@ -1,0 +1,35 @@
+@import '../../../styles/variables';
+
+#filter {
+  padding: 0;
+  border: none;
+  position: relative;
+  box-shadow: 1px 1px 12px -4px #000;
+  z-index: 250;
+  label.inline {
+    cursor: default;
+    background: #41728b;
+    text-align: right;
+    padding: 8px 7px 0.47rem 0;
+    color: #fff;
+  }
+  input, label, select {
+    margin: 0;
+    border-top: none;
+    border-bottom: none;
+  }
+  select {
+    border-right: none;
+  }
+  button {
+    width: 100%;
+    padding-bottom: 0.775rem;
+  }
+  #fieldSelect {
+    text-align: right;
+  }
+  #operatorSelect {
+    text-align: center;
+  }
+}
+

@@ -35,21 +35,25 @@ let Database = store.defineResource({
     return currentDatabase;
   },
   set(database) {
+    if (currentDatabase === database) {
+      return;
+    }
     currentDatabase = database;
     setTimeout(() => this.emit('db'));
     let connection = store.definitions.connection.get(currentDatabase.connectionId);
-    if (connection) {
-      connection.getTables(currentDatabase.id)
+    let connectionId = connection.id;
+    let databaseId = currentDatabase.id;
+    if (connection && connectionId !== 'none' && currentDatabase && databaseId !== 'none') {
+      connection.getTables(databaseId)
         .then(tables => {
           Table.ejectAll({
-            connectionId: connection.id,
-            databaseId: currentDatabase.id
+            connectionId: connectionId
           });
           return Table.inject(tables.map(table => {
             return {
               id: table,
-              databaseId: currentDatabase.id,
-              connectionId: connection.id
+              databaseId: databaseId,
+              connectionId: connectionId
             };
           }));
         })

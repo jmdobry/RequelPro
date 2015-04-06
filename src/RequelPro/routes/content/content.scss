@@ -1,3 +1,47 @@
-#contentPage {
-}
+@import '../../styles/variables';
 
+#contentPage {
+  #contentTable {
+    overflow-y: auto;
+    overflow-x: auto;
+    & > div {
+      width: 250px;
+      text-align: center;
+      padding: 20px 25px;
+    }
+    &.panel {
+      padding: 0;
+    }
+  }
+  table {
+    margin-bottom: 0;
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    cursor: default;
+    th {
+      border-bottom: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+    }
+    thead:first-child {
+      border-left: none;
+    }
+    tbody {
+      overflow-y: auto;
+    }
+    th, td {
+      padding: 0 5px;
+      height: 20px;
+      font-size: 12.5px;
+    }
+    tr {
+      height: 20px;
+      &.active {
+        background: $primary-color;
+        td {
+          color: #fff;
+        }
+      }
+    }
+  }
+}

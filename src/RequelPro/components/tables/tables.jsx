@@ -13,13 +13,17 @@ let Navbar = React.createClass({
    */
   getInitialState() {
     let connection = Connection.current();
-    let database = Database.current();
-    return {
-      connection,
-      database,
-      table: Table.current(),
-      tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
-    };
+    if (connection && connection.id !== 'none') {
+      let database = Database.current();
+      return {
+        connection,
+        database,
+        table: Table.current(),
+        tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
+      };
+    } else {
+      return { connection, table: Table.current() };
+    }
   },
   componentDidMount() {
     Connection.on('connect', this.onChange);
@@ -37,15 +41,17 @@ let Navbar = React.createClass({
    */
   onChange() {
     let connection = Connection.current();
-    let database = Database.current();
-    this.setState({
-      connection,
-      database,
-      tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
-    });
+    if (connection && connection.id !== 'none') {
+      let database = Database.current();
+      this.setState({
+        connection,
+        database,
+        table: Table.current(),
+        tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
+      });
+    }
   },
   onSelect(table, e) {
-    console.log(table);
     e.preventDefault();
     this.setState({ table });
     Table.set(table);
@@ -60,7 +66,7 @@ let Navbar = React.createClass({
         <hr/>
         <ul className="side-nav">
         {this.state.tables.map(table => {
-          return <li key={table.id} classNames={table === this.state.table ? 'active' : ''}>
+          return <li key={table.id} className={table.id === this.state.table.id ? 'active' : ''}>
             <a href="" onClick={e => this.onSelect(table, e)}>{table.id}</a>
           </li>;
         })}

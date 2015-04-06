@@ -14,10 +14,10 @@ let Query = React.createClass({
     return (
       <div id="queryPage">
         <div className="row">
-          <div className="large-3 medium-4 columns">
+          <div className="large-2 medium-3 columns side-area">
             <Tables/>
           </div>
-          <div className="large-9 medium-8 columns end">
+          <div className="large-10 medium-9 columns end">
           Query page
           </div>
         </div>

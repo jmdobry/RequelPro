@@ -29,14 +29,21 @@ let Navbar = React.createClass({
    */
   onChange() {
     let connection = Connection.current();
-    let databases = Database.filter({ connectionId: connection.id });
-    if (databases.length && (!this.state.connection !== connection || !this.state.databases.length)) {
-      Database.set(databases[0]);
+    if (connection.id === 'none') {
+      this.setState({
+        connection,
+        databases: []
+      });
+    } else {
+      let databases = Database.filter({ connectionId: connection.id });
+      if (databases.length && (!this.state.connection !== connection || !this.state.databases.length)) {
+        Database.set(databases[0]);
+      }
+      this.setState({
+        connection,
+        databases
+      });
     }
-    this.setState({
-      connection,
-      databases
-    });
   },
   onSelect(e) {
     let db = e.target.value;
@@ -53,7 +60,7 @@ let Navbar = React.createClass({
           <div className="row">
             <div className="medium-offset-1 medium-10 columns">
               <label>Databases
-                <select value={this.state.db} onChange={this.onSelect}>
+                <select value={this.state.db} onChange={this.onSelect} disabled={!this.state.databases.length}>
                 {this.state.databases.map(database => {
                   return <option key={database.id} value={database.id}>{database.id}</option>;
                 })}

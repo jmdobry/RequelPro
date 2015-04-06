@@ -145,6 +145,9 @@ let Connection = store.defineResource({
     return currentConnection || { id: 'none' };
   },
   set(connection) {
+    if (currentConnection === connection) {
+      return;
+    }
     connection.section = currentConnection ? currentConnection.section || 'content' : 'content';
     currentConnection = connection;
     setTimeout(() => this.emit('connect'));
@@ -154,9 +157,9 @@ let Connection = store.defineResource({
     return currentConnection;
   },
   unset() {
+    currentConnection = null;
     Table.unset();
     Database.unset();
-    currentConnection = null;
     setTimeout(() => this.emit('connect'));
   }
 });

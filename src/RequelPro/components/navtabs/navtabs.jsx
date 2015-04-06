@@ -1,5 +1,7 @@
 import React from 'react';
 import Connection from '../../models/connection.js';
+import Database from '../../models/database.js';
+import Table from '../../models/table.js';
 import styles from './navtabs.scss';
 
 let Navtabs = React.createClass({
@@ -51,13 +53,19 @@ let Navtabs = React.createClass({
   /*
    * Methods
    */
-  remove(connection) {
+  remove(connection, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    Table.ejectAll({ connectionId: connection.id });
+    Database.ejectAll({ connectionId: connection.id });
     Connection.eject(connection.id);
-    Connection.unset();
     let connections = Connection.getAll();
     if (connections.length) {
       Connection.set(connections[0]);
     } else {
+      Connection.unset();
+      Table.ejectAll();
+      Database.ejectAll();
       this.context.router.transitionTo('/');
     }
   },
@@ -84,7 +92,8 @@ let Navtabs = React.createClass({
       })}
         <dd>
           <a href="#" onClick={this.newConnection} id="navtab-plus">
-            <i className="fa fa-plus"></i>&nbsp;New
+            <i className="fa fa-plus"></i>
+          &nbsp;New
           </a>
         </dd>
       </dl>
