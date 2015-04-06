@@ -1,8 +1,10 @@
 import r from 'rethinkdb';
 import _ from 'lodash';
 import store from '../services/store.js';
+let {utils: DSUtils} = store;
 
 let currentTable = null;
+const TABLE_PAGE_SIZE = 100;
 
 let Table = store.defineResource({
   name: 'table',
@@ -27,6 +29,7 @@ let Table = store.defineResource({
         .then(_conn => {
           conn = _conn;
           let rql = r.db(database.id).table(this.id);
+          let rql2 = null;
           try {
             console.log(options);
             if (options.field) {
@@ -35,7 +38,6 @@ let Table = store.defineResource({
               if (_.isFinite(parseInt(value, 10))) {
                 value = parseInt(value, 10);
               }
-              console.log(value);
               if (operator === '==') {
                 clause = clause.eq(value);
               } else if (operator === '!=') {
@@ -57,15 +59,48 @@ let Table = store.defineResource({
             }
             if (options.sort) {
               if (options.direction === 'desc') {
-                rql = rql.orderBy(r.desc(options.sort));
+                rql2 = rql.orderBy(r.desc(options.sort));
               } else {
-                rql = rql.orderBy(options.sort);
+                rql2 = rql.orderBy(options.sort);
               }
+            } else {
+              rql2 = rql;
             }
           } catch (err) {
             console.log(err.stack);
+            throw err;
           }
-          return rql.limit(100).coerceTo('ARRAY').run(conn);
+          return DSUtils.Promise.all([
+            rql2.skip(TABLE_PAGE_SIZE * (parseInt(options.page, 10) - 1)).limit(TABLE_PAGE_SIZE).coerceTo('ARRAY').run(conn),
+            rql.count().run(conn)
+          ]);
+        })
+        .then(results => {
+          return {
+            data: results[0],
+            count: results[1]
+          };
+        })
+        .finally(() => {
+          if (conn) {
+            return conn.close();
+          }
+        });
+    },
+    deleteRows(rows) {
+      if (!_.isArray(rows)) {
+        rows = [rows];
+      }
+      let connection = store.definitions.connection.current();
+      let database = store.definitions.database.current();
+      let conn = null;
+      return connection.connect()
+        .then(_conn => {
+          conn = _conn;
+          let rql = r.db(database.id).table(this.id);
+          return rql.getAll.apply(rql, rows.map(row => {
+            return row.id
+          })).delete().run(conn);
         })
         .finally(() => {
           if (conn) {
