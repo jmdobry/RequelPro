@@ -40,8 +40,8 @@ let Structure = React.createClass({
    */
   render() {
     return (
-      <div id="structure">
-      Structure page  - {this.state.table.id}
+      <div id="structure" className="panel">
+      The goal of this feature is to allow you to define in RequelPro a schema for each table, so RequelPro can report data with missing or invalidate values. It could even make an initial attempt to infer the schema from the table's data.
       </div>
     );
   }

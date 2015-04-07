@@ -1,47 +1,49 @@
 import styles from './filter.scss';
 import React from 'react';
+import _ from 'lodash';
 import Table from '../../../models/table.js';
 
+const operators = [
+  '==',
+  '!=',
+  '>',
+  '<',
+  '>=',
+  '<=',
+  'in',
+  'is null'
+];
+
+const defaults = {
+  field: 'id',
+  value: '',
+  operator: '==',
+  operators
+};
+
 let Filter = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   /*
    * Lifecycle
    */
   getInitialState() {
-    return {
-      table: Table.current(),
-      value: '',
-      field: 'id',
-      operator: '==',
-      operators: [
-        '==',
-        '!=',
-        '>',
-        '<',
-        '>=',
-        '<=',
-        'in',
-        'is null'
-      ]
-    };
+    return this.getData(this.context.router.getCurrentParams());
   },
-  componentDidMount() {
-    Table.on('table', this.onChange);
-  },
-  componentWillUnmount() {
-    Table.off('table', this.onChange);
+  componentWillReceiveProps() {
+    this.onChange();
   },
   /*
    * Event Handlers
    */
   onChange() {
-    this.setState({
-      table: Table.current()
-    });
+    this.setState(this.getData(this.context.router.getCurrentParams()));
   },
   onSubmit(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (this.state.table.id === 'none') {
+    if (!this.state.table) {
       return;
     }
     this.props.onChange(this.state);
@@ -64,8 +66,20 @@ let Filter = React.createClass({
   /*
    * Methods
    */
+  getData(params) {
+    let table = null;
+    if (params.tableId) {
+      table = Table.get(params.tableId);
+    }
+    return _.defaults({
+      table,
+      field: this.state ? this.state.field : undefined,
+      value: this.state ? this.state.value : undefined,
+      operator: this.state ? this.state.operator : undefined
+    }, defaults);
+  },
   render() {
-    let disabled = this.state.table.id === 'none';
+    let disabled = !this.state.table;
     return (
       <div id="filter" className="panel">
         <form onSubmit={this.onSubmit}>

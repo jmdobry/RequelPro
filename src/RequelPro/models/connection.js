@@ -83,7 +83,6 @@ let Connection = store.defineResource({
     },
 
     getDatabases() {
-      console.log('connection.getDatabases', this.id);
       let existing = Database.filter({ connectionId: this.id });
       let toKeep = [];
       return this.run(r.dbList()).then(databases => {
@@ -100,7 +99,6 @@ let Connection = store.defineResource({
             };
           }
         }));
-        console.log(injected, toKeep);
         // remove from the store databases and tables that no longer exist
         if (toKeep.length) {
           let ejected = Database.ejectAll({
@@ -114,8 +112,6 @@ let Connection = store.defineResource({
             Table.ejectAll({ databaseId: db }, { notify: false });
           });
         }
-        console.log('got ' + injected.length + ' databases');
-        console.log(injected.map(i => i.id));
         return injected;
       });
     }

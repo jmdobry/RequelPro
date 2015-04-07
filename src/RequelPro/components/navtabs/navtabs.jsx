@@ -16,22 +16,20 @@ let Navtabs = React.createClass({
   },
   componentDidMount() {
     Connection.on('change', this.onChange);
-    Connection.on('connect', this.onChange);
     Connection.on('closeTab', this.onCloseTab);
   },
   componentWillUnmount() {
     Connection.off('change', this.onChange);
-    Connection.off('connect', this.onChange);
     Connection.off('closeTab', this.onCloseTab);
+  },
+  componentWillReceiveProps() {
+    this.onChange();
   },
   /*
    * Event Handlers
    */
   onChange() {
     this.setState({ connections: Connection.getAll() });
-  },
-  componentWillReceiveProps() {
-    this.onChange();
   },
   onClick(connection, e) {
     e.preventDefault();
@@ -71,10 +69,11 @@ let Navtabs = React.createClass({
     if (!this.state.connections.length) {
       dlClasses += ' hidden';
     }
+    let params = this.context.router.getCurrentParams();
     return (
       <dl className={dlClasses}>
       {this.state.connections.map(connection => {
-        return <dd key={connection.id} className={connection.active ? 'active' : ''}>
+        return <dd key={connection.id} className={params.id === connection.id ? 'active' : ''}>
           <a href="" onClick={e => this.onClick(connection, e)}>
             <span>{connection.host + '/' + (connection.name ? connection.name : connection.port)}</span>
             <span className="right delete-tab" onClick={e => this.onRemoveClick(connection, e)}>

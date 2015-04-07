@@ -199,13 +199,13 @@ let routes = (
     <Route name="database" path="/connection/:id/database/:databaseId" handler={DatabaseView} />
     <Route name="table" path="/connection/:id/database/:databaseId/table/:tableId" handler={TableView}>
       <Route name="structure" path="structure" handler={Structure} />
+      <Route name="content" path="content" handler={Content} />
       <Route name="relations" path="relations" handler={Relations} />
       <Route name="info" path="info" handler={Info} />
       <Route name="query" path="query" handler={Query} />
     </Route>
   </Route>
 );
-//<Route name="content" path="content" handler={Content} />
 
 setTimeout(() => {
   win.show();

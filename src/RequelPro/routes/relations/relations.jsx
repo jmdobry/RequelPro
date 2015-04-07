@@ -40,8 +40,8 @@ let Relations = React.createClass({
    */
   render() {
     return (
-      <div id="relations">
-      Relations page  - {this.state.table.id}
+      <div id="relations" className="panel">
+      The goal of this feature is so you can tell RequelPro about your normalized data, so RequelPro can make exploring related data easier.
       </div>
     );
   }

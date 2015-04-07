@@ -40,8 +40,8 @@ let Query = React.createClass({
    */
   render() {
     return (
-      <div id="query">
-      Query page  - {this.state.table.id}
+      <div id="query" className="panel">
+      The goal here is to have an awesome query editor/runner like the one in RethinkDB's admin UI.
       </div>
     );
   }

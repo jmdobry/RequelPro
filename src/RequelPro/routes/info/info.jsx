@@ -26,22 +26,22 @@ let Info = React.createClass({
   componentDidMount() {
     layout.maximize('#info');
   },
+  componentWillReceiveProps() {
+    this.onChange();
+  },
   /*
    * Event Handlers
    */
   onChange() {
     this.setState(getData(this.context.router.getCurrentParams()));
   },
-  componentWillReceiveProps() {
-    this.onChange();
-  },
   /*
    * Methods
    */
   render() {
     return (
-      <div id="info">
-      Info page  - {this.state.table.id}
+      <div id="info" className="panel">
+      This page will be able to tell you as much about the table as possible.
       </div>
     );
   }
