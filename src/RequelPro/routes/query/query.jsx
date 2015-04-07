@@ -1,26 +1,47 @@
 import styles from './query.scss';
 import React from 'react';
 import layout from '../../services/layout.js';
-import Tables from '../../components/tables/tables.jsx';
+import Table from '../../models/table.js';
+import Connection from '../../models/connection.js';
+import Database from '../../models/database.js';
+
+let getData = params => {
+  let table = null;
+  if (params.tableId) {
+    table = Table.get(params.tableId);
+  }
+  return { table };
+};
 
 let Query = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+  /*
+   * Lifecycle
+   */
+  getInitialState() {
+    return getData(this.context.router.getCurrentParams());
+  },
   componentDidMount() {
-    layout.maximize('#queryPage > .panel');
+    layout.maximize('#query');
+  },
+  /*
+   * Event Handlers
+   */
+  onChange() {
+    this.setState(getData(this.context.router.getCurrentParams()));
+  },
+  componentWillReceiveProps() {
+    this.onChange();
   },
   /*
    * Methods
    */
   render() {
     return (
-      <div id="queryPage">
-        <div className="row">
-          <div className="large-2 medium-3 columns side-area">
-            <Tables/>
-          </div>
-          <div className="large-10 medium-9 columns end">
-          Query page
-          </div>
-        </div>
+      <div id="query">
+      Query page  - {this.state.table.id}
       </div>
     );
   }

@@ -5,50 +5,56 @@ import Connection from '../../models/connection.js';
 import Database from '../../models/database.js';
 import styles from './databases.scss';
 
-let Navbar = React.createClass({
+let getData = params => {
+  let connection = null;
+  if (params.id) {
+    connection = Connection.get(params.id);
+  }
+  return {
+    connection,
+    databases: connection ? Database.filter({ connectionId: connection.id }) : []
+  };
+};
+
+let Databases = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   /*
    * Lifecycle
    */
   getInitialState() {
-    let connection = Connection.current();
-    return {
-      connection,
-      databases: Database.filter({ connectionId: connection.id })
-    };
+    return getData(this.context.router.getCurrentParams());
   },
   componentDidMount() {
-    Connection.on('connect', this.onChange);
+    Connection.on('change', this.onChange);
     Database.on('change', this.onChange);
   },
   componentWillUnmount() {
-    Connection.off('connect', this.onChange);
+    Connection.off('change', this.onChange);
     Database.off('change', this.onChange);
   },
   /*
    * Event Handlers
    */
   onChange() {
-    let connection = Connection.current();
-    if (connection.id === 'none') {
-      this.setState({
-        connection,
-        databases: []
-      });
-    } else {
-      let databases = Database.filter({ connectionId: connection.id });
-      if (databases.length && (!this.state.connection !== connection || !this.state.databases.length)) {
-        Database.set(databases[0]);
-      }
-      this.setState({
-        connection,
-        databases
-      });
-    }
+    this.setState(getData(this.context.router.getCurrentParams()));
+  },
+  componentWillReceiveProps() {
+    this.onChange();
   },
   onSelect(e) {
-    let db = e.target.value;
-    this.setState({ db });
-    Database.set(Database.get(db));
+    let databaseId = e.target.value;
+    let database = Database.get(databaseId);
+    this.setState({ databaseId });
+    let params = this.context.router.getCurrentParams();
+    if (params.databaseId !== database.id) {
+      database.getTables();
+      this.context.router.transitionTo('database', {
+        id: database.connectionId,
+        databaseId
+      });
+    }
   },
   /*
    * Methods
@@ -60,9 +66,9 @@ let Navbar = React.createClass({
           <div className="row">
             <div className="medium-offset-1 medium-10 columns">
               <label>Databases
-                <select value={this.state.db} onChange={this.onSelect} disabled={!this.state.databases.length}>
+                <select value={this.state.databaseId} onChange={this.onSelect} disabled={!this.state.databases.length}>
                 {this.state.databases.map(database => {
-                  return <option key={database.id} value={database.id}>{database.id}</option>;
+                  return <option key={database.id} value={database.id}>{database.name}</option>;
                 })}
                 </select>
               </label>
@@ -74,4 +80,4 @@ let Navbar = React.createClass({
   }
 });
 
-export default Navbar;
+export default Databases;

@@ -1,73 +1,79 @@
 import React from 'react';
 import {Link} from 'react-router';
 import classnames from 'classnames';
-import Connection from '../../models/connection.js';
 import Database from '../../models/database.js';
 import Table from '../../models/table.js';
 import styles from './tables.scss';
 import layout from '../../services/layout.js';
 
-let Navbar = React.createClass({
+let getData = params => {
+  let table = null;
+  let database = null;
+  if (params.tableId) {
+    table = Database.get(params.tableId);
+  }
+  if (params.databaseId) {
+    database = Database.get(params.databaseId);
+  }
+  return {
+    database,
+    table,
+    tables: database ? Table.filter({ databaseId: database.id, connectionId: database.connectionId }) : []
+  };
+};
+
+let Tables = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   /*
    * Lifecycle
    */
   getInitialState() {
-    let connection = Connection.current();
-    if (connection && connection.id !== 'none') {
-      let database = Database.current();
-      return {
-        connection,
-        database,
-        table: Table.current(),
-        tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
-      };
-    } else {
-      return { connection, table: Table.current() };
-    }
+    return getData(this.context.router.getCurrentParams());
   },
   componentDidMount() {
-    Connection.on('connect', this.onChange);
-    Database.on('db', this.onChange);
     Table.on('change', this.onChange);
+    Database.on('change', this.onChange);
     layout.maximize('#tables');
   },
   componentWillUnmount() {
-    Connection.off('connect', this.onChange);
-    Database.off('db', this.onChange);
     Table.off('change', this.onChange);
+    Database.off('change', this.onChange);
   },
   /*
    * Event Handlers
    */
   onChange() {
-    let connection = Connection.current();
-    if (connection && connection.id !== 'none') {
-      let database = Database.current();
-      this.setState({
-        connection,
-        database,
-        table: Table.current(),
-        tables: Table.filter({ databaseId: database.id, connectionId: connection.id })
-      });
-    }
+    this.setState(getData(this.context.router.getCurrentParams()));
+  },
+  componentWillReceiveProps() {
+    this.onChange();
   },
   onSelect(table, e) {
     e.preventDefault();
-    this.setState({ table });
-    Table.set(table);
+    let params = this.context.router.getCurrentParams();
+    if (params.tableId !== table.id) {
+      this.context.router.transitionTo('structure', {
+        id: table.connectionId,
+        databaseId: table.databaseId,
+        tableId: table.id
+      });
+    }
   },
   /*
    * Methods
    */
   render() {
+    let params = this.context.router.getCurrentParams();
     return (
       <div id="tables" className="panel">
         <h5>Tables</h5>
         <hr/>
         <ul className="side-nav">
         {this.state.tables.map(table => {
-          return <li key={table.id} className={table.id === this.state.table.id ? 'active' : ''}>
-            <a href="" onClick={e => this.onSelect(table, e)}>{table.id}</a>
+          return <li key={table.id} className={table.id === params.tableId ? 'active' : ''}>
+            <a href="" onClick={e => this.onSelect(table, e)}>{table.name}</a>
           </li>;
         })}
         </ul>
@@ -76,4 +82,4 @@ let Navbar = React.createClass({
   }
 });
 
-export default Navbar;
+export default Tables;

@@ -1,8 +1,8 @@
+import r from 'rethinkdb';
+import _ from 'lodash';
+import guid from 'mout/random/guid';
 import store from '../services/store.js';
-import alert from '../services/alert.js';
 import Table from '../models/table.js';
-
-let currentDatabase = null;
 
 let Database = store.defineResource({
   name: 'database',
@@ -11,6 +11,12 @@ let Database = store.defineResource({
       connection: {
         localKey: 'connectionId',
         localField: 'connection'
+      }
+    },
+    hasMany: {
+      table: {
+        foreignKey: 'databaseId',
+        localField: 'tables'
       }
     }
   },
@@ -28,44 +34,43 @@ let Database = store.defineResource({
     Database.set(database);
     cb(null, database);
   },
-  current() {
-    if (!currentDatabase) {
-      currentDatabase = { id: 'none' };
-    }
-    return currentDatabase;
-  },
-  set(database) {
-    if (currentDatabase === database) {
-      return;
-    }
-    currentDatabase = database;
-    setTimeout(() => this.emit('db'));
-    let connection = store.definitions.connection.get(currentDatabase.connectionId);
-    let connectionId = connection.id;
-    let databaseId = currentDatabase.id;
-    if (connection && connectionId !== 'none' && currentDatabase && databaseId !== 'none') {
-      connection.getTables(databaseId)
-        .then(tables => {
-          Table.ejectAll({
-            connectionId: connectionId
-          });
-          return Table.inject(tables.map(table => {
+  /*
+   * Instance Methods
+   */
+  methods: {
+    getTables() {
+      let existing = Table.filter({ databaseId: this.id, connectionId: this.connection.id });
+      let toKeep = [];
+      return this.connection.run(r.db(this.name).tableList()).then(tables => {
+        let injected = Table.inject(tables.map(t => {
+          let table = _.find(existing, _t => _t.name === t);
+          if (table) {
+            toKeep.push(table.id);
+            return table;
+          } else {
             return {
-              id: table,
-              databaseId: databaseId,
-              connectionId: connectionId
+              id: guid(),
+              name: t,
+              databaseId: this.id,
+              connectionId: this.connection.id
             };
-          }));
-        })
-        .catch(err => alert.error('Failed to retrieve tables!', err));
+          }
+        }));
+        // remove from the store tables that no longer exist
+        if (toKeep.length) {
+          Table.ejectAll({
+            where: {
+              id: {
+                'notIn': toKeep
+              }
+            }
+          }, { notify: false });
+        }
+        return injected;
+      });
     }
-    return currentDatabase;
-  },
-  unset() {
-    Table.unset();
-    currentDatabase = null;
-    setTimeout(() => this.emit('db'));
   }
 });
 
+console.log('RETURN DATABASE MODEL');
 export default Database;

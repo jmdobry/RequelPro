@@ -3,7 +3,7 @@ import DSNeDBAdapter from './DSNeDBAdapter.jsx';
 
 let store = new JSData.DS({
   reapInterval: false,
-  log: true
+  log: false
 });
 
 store.registerAdapter('nedb', new DSNeDBAdapter(), { default: true });

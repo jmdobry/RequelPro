@@ -12,48 +12,39 @@ let Navtabs = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    return {
-      connection: Connection.current(),
-      connections: Connection.getAll()
-    };
+    return { connections: Connection.getAll() };
   },
   componentDidMount() {
     Connection.on('change', this.onChange);
     Connection.on('connect', this.onChange);
-    Connection.on('closeTab', this.closeTab);
+    Connection.on('closeTab', this.onCloseTab);
   },
   componentWillUnmount() {
     Connection.off('change', this.onChange);
     Connection.off('connect', this.onChange);
-    Connection.off('closeTab', this.closeTab);
+    Connection.off('closeTab', this.onCloseTab);
   },
   /*
    * Event Handlers
    */
   onChange() {
-    let connection = Connection.current();
-    if (connection && (!this.state.connection || this.state.connection.id !== connection.id) && connection.id !== 'none') {
-      this.context.router.transitionTo('content', connection);
-    }
-    this.setState({
-      connection: connection,
-      connections: Connection.getAll()
-    });
+    this.setState({ connections: Connection.getAll() });
+  },
+  componentWillReceiveProps() {
+    this.onChange();
   },
   onClick(connection, e) {
     e.preventDefault();
     e.stopPropagation();
-    Connection.set(connection);
+    this.context.router.transitionTo('connection', connection);
   },
-  closeTab() {
-    if (this.state.connection && this.state.connection.id !== 'none') {
-      this.remove(this.state.connection);
+  onCloseTab() {
+    let params = this.context.router.getCurrentParams();
+    if (params.id) {
+      this.remove(Connection.get(params.id));
     }
   },
-  /*
-   * Methods
-   */
-  remove(connection, e) {
+  onRemoveClick(connection, e) {
     e.preventDefault();
     e.stopPropagation();
     Table.ejectAll({ connectionId: connection.id });
@@ -61,18 +52,20 @@ let Navtabs = React.createClass({
     Connection.eject(connection.id);
     let connections = Connection.getAll();
     if (connections.length) {
-      Connection.set(connections[0]);
+      this.context.router.transitionTo('connection', connection);
     } else {
-      Connection.unset();
+      Connection.ejectAll();
       Table.ejectAll();
       Database.ejectAll();
       this.context.router.transitionTo('/');
     }
   },
-  newConnection() {
-    Connection.unset();
+  onNewConnectionClick() {
     this.context.router.transitionTo('/');
   },
+  /*
+   * Methods
+   */
   render() {
     let dlClasses = 'sub-nav';
     if (!this.state.connections.length) {
@@ -81,17 +74,17 @@ let Navtabs = React.createClass({
     return (
       <dl className={dlClasses}>
       {this.state.connections.map(connection => {
-        return <dd key={connection.id} className={connection === this.state.connection ? 'active' : ''}>
-          <a href="#" onClick={e => this.onClick(connection, e)}>
+        return <dd key={connection.id} className={connection.active ? 'active' : ''}>
+          <a href="" onClick={e => this.onClick(connection, e)}>
             <span>{connection.host + '/' + (connection.name ? connection.name : connection.port)}</span>
-            <span className="right delete-tab" onClick={e => this.remove(connection, e)}>
+            <span className="right delete-tab" onClick={e => this.onRemoveClick(connection, e)}>
               <i className="fa fa-close"></i>
             </span>
           </a>
         </dd>;
       })}
         <dd>
-          <a href="#" onClick={this.newConnection} id="navtab-plus">
+          <a href="#" onClick={this.onNewConnectionClick} id="navtab-plus">
             <i className="fa fa-plus"></i>
           &nbsp;New
           </a>

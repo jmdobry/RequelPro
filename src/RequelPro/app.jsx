@@ -9,6 +9,7 @@ import Router from 'react-router';
 
 // routes
 import Connect from './routes/connect/connect.jsx';
+//import SelectTable from './routes/table/table.jsx';
 import Structure from './routes/structure/structure.jsx';
 import Content from './routes/content/content.jsx';
 import Relations from './routes/relations/relations.jsx';
@@ -18,15 +19,20 @@ import Query from './routes/query/query.jsx';
 // services
 import MainMenu from './services/mainMenu.js';
 import ContextMenu from './services/contextMenu.js';
+import layout from './services/layout.js';
+import store from './services/store.js';
 
 // models
 import Connection from './models/connection.js';
+import Database from './models/database.js';
+import Table from './models/table.js';
 import Favorite from './models/favorite.js';
 
 // components
 import Databases from './components/databases/databases.jsx';
 import Navbar from './components/navbar/navbar.jsx';
 import Navtabs from './components/navtabs/navtabs.jsx';
+import Tables from './components/tables/tables.jsx';
 
 let { Route, DefaultRoute, RouteHandler, Link } = Router;
 
@@ -56,7 +62,6 @@ let App = React.createClass({
    * Event Handlers
    */
   onNewTab() {
-    Connection.unset();
     this.context.router.transitionTo('/');
   },
   onLinkClick() {
@@ -93,16 +98,114 @@ let App = React.createClass({
   }
 });
 
+let ConnectionView = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+  getInitialState() {
+    return { connection: Connection.get(this.context.router.getCurrentParams().id) };
+  },
+  componentDidMount() {
+    layout.maximize('#selectDatabase');
+  },
+  render() {
+    return (
+      <div id="selectDatabase">
+        <div className="row">
+          <div className="large-12 columns end">
+          Select a database or create one to begin... - {this.state.connection.id}
+          </div>
+        </div>
+      </div>
+    );
+  }
+});
+
+let getData = params => {
+  let database = null;
+  if (params.databaseId) {
+    database = Database.get(params.databaseId);
+  }
+  return { database };
+};
+
+let DatabaseView = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+  getInitialState() {
+    return getData(this.context.router.getCurrentParams());
+  },
+  componentDidMount() {
+    Table.on('change', this.onChange);
+    layout.maximize('#selectTable');
+  },
+  componentWillUnmount() {
+    Table.off('change', this.onChange);
+    layout.maximize('#selectTable');
+  },
+  onChange() {
+    this.setState(getData(this.context.router.getCurrentParams()));
+  },
+  componentWillReceiveProps() {
+    this.onChange();
+  },
+  render() {
+    return (
+      <div id="selectTable">
+        <div className="row">
+          <div className="large-2 medium-3 columns side-area">
+            <Tables/>
+          </div>
+          <div className="large-10 medium-9 columns end">
+          Select a table to begin... - {this.state.database ? this.state.database.id : 'none selected'}
+          </div>
+        </div>
+      </div>
+    );
+  }
+});
+
+let TableView = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+  getInitialState() {
+    return { table: Table.get(this.context.router.getCurrentParams().tableId) };
+  },
+  componentDidMount() {
+    layout.maximize('#tableView');
+  },
+  render() {
+    return (
+      <div id="tableView">
+        <div className="row">
+          <div className="large-2 medium-3 columns side-area">
+            <Tables/>
+          </div>
+          <div className="large-10 medium-9 columns end">
+            <RouteHandler/>
+          </div>
+        </div>
+      </div>
+    );
+  }
+});
+
 let routes = (
   <Route handler={App} path="/">
     <DefaultRoute handler={Connect} />
-    <Route name="structure" path="/structure/:id" handler={Structure} />
-    <Route name="content" path="/content/:id" handler={Content} />
-    <Route name="relations" path="/relations/:id" handler={Relations} />
-    <Route name="info" path="/info/:id" handler={Info} />
-    <Route name="query" path="/query/:id" handler={Query} />
+    <Route name="connection" path="/connection/:id" handler={ConnectionView} />
+    <Route name="database" path="/connection/:id/database/:databaseId" handler={DatabaseView} />
+    <Route name="table" path="/connection/:id/database/:databaseId/table/:tableId" handler={TableView}>
+      <Route name="structure" path="structure" handler={Structure} />
+      <Route name="relations" path="relations" handler={Relations} />
+      <Route name="info" path="info" handler={Info} />
+      <Route name="query" path="query" handler={Query} />
+    </Route>
   </Route>
 );
+//<Route name="content" path="content" handler={Content} />
 
 setTimeout(() => {
   win.show();

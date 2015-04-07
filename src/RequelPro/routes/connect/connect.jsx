@@ -8,6 +8,9 @@ import Favorite from '../../models/favorite.js';
 import Favorites from './favorites/favorites.jsx';
 
 let Connect = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   /*
    * Lifecycle
    */
@@ -39,7 +42,8 @@ let Connect = React.createClass({
       name: fav.name,
       host: fav.host,
       port: fav.port,
-      authKey: fav.authKey
+      authKey: fav.authKey,
+      db: fav.db
     });
   },
   onNameChange(e, n) {
@@ -66,6 +70,9 @@ let Connect = React.createClass({
   onAuthKeyChange(e) {
     this.setState({ authKey: e.target.value });
   },
+  onDbChange(e) {
+    this.setState({ db: e.target.value });
+  },
   /*
    * Methods
    */
@@ -74,7 +81,8 @@ let Connect = React.createClass({
       name: React.findDOMNode(this.refs.name).value,
       host: React.findDOMNode(this.refs.host).value,
       port: React.findDOMNode(this.refs.port).value,
-      authKey: React.findDOMNode(this.refs.authKey).value
+      authKey: React.findDOMNode(this.refs.authKey).value,
+      db: React.findDOMNode(this.refs.db).value
     };
   },
   save(e) {
@@ -90,6 +98,7 @@ let Connect = React.createClass({
       options.host = options.host || '127.0.0.1';
       options.port = options.port || 28015;
       options.authKey = options.authKey || '';
+      options.db = options.db || '';
       Favorite.create(options);
     }
   },
@@ -106,18 +115,37 @@ let Connect = React.createClass({
 
     connection.host = connection.host || '127.0.0.1';
     connection.port = connection.port || 28015;
+    connection.db = connection.db || 'test';
 
-    connection.connect()
-      .then(conn => {
-        if (conn) {
-          conn.close();
-        }
+    // Make sure we can connect to the database
+    connection.testConnection()
+      .then(() => {
+        // Create a connection and add it to the store
         connection.id = guid();
         store.store.connection.completedQueries[connection.id] = new Date().getTime();
-        Connection.set(Connection.inject(connection));
+        connection = Connection.inject(connection);
+
+        // Clear the current favorite
+        // TODO: Don't use the Model for this, let the favorites component communicate with the connect component directly
         Favorite.unset();
-      })
-      .catch(err => alert.error('Failed to connect!', err));
+        return connection.getDatabases();
+      }, err => alert.error('Failed to connect!', err))
+      .then(databases => {
+        let database = _.find(databases, db => db.id === connection.db);
+        database = database ? database : databases.length ? databases[0] : null;
+        if (database) {
+          // go to default db
+          this.context.router.transitionTo('database', {
+            id: connection.id,
+            databaseId: database.id
+          });
+          database.getTables();
+        } else {
+          // go to database selection
+          this.context.router.transitionTo('connection', connection);
+        }
+      }, err => alert.error('Failed to retrieve databases!', err))
+      .catch(err => alert.error('Uh Oh! Something went wrong...', err));
   },
   render() {
     return (
@@ -153,6 +181,21 @@ let Connect = React.createClass({
                     <div className="medium-1 columns">
                       <span className="prefix">
                         <i className="fa fa-database"></i>
+                      </span>
+                    </div>
+                    <div className="medium-11 columns end">
+                      <input type="text" placeholder="test" ref="db" value={this.state.db} onChange={this.onDbChange}/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="medium-12 columns">
+                  <div className="row collapse prefix-radius">
+                    <div className="medium-1 columns">
+                      <span className="prefix">
+                        <i className="fa fa-server"></i>
                       </span>
                     </div>
                     <div className="medium-11 columns end">
