@@ -62,26 +62,6 @@ try {
 
   win.menu.items[1].submenu.items[6].enabled = false;
   win.menu.items[1].submenu.items[7].enabled = false;
-
-  //$rootScope.$watch('connection', function (connection) {
-  //  win.menu.items[1].submenu.items[6].enabled = !!connection;
-  //  win.menu.items[1].submenu.items[7].enabled = !!connection;
-  //});
-
-  //$rootScope.$watch('connection.db', function (db) {
-  //  win.menu.items[3].submenu.items[1].enabled = !!db;
-  //  win.menu.items[3].submenu.items[3].enabled = !!db;
-  //  win.menu.items[3].submenu.items[5].enabled = !!db;
-  //  win.menu.items[3].submenu.items[9].enabled = !!db;
-  //  win.menu.items[4].submenu.items[0].enabled = !!db;
-  //});
-  //
-  //$rootScope.$watch('connection.table', function (table) {
-  //  win.menu.items[4].submenu.items[1].enabled = !!table;
-  //  win.menu.items[4].submenu.items[3].enabled = !!table;
-  //  win.menu.items[4].submenu.items[5].enabled = !!table;
-  //  win.menu.items[4].submenu.items[6].enabled = !!table;
-  //});
 } catch (err) {
   console.error(err);
 }

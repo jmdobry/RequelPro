@@ -53,12 +53,17 @@ let App = React.createClass({
    * Lifecycle
    */
   componentDidMount() {
+    // Event comes from main menu or global shortcut
     Connection.on('newTab', this.onNewTab);
+    // Event comes from main menu or global shortcut
     store.on('goBack', this.context.router.goBack);
   },
   componentWillUnmount() {
     Connection.off('newTab', this.onNewTab);
     store.off('goBack', this.context.router.goBack);
+  },
+  componentWillReceiveProps() {
+    store.emit('route', this.context.router.getCurrentParams(), this.context.router.getCurrentPathname());
   },
   /*
    * Event Handlers
@@ -71,12 +76,16 @@ let App = React.createClass({
       return false;
     }
   },
+  onMenu(e) {
+    e.preventDefault();
+    ContextMenu.popup(e.clientX, e.clientY);
+  },
   /*
    * Methods
    */
   render() {
     return (
-      <div className="content">
+      <div className="content" onContextMenu={this.onMenu}>
         <div id="headerRow" className="row">
           <div className="columns large-3 medium-4">
             <Databases/>

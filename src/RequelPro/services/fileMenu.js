@@ -1,5 +1,7 @@
 import gui from 'nw.gui';
 import Connection from '../models/connection.js';
+import store from './store.js';
+import alert from './alert.js';
 
 let win = gui.Window.get();
 
@@ -20,14 +22,6 @@ let FileMenu = new gui.MenuItem({
 FileMenu.submenu = new gui.Menu();
 
 FileMenu.submenu.append(new gui.MenuItem({
-  label: 'New Connection Window',
-  click() {
-    gui.Window.get(window.open(window.location.href));
-  },
-  key: 'n',
-  modifiers: 'cmd'
-}));
-FileMenu.submenu.append(new gui.MenuItem({
   label: 'New Connection Tab',
   click() {
     Connection.emit('newTab');
@@ -39,9 +33,7 @@ FileMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
 FileMenu.submenu.append(new gui.MenuItem({
   label: 'Open...',
   click() {
-    setTimeout(() => {
-      console.log('open');
-    });
+    alert.error('Not yet implemented!');
   },
   key: 'o',
   modifiers: 'cmd'
@@ -49,19 +41,15 @@ FileMenu.submenu.append(new gui.MenuItem({
 FileMenu.submenu.append(new gui.MenuItem({
   label: 'Open Recent',
   click() {
-    setTimeout(() => {
-      console.log('openRecent');
-    });
+    alert.error('Not yet implemented!');
   }
 }));
 FileMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
 FileMenu.submenu.append(new gui.MenuItem({
   label: 'Import...',
   click() {
+    alert.error('Not yet implemented!');
     chooseFile('#import-file-dialog');
-    setTimeout(() => {
-      console.log('import');
-    });
   },
   key: 'i',
   modifiers: 'cmd-shift'
@@ -69,9 +57,7 @@ FileMenu.submenu.append(new gui.MenuItem({
 FileMenu.submenu.append(new gui.MenuItem({
   label: 'Export...',
   click() {
-    setTimeout(() => {
-      console.log('export');
-    });
+    alert.error('Not yet implemented!');
   },
   key: 'e',
   modifiers: 'cmd-shift'
@@ -82,9 +68,7 @@ FileMenu.submenu.append(new gui.MenuItem({
 FileMenu.submenu.append(new gui.MenuItem({
   label: 'Close Window',
   click() {
-    setTimeout(() => {
-      win.close();
-    });
+    win.close();
   },
   key: 'w',
   modifiers: 'cmd'
@@ -95,7 +79,12 @@ FileMenu.submenu.append(new gui.MenuItem({
     Connection.emit('closeTab');
   },
   key: 'w',
-  modifiers: 'cmd-shift'
+  modifiers: 'cmd-shift',
+  enabled: false
 }));
+
+store.on('route', () => {
+  FileMenu.submenu.items[9].enabled = Connection.getAll().length;
+});
 
 export default FileMenu;

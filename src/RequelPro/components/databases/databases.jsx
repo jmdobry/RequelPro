@@ -18,7 +18,9 @@ let Databases = React.createClass({
   componentDidMount() {
     Connection.on('change', this.onChange);
     Database.on('change', this.onChange);
+    // Event comes from main menu, or global shortcut
     Database.on('refresh', this.onRefresh);
+    // Event comes from main menu or global shortcut
     Database.on('databaseInNewTab', this.onDatabaseInNewTab);
   },
   componentWillUnmount() {

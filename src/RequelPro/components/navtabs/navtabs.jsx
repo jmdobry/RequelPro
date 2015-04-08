@@ -16,7 +16,9 @@ let Navtabs = React.createClass({
   },
   componentDidMount() {
     Connection.on('change', this.onChange);
+    // Event comes from main menu or global shortcut
     Connection.on('closeTab', this.onCloseTab);
+    // Event comes from main menu or global shortcut
     Connection.on('goTo', this.onClick);
   },
   componentWillUnmount() {

@@ -1,4 +1,5 @@
 import styles from './content.scss';
+import gui from 'nw.gui';
 import React from 'react';
 import _ from 'lodash';
 import layout from '../../services/layout.js';
@@ -6,6 +7,7 @@ import alert from '../../services/alert.js';
 import Table from '../../models/table.js';
 import Tables from '../../components/tables/tables.jsx';
 import Filter from './filter/filter.jsx';
+import ContextMenu from './contextMenu/contextMenu.js'
 
 const defaults = {
   page: 1,
@@ -44,10 +46,16 @@ let Content = React.createClass({
   },
   componentDidMount() {
     Table.on('change', this.onChange);
+    ContextMenu.on('copy', this.onCopyRow);
+    ContextMenu.on('addRow', this.onAddRow);
+    Table.on('addRow', this.onAddRow);
     layout.maximize('#contentTable', 37 + 26);
   },
   componentWillUnmount() {
     Table.off('change', this.onChange);
+    ContextMenu.off('copy', this.onCopyRow);
+    ContextMenu.off('addRow', this.onAddRow);
+    Table.off('addRow', this.onAddRow);
   },
   componentWillReceiveProps() {
     this.onChange();
@@ -95,6 +103,20 @@ let Content = React.createClass({
     }
     this.getTablePage(options);
   },
+  onMenu(row, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    let haveRow = !!this.state.selectedRow;
+    ContextMenu.items[0].enabled = haveRow;
+    ContextMenu.items[2].enabled = haveRow;
+    ContextMenu.popup(e.clientX, e.clientY);
+  },
+  onCopyRow(e) {
+    if (e) {
+      e.preventDefault();
+    }
+    alert.error('Not yet implemented!');
+  },
   onPageForward(e) {
     e.preventDefault();
     if (this.state.hasMorePages) {
@@ -120,7 +142,10 @@ let Content = React.createClass({
     }
   },
   onAddRow(e) {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
+    this.clearSelection();
     alert.error('Not yet implemented!');
   },
   onDuplicateSelectedRow(e) {
@@ -159,7 +184,8 @@ let Content = React.createClass({
   },
   render() {
     let rows = this.state.data.map(d => {
-      return <tr key={d.id} className={d === this.state.selectedRow ? 'active' : ''} onClick={e => this.onRowSelect(d, e)}>
+      return <tr key={d.id} className={d === this.state.selectedRow ? 'active' : ''} onClick={e => this.onRowSelect(d, e)}
+        onContextMenu={e => this.onMenu(d, e)}>
       {this.state.fields.map(f => {
         let v = this.format(d[f]);
         return <td key={d.id + '-' + f} className="contentField" onDoubleClick={this.onFieldSelect} title={v}>

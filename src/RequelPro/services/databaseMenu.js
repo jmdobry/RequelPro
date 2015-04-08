@@ -1,5 +1,6 @@
 import gui from 'nw.gui';
 import alert from './alert.js';
+import store from './store.js';
 import Database from '../models/database.js';
 
 let DatabaseMenu = new gui.MenuItem({
@@ -53,5 +54,14 @@ DatabaseMenu.submenu.append(new gui.MenuItem({
     Database.emit('databaseInNewTab');
   }
 }));
+
+store.on('route', (params, pathname) => {
+  DatabaseMenu.submenu.items[0].enabled = !!(pathname && params.id);
+  DatabaseMenu.submenu.items[1].enabled = !!(pathname && params.id && params.databaseId);
+  DatabaseMenu.submenu.items[3].enabled = !!(pathname && params.id && params.databaseId);
+  DatabaseMenu.submenu.items[5].enabled = !!(pathname && params.id && params.databaseId);
+  DatabaseMenu.submenu.items[7].enabled = !!(pathname && params.id);
+  DatabaseMenu.submenu.items[9].enabled = !!(pathname && params.id && params.databaseId);
+});
 
 export default DatabaseMenu;
