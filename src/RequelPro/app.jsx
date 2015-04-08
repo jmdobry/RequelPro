@@ -189,7 +189,6 @@ let TableView = React.createClass({
             <RouteHandler/>
           </div>
         </div>
-      cungricht@centurylink.net
       </div>
     );
   }
