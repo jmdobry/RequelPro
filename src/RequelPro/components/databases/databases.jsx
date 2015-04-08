@@ -1,20 +1,9 @@
 import React from 'react';
-import {Link} from 'react-router';
-import classnames from 'classnames';
+import guid from 'mout/random/guid';
+import store from '../../services/store.js';
 import Connection from '../../models/connection.js';
 import Database from '../../models/database.js';
 import styles from './databases.scss';
-
-let getData = params => {
-  let connection = null;
-  if (params.id) {
-    connection = Connection.get(params.id);
-  }
-  return {
-    connection,
-    databases: connection ? Database.filter({ connectionId: connection.id }) : []
-  };
-};
 
 let Databases = React.createClass({
   contextTypes: {
@@ -24,21 +13,25 @@ let Databases = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    return getData(this.context.router.getCurrentParams());
+    return this.getState();
   },
   componentDidMount() {
     Connection.on('change', this.onChange);
     Database.on('change', this.onChange);
+    Database.on('refresh', this.onRefresh);
+    Database.on('databaseInNewTab', this.onDatabaseInNewTab);
   },
   componentWillUnmount() {
     Connection.off('change', this.onChange);
     Database.off('change', this.onChange);
+    Database.off('refresh', this.onRefresh);
+    Database.off('databaseInNewTab', this.onDatabaseInNewTab);
   },
   /*
    * Event Handlers
    */
   onChange() {
-    this.setState(getData(this.context.router.getCurrentParams()));
+    this.setState(this.getState());
   },
   componentWillReceiveProps() {
     this.onChange();
@@ -56,16 +49,42 @@ let Databases = React.createClass({
       });
     }
   },
+  onRefresh() {
+    let params = this.context.router.getCurrentParams();
+    if (params.id) {
+      let connection = Connection.get(params.id);
+      connection.getDatabases();
+    }
+  },
+  onDatabaseInNewTab() {
+    let params = this.context.router.getCurrentParams();
+    if (params.id) {
+      let connection = Connection.get(params.id);
+      let newConnection = Connection.createInstance(connection);
+      newConnection.id = guid();
+
+      store.store.connection.completedQueries[newConnection.id] = new Date().getTime();
+      newConnection = Connection.inject(newConnection);
+      newConnection.getDatabases().then(() => {
+        Connection.emit('goTo', newConnection);
+      });
+    }
+  },
   /*
    * Methods
    */
+  getState() {
+    return {
+      databases: Database.filter({ connectionId: this.context.router.getCurrentParams().id })
+    };
+  },
   render() {
     return (
       <div id="databases">
         <form>
           <div className="row">
             <div className="medium-offset-1 medium-10 columns">
-              <label>Databases
+              <label title="Select a database to view">Databases
                 <select value={this.state.databaseId} onChange={this.onSelect} disabled={!this.state.databases.length}>
                 {this.state.databases.map(database => {
                   return <option key={database.id} value={database.id}>{database.name}</option>;

@@ -1,4 +1,6 @@
 import gui from 'nw.gui';
+import alert from './alert.js';
+import Database from '../models/database.js';
 
 let DatabaseMenu = new gui.MenuItem({
   type: 'normal',
@@ -8,9 +10,7 @@ DatabaseMenu.submenu = new gui.Menu();
 DatabaseMenu.submenu.append(new gui.MenuItem({
   label: 'Create Database...',
   click() {
-    setTimeout(() => {
-      console.log('createDatabase');
-    });
+    alert.error('Not yet implemented!');
   },
   key: 'a',
   modifiers: 'shift-alt'
@@ -18,40 +18,21 @@ DatabaseMenu.submenu.append(new gui.MenuItem({
 DatabaseMenu.submenu.append(new gui.MenuItem({
   label: 'Drop Database...',
   click() {
-    //if ($rootScope.connection) {
-    //  $rootScope.processing = true;
-    //  $rootScope.connection.dropDatabase($rootScope.connection.db)
-    //    .then(function () {
-    //      delete $rootScope.connection.db;
-    //    })
-    //    .finally(function () {
-    //      $rootScope.processing = false;
-    //    })
-    //    .catch(function (err) {
-    //      $rootScope.showError('Failed to drop database!', err.msg || err);
-    //    })
-    //    .error(function (err) {
-    //      $rootScope.showError('Failed to drop database!', err.msg || err);
-    //    });
-    //}
+    alert.error('Not yet implemented!');
   }
 }));
 DatabaseMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
 DatabaseMenu.submenu.append(new gui.MenuItem({
   label: 'Rename Database...',
   click() {
-    setTimeout(() => {
-      console.log('renameDatabase');
-    });
+    alert.error('Not yet implemented!');
   }
 }));
 DatabaseMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
 DatabaseMenu.submenu.append(new gui.MenuItem({
   label: 'Refresh Tables',
   click() {
-    setTimeout(() => {
-      console.log('refreshTables');
-    });
+    alert.error('Not yet implemented!');
   },
   key: 'r',
   modifiers: 'ctrl-cmd'
@@ -60,9 +41,7 @@ DatabaseMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
 DatabaseMenu.submenu.append(new gui.MenuItem({
   label: 'Refresh Databases',
   click() {
-    setTimeout(() => {
-      console.log('refreshDatabases');
-    });
+    Database.emit('refresh');
   },
   key: 'r',
   modifiers: 'shift-cmd'
@@ -71,9 +50,7 @@ DatabaseMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
 DatabaseMenu.submenu.append(new gui.MenuItem({
   label: 'Open Database in New Tab',
   click() {
-    setTimeout(() => {
-      console.log('openDatabaseInNewTab');
-    });
+    Database.emit('databaseInNewTab');
   }
 }));
 

@@ -10,9 +10,9 @@ let alert = {
       confirmButtonText: 'Okay'
     });
   },
-  error(title, err) {
+  error(title, err = '') {
     let msg = err;
-    msg = err.msg ? err.msg : msg;
+    msg = err.message ? err.message : msg;
     if (err.stack) {
       console.error(err.stack);
     }

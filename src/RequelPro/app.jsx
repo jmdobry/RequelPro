@@ -54,9 +54,11 @@ let App = React.createClass({
    */
   componentDidMount() {
     Connection.on('newTab', this.onNewTab);
+    store.on('goBack', this.context.router.goBack);
   },
   componentWillUnmount() {
     Connection.off('newTab', this.onNewTab);
+    store.off('goBack', this.context.router.goBack);
   },
   /*
    * Event Handlers
@@ -113,7 +115,7 @@ let ConnectionView = React.createClass({
       <div id="selectDatabase">
         <div className="row">
           <div className="large-12 columns end">
-          Select a database or create one to begin... - {this.state.connection.id}
+          Select a database or create one to begin...
           </div>
         </div>
       </div>
@@ -187,6 +189,7 @@ let TableView = React.createClass({
             <RouteHandler/>
           </div>
         </div>
+      cungricht@centurylink.net
       </div>
     );
   }

@@ -1,17 +1,7 @@
-import styles from './info.scss';
 import React from 'react';
 import layout from '../../services/layout.js';
 import Table from '../../models/table.js';
-import Connection from '../../models/connection.js';
-import Database from '../../models/database.js';
-
-let getData = params => {
-  let table = null;
-  if (params.tableId) {
-    table = Table.get(params.tableId);
-  }
-  return { table };
-};
+import styles from './info.scss';
 
 let Info = React.createClass({
   contextTypes: {
@@ -21,7 +11,7 @@ let Info = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    return getData(this.context.router.getCurrentParams());
+    return this.getState();
   },
   componentDidMount() {
     layout.maximize('#info');
@@ -33,11 +23,19 @@ let Info = React.createClass({
    * Event Handlers
    */
   onChange() {
-    this.setState(getData(this.context.router.getCurrentParams()));
+    this.setState(this.getState());
   },
   /*
    * Methods
    */
+  getState() {
+    let params = this.context.router.getCurrentParams();
+    let table = null;
+    if (params.tableId) {
+      table = Table.get(params.tableId);
+    }
+    return { table };
+  },
   render() {
     return (
       <div id="info" className="panel">

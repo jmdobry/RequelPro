@@ -6,6 +6,8 @@ let store = new JSData.DS({
   log: false
 });
 
+store.utils.Events(store);
+
 store.registerAdapter('nedb', new DSNeDBAdapter(), { default: true });
 
 export default store;

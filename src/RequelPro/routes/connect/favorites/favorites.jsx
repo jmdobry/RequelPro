@@ -1,62 +1,63 @@
 import React from 'react';
 import Favorite from '../../../models/favorite.js';
-import styles from './favorites.scss';
 import layout from '../../../services/layout.js';
+import styles from './favorites.scss';
 
 let Favorites = React.createClass({
+  /*
+   * Lifecycle
+   */
   getInitialState() {
-    // Pull the initial list of users
-    // from Firebase
     Favorite.findAll();
-
-    return {
-      favorites: Favorite.getAll(),
-      fav: Favorite.current()
-    };
-  },
-  onChange() {
-    this.setState({
-      favorites: Favorite.getAll(),
-      fav: Favorite.current()
-    });
+    return { favorites: Favorite.getAll() };
   },
   componentDidMount() {
     Favorite.on('change', this.onChange);
-    Favorite.on('fav', this.onChange);
     layout.maximize('#favorites');
   },
   componentWillUnmount() {
     Favorite.off('change', this.onChange);
-    Favorite.off('fav', this.onChange);
   },
-  newConnection() {
-    Favorite.unset();
+  /*
+   * Event Handlers
+   */
+  onChange() {
+    this.setState({ favorites: Favorite.getAll() });
   },
-  selectFavorite(favorite, e) {
+  onSelectFavorite(favorite, e) {
     e.preventDefault();
     e.stopPropagation();
-    Favorite.set(favorite);
+    this.props.onChange(favorite);
+    this.setState({ favorite });
   },
-  remove(favorite, e) {
+  onNewConnection() {
+    this.props.onChange();
+    this.setState({ favorite: null });
+  },
+  onRemove(favorite, e) {
     e.preventDefault();
     e.stopPropagation();
     Favorite.destroy(favorite);
-    Favorite.unset();
+    this.onNewConnection();
   },
+  /*
+   * Methods
+   */
   render() {
     return (
       <div className="panel" id="favorites">
-        <button className={'right button radius tiny' + (!this.state.fav.id ? ' disabled' : '')} onClick={this.newConnection}>
+        <button className={'right button radius tiny' + (!this.state.favorite ? ' disabled' : '')} onClick={this.onNewConnection}>
           <i className="fa fa-bolt"></i>
-        &nbsp;Quick Connect
+        &nbsp;New Connection
         </button>
         <h4>Favorites</h4>
         <hr/>
         <ul className="side-nav">
           {this.state.favorites.map(favorite => {
-            return <li key={favorite.id} className={this.state.fav === favorite ? 'active' : '' }>
-              <a key={favorite.id} href="" className="clearfix" onClick={e => this.selectFavorite(favorite, e)}>
-                <span key={favorite.id} className="right button radius tiny alert" onClick={e => this.remove(favorite, e)}>
+            return <li key={favorite.id} className={this.state.favorite === favorite ? 'active' : '' }>
+              <a key={favorite.id} href="" className="clearfix" onClick={e => this.onSelectFavorite(favorite, e)}>
+                <span key={favorite.id} className="right button radius tiny alert" onClick={e => this.onRemove(favorite, e)}
+                  title="Delete favorite">
                   <i className="fa fa-trash-o">&nbsp;</i>
                 </span>
                 {favorite.name}&nbsp;

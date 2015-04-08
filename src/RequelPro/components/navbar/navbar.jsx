@@ -1,29 +1,16 @@
 import React from 'react';
-import {Link} from 'react-router';
 import classnames from 'classnames';
 import Connection from '../../models/connection.js';
 import Table from '../../models/table.js';
 import styles from './navbar.scss';
 
 const links = [
-  { icon: 'database', label: 'Structure', name: 'structure' },
-  { icon: 'table', label: 'Content', name: 'content' },
-  { icon: 'sitemap', label: 'Relations', name: 'relations' },
-  { icon: 'info', label: 'Table Info', name: 'info' },
-  { icon: 'terminal', label: 'Query', name: 'query' }
+  { icon: 'database', label: 'Structure', name: 'structure', title: 'Switch to the Table Structure tab (⌘1)' },
+  { icon: 'table', label: 'Content', name: 'content', title: 'Switch to the Table Content tab (⌘2)' },
+  { icon: 'sitemap', label: 'Relations', name: 'relations', title: 'Switch to the Table Relations tab (⌘3)' },
+  { icon: 'info', label: 'Table Info', name: 'info', title: 'Switch to the Table Info tab (⌘4)' },
+  { icon: 'terminal', label: 'Query', name: 'query', title: 'Switch to the Run Query tab (⌘5)' }
 ];
-
-let getData = params => {
-  let connection = null;
-  let table = null;
-  if (params.id) {
-    connection = Connection.get(params.id);
-  }
-  if (params.tableId) {
-    table = Table.get(params.tableId);
-  }
-  return { connection, table };
-};
 
 let Navbar = React.createClass({
   contextTypes: {
@@ -33,28 +20,34 @@ let Navbar = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    let data = getData(this.context.router.getCurrentParams());
+    let data = this.getState();
     data.links = links;
     return data;
   },
   componentDidMount() {
     Connection.on('change', this.onChange);
+    Connection.on('route', this.onClick);
+    Table.on('change', this.onChange);
   },
   componentWillUnmount() {
     Connection.off('change', this.onChange);
+    Connection.off('route', this.onClick);
+    Table.off('change', this.onChange);
+  },
+  componentWillReceiveProps() {
+    this.onChange();
   },
   /*
    * Event Handlers
    */
   onChange() {
-    this.setState(getData(this.context.router.getCurrentParams()));
-  },
-  componentWillReceiveProps() {
-    this.onChange();
+    this.setState(this.getState());
   },
   onClick(link, e) {
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (this.state.connection) {
       this.context.router.transitionTo(link.name, this.context.router.getCurrentParams());
     }
@@ -62,6 +55,18 @@ let Navbar = React.createClass({
   /*
    * Methods
    */
+  getState() {
+    let params = this.context.router.getCurrentParams();
+    let connection = null;
+    let table = null;
+    if (params.id) {
+      connection = Connection.get(params.id);
+    }
+    if (params.tableId) {
+      table = Table.get(params.tableId);
+    }
+    return { connection, table };
+  },
   render() {
     this.state.links.forEach(link => {
       link.classes = classnames({
@@ -73,7 +78,7 @@ let Navbar = React.createClass({
     return (
       <div className="icon-bar five-up">
       {this.state.links.map(link => {
-        return <a href="" key={link.name} className={link.classes} onClick={e => this.onClick(link, e)}>
+        return <a href="" key={link.name} className={link.classes} onClick={e => this.onClick(link, e)} title={link.title}>
           <i className={'fa fa-' + link.icon}></i>
           <label>{link.label}</label>
         </a>

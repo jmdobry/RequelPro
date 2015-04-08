@@ -25,6 +25,10 @@ let Connection = store.defineResource({
   afterInject() {
     Connection.emit('change');
   },
+  beforeEject(Connection, connection) {
+    Table.ejectAll({ connectionId: connection.id });
+    Database.ejectAll({ connectionId: connection.id });
+  },
   afterEject() {
     Connection.emit('change');
   },

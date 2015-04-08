@@ -41,14 +41,14 @@ let Tables = React.createClass({
     Table.off('change', this.onChange);
     Database.off('change', this.onChange);
   },
+  componentWillReceiveProps() {
+    this.onChange();
+  },
   /*
    * Event Handlers
    */
   onChange() {
     this.setState(getData(this.context.router.getCurrentParams()));
-  },
-  componentWillReceiveProps() {
-    this.onChange();
   },
   onSelect(table, e) {
     e.preventDefault();

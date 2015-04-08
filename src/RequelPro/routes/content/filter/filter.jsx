@@ -90,7 +90,7 @@ let Filter = React.createClass({
                   <label className="inline">Filter:</label>
                 </div>
                 <div className="small-9 columns end">
-                  <label>
+                  <label title="Choose a field you want to use for your search">
                     <select value={this.state.field} onChange={this.onFieldSelect} disabled={disabled} id="fieldSelect">
                       {this.props.fields.map(f => {
                         return <option key={f} value={f}>{f}</option>;
@@ -101,7 +101,7 @@ let Filter = React.createClass({
               </div>
             </div>
             <div className="large-1 columns">
-              <label>
+              <label title="Choose a search operator">
                 <select value={this.state.operator} onChange={this.onOperatorSelect} disabled={disabled} id="operatorSelect">
                 {this.state.operators.map(op => {
                   return <option key={op} value={op}>{op}</option>;
@@ -112,7 +112,8 @@ let Filter = React.createClass({
             <div className="large-8 columns">
               <div className="row collapse">
                 <div className="large-11 columns">
-                  <input type="text" ref="value" value={this.state.value} onChange={this.onValueChange} disabled={disabled} placeholder="Enter filter value here..."/>
+                  <input type="text" ref="value" value={this.state.value} onChange={this.onValueChange} disabled={disabled}
+                    placeholder="Enter search value here..." title="Enter search value here..."/>
                 </div>
                 <div className="large-1 columns end">
                   <button type="submit" className="button success tiny" disabled={disabled}>Go</button>

@@ -123,6 +123,10 @@ let Content = React.createClass({
     e.preventDefault();
     alert.error('Not yet implemented!');
   },
+  onDuplicateSelectedRow(e) {
+    e.preventDefault();
+    alert.error('Not yet implemented!');
+  },
   /*
    * Methods
    */
@@ -157,8 +161,9 @@ let Content = React.createClass({
     let rows = this.state.data.map(d => {
       return <tr key={d.id} className={d === this.state.selectedRow ? 'active' : ''} onClick={e => this.onRowSelect(d, e)}>
       {this.state.fields.map(f => {
-        return <td key={d.id + '-' + f} className="contentField" onDoubleClick={this.onFieldSelect}>
-        {this.format(d[f])}
+        let v = this.format(d[f]);
+        return <td key={d.id + '-' + f} className="contentField" onDoubleClick={this.onFieldSelect} title={v}>
+        {v}
         </td>;
       })}
       </tr>;
@@ -173,7 +178,7 @@ let Content = React.createClass({
             <thead>
               <tr>
             {this.state.fields.map(f => {
-              return <th key={f} className="contentHeader" onClick={e => this.onSort(f, e)}>
+              return <th key={f} className="contentHeader" onClick={e => this.onSort(f, e)} title={'Sort by ' + f}>
                 {f}
                 <span id="sort-arrows" className="right">
                   <i id="up-sort" className={'fa fa-caret-up ' + (this.state.direction === 'asc' && this.state.sort === f ? 'active' : '')}></i>
@@ -189,17 +194,22 @@ let Content = React.createClass({
         <div id="bottomBar" className="panel">
           <div className="left">
             <ul className="button-group">
-              <li onClick={this.onAddRow}>
+              <li onClick={this.onAddRow} title="Add row (⌥⌘A)">
                 <a href="" className="button">
                   <i className="fa fa-plus"></i>
                 </a>
               </li>
-              <li onClick={this.onDeleteSelectedRows}>
+              <li onClick={this.onDeleteSelectedRows} title="Delete selected row(s) (⌦)">
                 <a href="" className="button" disabled={!this.state.selectedRow}>
                   <i className="fa fa-minus"></i>
                 </a>
               </li>
-              <li onClick={this.onRefresh}>
+              <li onClick={this.onDuplicateSelectedRow} title="Duplicate selected row (⌘D)">
+                <a href="" className="button" disabled={!this.state.selectedRow}>
+                  <i className="fa fa-files-o"></i>
+                </a>
+              </li>
+              <li onClick={this.onRefresh} title="Refresh table contents (⌘R)">
                 <a href="" className="button">
                   <i className="fa fa-refresh"></i>
                 </a>
@@ -211,10 +221,12 @@ let Content = React.createClass({
           </div>
           <div className="right">
             <ul className="pagination">
-              <li className={'arrow' + (this.state.page === 1 ? ' unavailable' : '')} onClick={this.onPageBack}>
+              <li className={'arrow' + (this.state.page === 1 ? ' unavailable' : '')} onClick={this.onPageBack}
+                title="View previous page of results">
                 <a href="">&laquo; Previous</a>
               </li>
-              <li className={'arrow' + (this.state.hasMorePages ? '' : ' unavailable')} onClick={this.onPageForward}>
+              <li className={'arrow' + (this.state.hasMorePages ? '' : ' unavailable')} onClick={this.onPageForward}
+                title="View next page of results">
                 <a href="">Next &raquo;</a>
               </li>
             </ul>

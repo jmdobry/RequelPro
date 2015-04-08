@@ -1,7 +1,7 @@
 import React from 'react';
+import _ from 'lodash';
 import Connection from '../../models/connection.js';
 import Database from '../../models/database.js';
-import Table from '../../models/table.js';
 import styles from './navtabs.scss';
 
 let Navtabs = React.createClass({
@@ -12,15 +12,17 @@ let Navtabs = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    return { connections: Connection.getAll() };
+    return this.getState();
   },
   componentDidMount() {
     Connection.on('change', this.onChange);
     Connection.on('closeTab', this.onCloseTab);
+    Connection.on('goTo', this.onClick);
   },
   componentWillUnmount() {
     Connection.off('change', this.onChange);
     Connection.off('closeTab', this.onCloseTab);
+    Connection.off('goTo', this.onClick);
   },
   componentWillReceiveProps() {
     this.onChange();
@@ -29,32 +31,44 @@ let Navtabs = React.createClass({
    * Event Handlers
    */
   onChange() {
-    this.setState({ connections: Connection.getAll() });
+    this.setState(this.getState());
   },
   onClick(connection, e) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.context.router.transitionTo('connection', connection);
+    console.log('onClick', connection, e);
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    let databases = Database.filter({ connectionId: connection.id });
+    let database = _.find(databases, db => db.id === connection.db);
+    database = database ? database : databases.length ? databases[0] : null;
+    if (database) {
+      // go to default db
+      this.context.router.transitionTo('database', {
+        id: connection.id,
+        databaseId: database.id
+      });
+      database.getTables();
+    } else {
+      // go to database selection
+      this.context.router.transitionTo('connection', connection);
+    }
   },
   onCloseTab() {
     let params = this.context.router.getCurrentParams();
     if (params.id) {
-      this.remove(Connection.get(params.id));
+      this.onRemoveClick(Connection.get(params.id));
     }
   },
   onRemoveClick(connection, e) {
     e.preventDefault();
     e.stopPropagation();
-    Table.ejectAll({ connectionId: connection.id });
-    Database.ejectAll({ connectionId: connection.id });
     Connection.eject(connection.id);
     let connections = Connection.getAll();
     if (connections.length) {
-      this.context.router.transitionTo('connection', connection);
+      this.context.router.transitionTo('connection', connections[0]);
     } else {
       Connection.ejectAll();
-      Table.ejectAll();
-      Database.ejectAll();
       this.context.router.transitionTo('/');
     }
   },
@@ -64,6 +78,9 @@ let Navtabs = React.createClass({
   /*
    * Methods
    */
+  getState() {
+    return { connections: Connection.getAll() };
+  },
   render() {
     let dlClasses = 'sub-nav';
     if (!this.state.connections.length) {

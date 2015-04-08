@@ -1,4 +1,3 @@
-import styles from './connect.scss';
 import React from 'react';
 import guid from 'mout/random/guid';
 import alert from '../../services/alert.js';
@@ -6,6 +5,7 @@ import Connection from '../../models/connection.js';
 import store from '../../services/store.js';
 import Favorite from '../../models/favorite.js';
 import Favorites from './favorites/favorites.jsx';
+import styles from './connect.scss';
 
 let Connect = React.createClass({
   contextTypes: {
@@ -15,37 +15,11 @@ let Connect = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    // Pull the initial list of users
-    // from Firebase
-    Favorite.findAll();
-
-    return {
-      favorites: Favorite.getAll(),
-      fav: {}
-    };
-  },
-  componentDidMount() {
-    Favorite.on('change', this.onChange);
-    Favorite.on('fav', this.onChange);
-  },
-  componentWillUnmount() {
-    Favorite.off('change', this.onChange);
-    Favorite.off('fav', this.onChange);
+    return {};
   },
   /*
    * Event Handlers
    */
-  onChange() {
-    let fav = Favorite.current();
-    this.setState({
-      fav,
-      name: fav.name,
-      host: fav.host,
-      port: fav.port,
-      authKey: fav.authKey,
-      db: fav.db
-    });
-  },
   onNameChange(e, n) {
     let name = n || n === '' ? n : e.target.value;
     if (!name) {
@@ -73,6 +47,16 @@ let Connect = React.createClass({
   onDbChange(e) {
     this.setState({ db: e.target.value });
   },
+  onSelectFavorite(favorite) {
+    this.setState({
+      name: favorite ? favorite.name : null,
+      host: favorite ? favorite.host : null,
+      port: favorite ? favorite.port : null,
+      authKey: favorite ? favorite.authKey : null,
+      db: favorite ? favorite.db : null,
+      favorite: favorite ? favorite : null
+    });
+  },
   /*
    * Methods
    */
@@ -91,8 +75,8 @@ let Connect = React.createClass({
     if (!name) {
       return;
     }
-    if (this.state.fav && this.state.fav.id) {
-      Favorite.update(this.state.fav.id, this.getValues());
+    if (this.state.favorite) {
+      Favorite.update(this.state.favorite.id, this.getValues());
     } else {
       let options = this.getValues();
       options.host = options.host || '127.0.0.1';
@@ -126,8 +110,7 @@ let Connect = React.createClass({
         connection = Connection.inject(connection);
 
         // Clear the current favorite
-        // TODO: Don't use the Model for this, let the favorites component communicate with the connect component directly
-        Favorite.unset();
+        this.onSelectFavorite();
         return connection.getDatabases();
       }, err => alert.error('Failed to connect!', err))
       .then(databases => {
@@ -152,7 +135,7 @@ let Connect = React.createClass({
       <div id="connectPage">
         <div className="row">
           <div className="large-3 medium-4 columns">
-            <Favorites/>
+            <Favorites onChange={this.onSelectFavorite}/>
           </div>
           <div className="large-5 large-offset-2 medium-4 medium-offset-1 columns end">
             <form name="connectForm" id="connectForm" className="panel radius" onSubmit={this.connect}>
@@ -179,7 +162,7 @@ let Connect = React.createClass({
                 <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
                     <div className="medium-1 columns">
-                      <span className="prefix">
+                      <span className="prefix" title="Default database">
                         <i className="fa fa-database"></i>
                       </span>
                     </div>
@@ -194,7 +177,7 @@ let Connect = React.createClass({
                 <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
                     <div className="medium-1 columns">
-                      <span className="prefix">
+                      <span className="prefix" title="Hostname of server. Default is 127.0.0.1">
                         <i className="fa fa-server"></i>
                       </span>
                     </div>
@@ -209,7 +192,7 @@ let Connect = React.createClass({
                 <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
                     <div className="medium-1 columns">
-                      <span className="prefix">
+                      <span className="prefix" title="Connection port. Default is 28015">
                         <i className="fa fa-anchor"></i>
                       </span>
                     </div>
@@ -224,7 +207,7 @@ let Connect = React.createClass({
                 <div className="medium-12 columns">
                   <div className="row collapse prefix-radius">
                     <div className="medium-1 columns">
-                      <span className="prefix">
+                      <span className="prefix" title="Server authKey. Default is no key">
                         <i className="fa fa-key"></i>
                       </span>
                     </div>
@@ -238,7 +221,7 @@ let Connect = React.createClass({
               <ul className="button-group even-3 radius">
                 <li>
                   <button type="button" className="button tiny" onClick={this.save}>
-                  {this.state.fav.id ? 'Save' : 'Save to Favorites'}
+                  {this.state.favorite ? 'Save' : 'Save to Favorites'}
                   </button>
                 </li>
                 <li>
