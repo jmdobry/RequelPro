@@ -1,8 +1,7 @@
 import r from 'rethinkdb';
 import _ from 'lodash';
-import guid from 'mout/random/guid';
 import store from '../services/store.js';
-import Table from '../models/table.js';
+import Table from './table.js';
 
 let Database = store.defineResource({
   name: 'database',
@@ -15,7 +14,7 @@ let Database = store.defineResource({
     },
     hasMany: {
       table: {
-        foreignKey: 'databaseId',
+        foreignKey: 'db',
         localField: 'tables'
       }
     }
@@ -39,38 +38,48 @@ let Database = store.defineResource({
    */
   methods: {
     getTables() {
-      let existing = Table.filter({ databaseId: this.id, connectionId: this.connection.id });
-      let toKeep = [];
-      return this.connection.run(r.db(this.name).tableList()).then(tables => {
-        let injected = Table.inject(tables.map(t => {
-          let table = _.find(existing, _t => _t.name === t);
-          if (table) {
-            toKeep.push(table.id);
-            return table;
-          } else {
-            return {
-              id: guid(),
-              name: t,
-              databaseId: this.id,
-              connectionId: this.connection.id
-            };
-          }
-        }));
-        // remove from the store tables that no longer exist
-        if (toKeep.length) {
-          Table.ejectAll({
-            where: {
-              id: {
-                'notIn': toKeep
-              }
-            }
-          }, { notify: false });
-        }
-        return injected;
-      });
+      let previous = Table.filter({ db: this.id, connectionId: this.connectionId });
+      return this.connection.run(
+        r.db('rethinkdb')
+          .table('table_config', { identifier_format: 'uuid' })
+          .filter({ db: this.id })
+          .eqJoin('id', r.db('rethinkdb').table('table_status', { identifier_format: 'uuid' }))
+          .zip()
+          .map(table => {
+            return table.merge(r.db(this.name).table(table('name')).info().without('db'));
+          })
+          .map(table => {
+            return table.merge({
+              shards: table('shards').map(shard => {
+                return shard.merge({
+                  replicas: shard('replicas').innerJoin(
+                    r.db('rethinkdb')
+                      .table('stats', { identifier_format: 'uuid' })
+                      .filter(stat => stat('table').eq(table('id')).and(stat.hasFields('storage_engine')))
+                      .without('id', 'table', 'db'),
+                    (replicaRow, statRow) => replicaRow('server').eq(statRow('server'))
+                  ).zip().coerceTo('array')
+                });
+              }).coerceTo('array'),
+              indexes: table('indexes').map(index => {
+                return r.db(this.name).table(table('name')).indexStatus(index).without('function');
+              }).coerceTo('array')
+            });
+          })
+          .coerceTo('array')
+      ).then(tables => {
+          tables.forEach(table => {
+            table.connectionId = this.connectionId;
+          });
+          let current = Table.inject(tables);
+          let deleted = _.difference(previous, current);
+          deleted.forEach(table => {
+            Table.eject(table.id, { notify: false });
+          });
+          return current;
+        });
     }
   }
 });
 
-console.log('RETURN DATABASE MODEL');
 export default Database;

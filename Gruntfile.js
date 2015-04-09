@@ -89,6 +89,42 @@ module.exports = function (grunt) {
             dest: 'dist/'
           }
         ]
+      },
+      fix: {
+        src: 'node_modules/rethinkdb/ast.js',
+        dest: 'node_modules/rethinkdb/ast.js',
+        options: {
+          process: function (content) {
+            return content.replace('val instanceof Function', 'typeof val === \'function\'');
+          }
+        }
+      },
+      fix2: {
+        src: 'node_modules/rethinkdb/ast.js',
+        dest: 'node_modules/rethinkdb/ast.js',
+        options: {
+          process: function (content) {
+            return content.replace('defun_or_opts instanceof Function', 'typeof defun_or_opts === \'function\'');
+          }
+        }
+      },
+      fix3: {
+        src: 'node_modules/rethinkdb/util.js',
+        dest: 'node_modules/rethinkdb/util.js',
+        options: {
+          process: function (content) {
+            return content.replace('obj instanceof Array', 'Array.isArray(obj)');
+          }
+        }
+      },
+      fix4: {
+        src: 'node_modules/rethinkdb/util.js',
+        dest: 'node_modules/rethinkdb/util.js',
+        options: {
+          process: function (content) {
+            return content.replace('obj instanceof Object', 'obj && typeof obj === \'function\'');
+          }
+        }
       }
     },
 
@@ -101,6 +137,7 @@ module.exports = function (grunt) {
         },
         externals: {
           'nw.gui': 'commonjs nw.gui',
+          'nwglobal': 'commonjs nwglobal',
           'rethinkdb': 'commonjs rethinkdb',
           'js-data-schema': 'commonjs js-data-schema',
           'path': 'commonjs path'
@@ -182,8 +219,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask('prebuild', [
     'clean:dist',
-    'webpack',
     'copy',
+    'webpack',
     'clean:pre'
   ]);
 

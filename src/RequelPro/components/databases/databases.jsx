@@ -76,8 +76,15 @@ let Databases = React.createClass({
    * Methods
    */
   getState() {
+    let params = this.context.router.getCurrentParams();
     return {
-      databases: Database.filter({ connectionId: this.context.router.getCurrentParams().id })
+      databases: Database.filter({
+        connectionId: params.id,
+        orderBy: [
+          ['name', 'ASC']
+        ]
+      }),
+      databaseId: params.databaseId
     };
   },
   render() {

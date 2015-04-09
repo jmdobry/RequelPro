@@ -12,7 +12,7 @@ let Table = store.defineResource({
         localField: 'connection'
       },
       database: {
-        localKey: 'databaseId',
+        localKey: 'db',
         localField: 'database'
       }
     }
@@ -30,6 +30,37 @@ let Table = store.defineResource({
    * Instance Methods
    */
   methods: {
+    getStatus() {
+      return this.connection.run(
+        r.db('rethinkdb')
+          .table('table_status', { identifier_format: 'uuid' })
+          .get(this.id)
+          .merge(r.db(this.database.name).table(r.row('name')).info().without('db'))
+          .merge(table => {
+            return {
+              shards: table('shards').map(shard => {
+                return shard.merge({
+                  replicas: shard('replicas').innerJoin(
+                    r.db('rethinkdb')
+                      .table('stats', { identifier_format: 'uuid' })
+                      .filter(stat => stat('table').eq(table('id')).and(stat.hasFields('storage_engine')))
+                      .without('id', 'table', 'db'),
+                    (replicaRow, statRow) => {
+                      return replicaRow('server').eq(statRow('server'));
+                    }
+                  ).zip().coerceTo('array')
+                });
+              }).coerceTo('array'),
+              indexes: table('indexes').map(index => {
+                return r.db(this.database.name).table(table('name')).indexStatus(index).without('function');
+              }).coerceTo('array')
+            };
+          })
+      ).then(table => {
+          console.log(table);
+          return Table.inject(table);
+        });
+    },
     getData(options) {
       let connection = this.connection;
       // data query

@@ -73,11 +73,11 @@ ViewMenu.submenu.append(new gui.MenuItem({
 }));
 
 store.on('route', (params, pathname) => {
+  ViewMenu.submenu.items[2].enabled = !!(pathname && params.tableId);
   ViewMenu.submenu.items[3].enabled = !!(pathname && params.tableId);
   ViewMenu.submenu.items[4].enabled = !!(pathname && params.tableId);
   ViewMenu.submenu.items[5].enabled = !!(pathname && params.tableId);
   ViewMenu.submenu.items[6].enabled = !!(pathname && params.tableId);
-  ViewMenu.submenu.items[7].enabled = !!(pathname && params.tableId);
 });
 
 export default ViewMenu;

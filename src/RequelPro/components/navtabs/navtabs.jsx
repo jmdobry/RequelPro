@@ -36,13 +36,12 @@ let Navtabs = React.createClass({
     this.setState(this.getState());
   },
   onClick(connection, e) {
-    console.log('onClick', connection, e);
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
     let databases = Database.filter({ connectionId: connection.id });
-    let database = _.find(databases, db => db.id === connection.db);
+    let database = _.find(databases, db => db.name === connection.db);
     database = database ? database : databases.length ? databases[0] : null;
     if (database) {
       // go to default db

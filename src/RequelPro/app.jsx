@@ -6,10 +6,10 @@ import appStyles from './app.scss';
 import gui from 'nw.gui';
 import React from 'react';
 import Router from 'react-router';
+import classnames from 'classnames';
 
 // routes
 import Connect from './routes/connect/connect.jsx';
-//import SelectTable from './routes/table/table.jsx';
 import Structure from './routes/structure/structure.jsx';
 import Content from './routes/content/content.jsx';
 import Relations from './routes/relations/relations.jsx';
@@ -31,6 +31,7 @@ import Favorite from './models/favorite.js';
 // components
 import Databases from './components/databases/databases.jsx';
 import Navbar from './components/navbar/navbar.jsx';
+import Clusterbar from './components/clusterbar/clusterbar.jsx';
 import Navtabs from './components/navtabs/navtabs.jsx';
 import Tables from './components/tables/tables.jsx';
 
@@ -87,11 +88,14 @@ let App = React.createClass({
     return (
       <div className="content" onContextMenu={this.onMenu}>
         <div id="headerRow" className="row">
-          <div className="columns large-3 medium-4">
+          <div className="columns large-2 medium-3">
             <Databases/>
           </div>
-          <div className="columns large-9 medium-8 end">
+          <div className="columns large-7 medium-5">
             <Navbar/>
+          </div>
+          <div className="columns large-3 medium-4 end">
+            <Clusterbar/>
           </div>
         </div>
         <div id="tabsRow" className="row">

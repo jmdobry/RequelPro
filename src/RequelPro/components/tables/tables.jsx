@@ -6,22 +6,6 @@ import Table from '../../models/table.js';
 import styles from './tables.scss';
 import layout from '../../services/layout.js';
 
-let getData = params => {
-  let table = null;
-  let database = null;
-  if (params.tableId) {
-    table = Database.get(params.tableId);
-  }
-  if (params.databaseId) {
-    database = Database.get(params.databaseId);
-  }
-  return {
-    database,
-    table,
-    tables: database ? Table.filter({ databaseId: database.id, connectionId: database.connectionId }) : []
-  };
-};
-
 let Tables = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
@@ -30,7 +14,7 @@ let Tables = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    return getData(this.context.router.getCurrentParams());
+    return this.getState();
   },
   componentDidMount() {
     Table.on('change', this.onChange);
@@ -48,7 +32,7 @@ let Tables = React.createClass({
    * Event Handlers
    */
   onChange() {
-    this.setState(getData(this.context.router.getCurrentParams()));
+    this.setState(this.getState());
   },
   onSelect(table, e) {
     e.preventDefault();
@@ -56,7 +40,7 @@ let Tables = React.createClass({
     if (params.tableId !== table.id) {
       this.context.router.transitionTo('structure', {
         id: table.connectionId,
-        databaseId: table.databaseId,
+        databaseId: table.db,
         tableId: table.id
       });
     }
@@ -64,6 +48,29 @@ let Tables = React.createClass({
   /*
    * Methods
    */
+  getState() {
+    let params = this.context.router.getCurrentParams();
+    let table = null;
+    let database = null;
+    if (params.tableId) {
+      table = Database.get(params.tableId);
+    }
+    if (params.databaseId) {
+      database = Database.get(params.databaseId);
+    }
+    let tables = database ? Table.filter({
+      db: database.id,
+      connectionId: database.connectionId,
+      orderBy: [
+        ['name', 'ASC']
+      ]
+    }) : [];
+    return {
+      database,
+      table,
+      tables: tables
+    };
+  },
   render() {
     let params = this.context.router.getCurrentParams();
     return (

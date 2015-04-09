@@ -1,0 +1,32 @@
+#clusterBar {
+  border-left: 1px solid rgba(255, 255, 255, 0.7);
+  .icon-bar {
+    height: 44px;
+    a {
+      background: lighten(#1a2f37, 10%);
+      padding: 4px;
+      &:hover {
+        background: #41728b;
+      }
+      i {
+        font-size: 1.2rem;
+      }
+      label {
+        font-size: 0.7rem;
+      }
+    }
+  }
+  #clusterLabel {
+    background: lighten(#1a2f37, 10%);
+    color: rgba(255, 255, 255, 0.7);
+    width: 100%;
+    padding: 0;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    &.active {
+      color: #fff;
+    }
+  }
+}

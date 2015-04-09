@@ -28,7 +28,8 @@ let getData = params => {
     table = Table.get(params.tableId);
   }
   return _.defaults({
-    table
+    table,
+    primaryKey: table.primary_key
   }, defaults);
 };
 
@@ -184,11 +185,11 @@ let Content = React.createClass({
   },
   render() {
     let rows = this.state.data.map(d => {
-      return <tr key={d.id} className={d === this.state.selectedRow ? 'active' : ''} onClick={e => this.onRowSelect(d, e)}
+      return <tr key={d[this.state.primaryKey]} className={d === this.state.selectedRow ? 'active' : ''} onClick={e => this.onRowSelect(d, e)}
         onContextMenu={e => this.onMenu(d, e)}>
       {this.state.fields.map(f => {
         let v = this.format(d[f]);
-        return <td key={d.id + '-' + f} className="contentField" onDoubleClick={this.onFieldSelect} title={v}>
+        return <td key={d[this.state.primaryKey] + '-' + f} className="contentField" onDoubleClick={this.onFieldSelect} title={v}>
         {v}
         </td>;
       })}

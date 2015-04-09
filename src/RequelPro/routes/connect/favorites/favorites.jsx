@@ -46,9 +46,9 @@ let Favorites = React.createClass({
   render() {
     return (
       <div className="panel" id="favorites">
-        <button className={'right button radius tiny' + (!this.state.favorite ? ' disabled' : '')} onClick={this.onNewConnection}>
-          <i className="fa fa-bolt"></i>
-        &nbsp;New Connection
+        <button id="newFav" className={'right button radius tiny' + (!this.state.favorite ? ' disabled' : '')} onClick={this.onNewConnection}>
+          <i className="fa fa-plus"></i>
+        &nbsp;New
         </button>
         <h4>Favorites</h4>
         <hr/>
@@ -60,8 +60,9 @@ let Favorites = React.createClass({
                   title="Delete favorite">
                   <i className="fa fa-trash-o">&nbsp;</i>
                 </span>
-                {favorite.name}&nbsp;
-                <small>{favorite.host}:{favorite.port}</small>
+                <span className="favorite">{favorite.name}&nbsp;
+                  <small>{favorite.host}:{favorite.port}</small>
+                </span>
               </a>
             </li>;
           })}

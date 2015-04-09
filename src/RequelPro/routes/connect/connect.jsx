@@ -114,8 +114,8 @@ let Connect = React.createClass({
         return connection.getDatabases();
       }, err => alert.error('Failed to connect!', err))
       .then(databases => {
-        let database = _.find(databases, db => db.id === connection.db);
-        database = database ? database : databases.length ? databases[0] : null;
+        let database = _.find(databases, db => db.name === connection.db);
+        database = database ? database : (databases.length ? databases[0] : null);
         if (database) {
           // go to default db
           this.context.router.transitionTo('database', {
@@ -134,10 +134,10 @@ let Connect = React.createClass({
     return (
       <div id="connectPage">
         <div className="row">
-          <div className="large-3 medium-4 columns">
+          <div className="large-2 medium-3 columns">
             <Favorites onChange={this.onSelectFavorite}/>
           </div>
-          <div className="large-5 large-offset-2 medium-4 medium-offset-1 columns end">
+          <div className="large-4 large-offset-3 medium-5 medium-offset-2 columns end">
             <form name="connectForm" id="connectForm" className="panel radius" onSubmit={this.connect}>
               <h4>Connection Details</h4>
               <hr/>
