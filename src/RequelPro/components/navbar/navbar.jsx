@@ -5,10 +5,10 @@ import Table from '../../models/table.js';
 import styles from './navbar.scss';
 
 const links = [
-  { icon: 'database', label: 'Structure', name: 'structure', title: 'Switch to the Table Structure tab (⌘1)' },
+  { icon: 'cogs', label: 'Structure', name: 'structure', title: 'Switch to the Table Structure tab (⌘1)' },
   { icon: 'table', label: 'Content', name: 'content', title: 'Switch to the Table Content tab (⌘2)' },
   { icon: 'sitemap', label: 'Relations', name: 'relations', title: 'Switch to the Table Relations tab (⌘3)' },
-  { icon: 'info', label: 'Table Info', name: 'info', title: 'Switch to the Table Info tab (⌘4)' },
+  { icon: 'info-circle', label: 'Table Info', name: 'info', title: 'Switch to the Table Info tab (⌘4)' },
   { icon: 'terminal', label: 'Query', name: 'query', title: 'Switch to the Run Query tab (⌘5)' }
 ];
 
