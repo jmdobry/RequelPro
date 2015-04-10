@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/jmdobry/RequelPro/master/src/img/requelpro.png" alt="RequelPro logo" title="RequelPro" align="right" width="64" height="64" />
 
-## RequelPro [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jmdobry/RequelPro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Latest Release](https://img.shields.io/github/release/jmdobry/RequelPro.svg?style=flat-square)](https://github.com/jmdobry/RequelPro/releases)
+## RequelPro [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jmdobry/RequelPro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Latest Release](https://img.shields.io/github/release/jmdobry/RequelPro.svg?style=flat-square)](https://github.com/jmdobry/RequelPro/releases) [![Task Board](https://img.shields.io/badge/Task%20Board-Waffle.io-blue.svg?style=flat-square)](https://waffle.io/jmdobry/requelpro)
 
 ## This project is in extremely early development, like pre-pre-pre-alpha.
 
