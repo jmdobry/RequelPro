@@ -61,9 +61,7 @@ let Database = store.defineResource({
                   ).zip().coerceTo('array')
                 });
               }).coerceTo('array'),
-              indexes: table('indexes').map(index => {
-                return r.db(this.name).table(table('name')).indexStatus(index).without('function');
-              }).coerceTo('array')
+              indexes: r.db(this.name).table(table('name')).indexStatus().without('function').coerceTo('array')
             });
           })
           .coerceTo('array')

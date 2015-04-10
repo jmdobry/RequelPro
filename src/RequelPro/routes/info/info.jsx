@@ -47,7 +47,7 @@ let Info = React.createClass({
     console.log(indexes);
     return (
       <div id="info" className="panel">
-        <h2>{this.state.table.name}</h2>
+        <h4>{this.state.table.name}</h4>
         <hr/>
         <div className="row">
           <div className="medium-6 columns">
@@ -108,7 +108,7 @@ let Info = React.createClass({
               </div>
             </div>
             <div className="row">
-              <h4>Indexes</h4>
+              <h5>Indexes</h5>
               <hr/>
               {indexes.map(index => {
                 return <div className="index">
