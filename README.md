@@ -10,6 +10,13 @@ Database Management Tool for [RethinkDB](http://rethinkdb.com/).
 
 Published under the GNU General Public License, version 3.
 
+### Screenshots
+
+<img src="https://raw.githubusercontent.com/jmdobry/RequelPro/master/src/img/screenshot1.png" alt="Login View" title="Login Screen" width="256" height="256" />
+<img src="https://raw.githubusercontent.com/jmdobry/RequelPro/master/src/img/screenshot2.png" alt="Content View" title="Login Screen" width="256" height="256" />
+<img src="https://raw.githubusercontent.com/jmdobry/RequelPro/master/src/img/screenshot3.png" alt="Table Info View" title="Login Screen" width="256" height="256" />
+
+
 ### How to I get it?
 
 #### Download Binary
