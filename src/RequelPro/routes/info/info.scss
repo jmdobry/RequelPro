@@ -1,6 +1,58 @@
-#infoPage {
+@import '../../styles/variables';
+
+#info {
+  .left-column, .right-column {
+    padding: 0 1%;
+  }
+  .success {
+    color: $success-color;
+  }
+  .alert {
+    color: $normal-red;
+  }
+  .success, .alert {
+    i {
+      margin-right: 8px;
+    }
+  }
+  table {
+    width: 100%;
+    thead {
+      background: #41728b;
+      tr {
+        th {
+          color: #fff;
+        }
+      }
+    }
+  }
+  .mini {
+    margin: 0.6rem 0 .6rem;
+  }
+  .shard {
+    &.panel {
+      background: #fff;
+    }
+  }
+  .replica {
+    h6 {
+      span {
+        font-size: 0.875rem;
+        &.success, &.alert {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+  #status, #details {
+    width: 97%;
+    margin: 0 auto;
+  }
   hr {
     margin: 1rem 0 .9rem
+  }
+  h5 {
+    margin-top: 20px;
   }
 }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import layout from '../../services/layout.js';
 import Table from '../../models/table.js';
 import styles from './info.scss';
+import pascalCase from 'mout/string/pascalCase';
 
 let Info = React.createClass({
   contextTypes: {
@@ -26,8 +27,7 @@ let Info = React.createClass({
    * Event Handlers
    */
   onChange() {
-    this.state.table.getStatus().then(table => {
-      console.log(table);
+    this.state.table.getStatus().then(() => {
       this.setState(this.getState());
     });
   },
@@ -43,65 +43,83 @@ let Info = React.createClass({
     return { table };
   },
   render() {
-    let indexes = this.state.table.indexes ? this.state.table.indexes : [];
-    console.log(indexes);
+    let table = this.state.table;
+    let indexes = table.indexes ? table.indexes : [];
     return (
       <div id="info" className="panel">
-        <h4>{this.state.table.name}</h4>
-        <hr/>
         <div className="row">
-          <div className="medium-6 columns">
+          <div className="medium-6 columns left-column">
+            <h4>Table:&nbsp;&nbsp;
+              <strong>{table.name}</strong>
+            </h4>
+            <hr/>
             <div className="row">
-              <div className="medium-3 columns">
-                <table>
+              <div className="medium-6 columns">
+                <table id="details">
                   <thead>
                     <tr>
-                      <th colSpan="2">Details</th>
+                      <th colSpan="2">
+                        <strong>Details</strong>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>Documents</td>
-                      <td>~{this.state.table.doc_count_estimates ? this.state.table.doc_count_estimates[0] : ''}</td>
+                      <td>~{table.doc_count_estimates ? table.doc_count_estimates[0] : ''}</td>
                     </tr>
                     <tr>
                       <td>Primary Key</td>
-                      <td>{this.state.table.primary_key}</td>
+                      <td>{table.primary_key}</td>
                     </tr>
                     <tr>
                       <td>Durability</td>
-                      <td>{this.state.table.durability}</td>
+                      <td>{table.durability}</td>
                     </tr>
                     <tr>
                       <td>Write Acks</td>
-                      <td>{this.state.table.write_acks}</td>
+                      <td>{table.write_acks}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div className="medium-3 columns end">
-                <table>
+              <div className="medium-6 columns end">
+                <table id="status">
                   <thead>
                     <tr>
-                      <th colSpan="2">Status</th>
+                      <th colSpan="2">
+                        <strong>Status</strong>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>All Replicas Ready</td>
-                      <td>{this.state.table.status.all_replicas_ready.toString()}</td>
+                      <td className={table.status.all_replicas_ready ? 'success' : 'alert'}>
+                        <i className={table.status.all_replicas_ready ? 'fa fa-circle' : 'fa fa-close'}></i>
+                        {table.status.all_replicas_ready ? 'Yes' : 'No'}
+                      </td>
                     </tr>
                     <tr>
                       <td>Ready for Outdated Reads</td>
-                      <td>{this.state.table.status.ready_for_outdated_reads.toString()}</td>
+                      <td className={table.status.ready_for_outdated_reads ? 'success' : 'alert'}>
+                        <i className={table.status.ready_for_outdated_reads ? 'fa fa-circle' : 'fa fa-close'}></i>
+                        {table.status.ready_for_outdated_reads ? 'Yes' : 'No'}
+                      </td>
                     </tr>
                     <tr>
                       <td>Ready for Reads</td>
-                      <td>{this.state.table.status.ready_for_reads.toString()}</td>
+                      <td className={table.status.ready_for_reads ? 'success' : 'alert'}>
+                        <i className={table.status.ready_for_reads ? 'fa fa-circle' : 'fa fa-close'}></i>
+                        {table.status.ready_for_reads ? 'Yes' : 'No'}
+                      </td>
                     </tr>
                     <tr>
                       <td>Ready for Writes</td>
-                      <td>{this.state.table.status.ready_for_writes.toString()}</td>
+                      <td className={table.status.ready_for_writes ? 'success' : 'alert'}>
+                        <i className={table.status.ready_for_writes ? 'fa fa-circle' : 'fa fa-close'}></i>
+                        {table.status.ready_for_writes ? 'Yes' : 'No'}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -110,44 +128,69 @@ let Info = React.createClass({
             <div className="row">
               <h5>Indexes</h5>
               <hr/>
-              {indexes.map(index => {
-                return <div className="index">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>Index</td>
+              <div className="index">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>
+                        <strong>Index</strong>
+                      </th>
+                      <th>Ready</th>
+                      <th>Outdated</th>
+                      <th>Multi</th>
+                      <th>Geo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {indexes.map(index => {
+                      return <tr key={index.index}>
                         <td>{index.index}</td>
-                      </tr>
-                      <tr>
-                        <td>Outdated</td>
-                        <td>{index.outdated ? 'Yes' : 'No'}</td>
-                      </tr>
-                      <tr>
-                        <td>Ready</td>
-                        <td>{index.ready ? 'Yes' : 'No'}</td>
-                      </tr>
-                      <tr>
-                        <td>Multi</td>
+                        <td className={index.ready ? 'success' : 'alert'}>
+                          <i className={index.ready ? 'fa fa-circle' : 'fa fa-close'}></i>
+                          {index.ready ? 'Yes' : 'No'}
+                        </td>
+                        <td className={index.outdated ? 'alert' : 'success'}>
+                          <i className={index.outdated ? 'fa fa-close' : 'fa fa-circle'}></i>
+                          {index.outdated ? 'Yes' : 'No'}
+                        </td>
                         <td>{index.multi ? 'Yes' : 'No'}</td>
-                      </tr>
-                      <tr>
-                        <td>Geo</td>
                         <td>{index.geo ? 'Yes' : 'No'}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                      </tr>;
+                    })}
+                    <tr className={indexes.length ? 'hidden' : ''}>
+                      <td colSpan="5">No indexes</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div className="medium-6 columns end right-column">
+            <h4>Shards</h4>
+            <hr/>
+            <div className="shards">
+              {table.shards.map(shard => {
+                return <div className="shard panel">
+                  {shard.replicas.map(replica => {
+                    return <div className="replica">
+                      <h6>
+                        {replica.name}&nbsp;
+                        <span className={replica.status === 'connected' ? 'success' : 'alery'}>
+                          <i className={replica.status === 'connected' ? 'fa fa-circle' : 'fa fa-close'}></i>
+                          {pascalCase(replica.status)}
+                        </span>
+                      &nbsp;
+                        <span className={replica.state === 'ready' ? 'success' : 'alery'}>
+                          <i className={replica.state === 'ready' ? 'fa fa-circle' : 'fa fa-close'}></i>
+                          {pascalCase(replica.state)}
+                        </span>
+                      </h6>
+                      <hr className="mini"/>
+                    </div>;
+                  })}
                 </div>;
               })}
             </div>
-          </div>
-          <div className="medium-6 columns end">
-          {this.state.table.shards.map(shard => {
-            return <div className="shard">
-              {shard.replicas.map(replica => {
-                return <div className="replica">{replica}</div>;
-              })}
-            </div>;
-          })}
           </div>
         </div>
       </div>

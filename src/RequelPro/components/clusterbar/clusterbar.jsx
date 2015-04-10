@@ -4,7 +4,7 @@ import Connection from '../../models/connection.js';
 import styles from './clusterbar.scss';
 
 const links = [
-  { icon: 'heartbeat', label: 'Status', name: 'status', title: 'Switch to the Status tab (⌘6)' },
+  { icon: 'heartbeat', label: 'Status', name: 'status', title: 'Switch to the Cluster Status tab (⌘6)' },
   { icon: 'server', label: 'Servers', name: 'servers', title: 'Switch to the Servers tab (⌘7)' }
 ];
 

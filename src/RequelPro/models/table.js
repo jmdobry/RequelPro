@@ -48,14 +48,16 @@ let Table = store.defineResource({
                     (replicaRow, statRow) => {
                       return replicaRow('server').eq(statRow('server'));
                     }
-                  ).zip().coerceTo('array')
+                  ).zip()
+                    .eqJoin('server', r.db('rethinkdb').table('server_status', { identifier_format: 'uuid' }))
+                    .zip()
+                    .coerceTo('array')
                 });
               }).coerceTo('array'),
               indexes: r.db(this.database.name).table(table('name')).indexStatus().without('function').coerceTo('array')
             };
           })
       ).then(table => {
-          console.log(table);
           return Table.inject(table);
         });
     },

@@ -127,3 +127,12 @@ button, .button {
   box-shadow: 1px 1px 12px -4px #000;
   z-index: 500;
 }
+
+strong, b {
+  font-family: "OpenSansRegular", $font-family-sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}

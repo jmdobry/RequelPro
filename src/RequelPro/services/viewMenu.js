@@ -64,6 +64,25 @@ ViewMenu.submenu.append(new gui.MenuItem({
 }));
 ViewMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
 ViewMenu.submenu.append(new gui.MenuItem({
+  label: 'Cluster Status',
+  click() {
+    Connection.emit('route', { name: 'heartbeat' });
+  },
+  key: '6',
+  modifiers: 'cmd',
+  enabled: false
+}));
+ViewMenu.submenu.append(new gui.MenuItem({
+  label: 'Servers',
+  click() {
+    Connection.emit('route', { name: 'servers' });
+  },
+  key: '7',
+  modifiers: 'cmd',
+  enabled: false
+}));
+ViewMenu.submenu.append(new gui.MenuItem({ type: 'separator' }));
+ViewMenu.submenu.append(new gui.MenuItem({
   label: 'Back In History',
   click() {
     store.emit('goBack');
@@ -78,6 +97,8 @@ store.on('route', (params, pathname) => {
   ViewMenu.submenu.items[4].enabled = !!(pathname && params.tableId);
   ViewMenu.submenu.items[5].enabled = !!(pathname && params.tableId);
   ViewMenu.submenu.items[6].enabled = !!(pathname && params.tableId);
+  ViewMenu.submenu.items[8].enabled = !!(pathname && params.id);
+  ViewMenu.submenu.items[9].enabled = !!(pathname && params.id);
 });
 
 export default ViewMenu;

@@ -58,7 +58,10 @@ let Database = store.defineResource({
                       .filter(stat => stat('table').eq(table('id')).and(stat.hasFields('storage_engine')))
                       .without('id', 'table', 'db'),
                     (replicaRow, statRow) => replicaRow('server').eq(statRow('server'))
-                  ).zip().coerceTo('array')
+                  ).zip()
+                    .eqJoin('server', r.db('rethinkdb').table('server_status', { identifier_format: 'uuid' }))
+                    .zip()
+                    .coerceTo('array')
                 });
               }).coerceTo('array'),
               indexes: r.db(this.name).table(table('name')).indexStatus().without('function').coerceTo('array')
