@@ -1,10 +1,19 @@
 import React from 'react';
 import {Link} from 'react-router';
 import classnames from 'classnames';
+import _ from 'lodash';
 import Database from '../../models/database.js';
 import Table from '../../models/table.js';
 import styles from './tables.scss';
 import layout from '../../services/layout.js';
+
+let tableRoutes = [
+  'structure',
+  'content',
+  'relations',
+  'info',
+  'query'
+];
 
 let Tables = React.createClass({
   contextTypes: {
@@ -38,7 +47,15 @@ let Tables = React.createClass({
     e.preventDefault();
     let params = this.context.router.getCurrentParams();
     if (params.tableId !== table.id) {
-      this.context.router.transitionTo('structure', {
+      let newRouteName = 'content';
+      let currentRoutes = this.context.router.getCurrentRoutes();
+      if (currentRoutes.length === 3) {
+        let route = currentRoutes[2];
+        if (_.includes(tableRoutes, route.name)) {
+          newRouteName = route.name;
+        }
+      }
+      this.context.router.transitionTo(newRouteName, {
         id: table.connectionId,
         databaseId: table.db,
         tableId: table.id

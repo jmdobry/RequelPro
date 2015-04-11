@@ -14,7 +14,8 @@ let Structure = React.createClass({
     return this.getState();
   },
   componentDidMount() {
-    layout.maximize('#structure');
+    layout.maximize('#structureTable', 26);
+    this.inferSchema();
   },
   componentWillReceiveProps() {
     this.onChange();
@@ -23,7 +24,24 @@ let Structure = React.createClass({
    * Event Handlers
    */
   onChange() {
-    this.setState(this.getState());
+    let state = this.getState();
+    this.setState(state);
+    this.inferSchema(state.table);
+  },
+  onRowSelect(row, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState({
+      selectedRow: row
+    });
+  },
+  onMenu(row, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    //let haveRow = !!this.state.selectedRow;
+    //ContextMenu.items[0].enabled = haveRow;
+    //ContextMenu.items[2].enabled = haveRow;
+    //ContextMenu.popup(e.clientX, e.clientY);
   },
   /*
    * Methods
@@ -34,12 +52,40 @@ let Structure = React.createClass({
     if (params.tableId) {
       table = Table.get(params.tableId);
     }
-    return { table };
+    return { table, fields: [] };
+  },
+  inferSchema(table) {
+    (table || this.state.table).getFieldsAndTypes().then(fields => {
+      this.setState({ fields });
+    });
   },
   render() {
+    let fields = this.state.fields.map(f => {
+      let max = f.types[0];
+      f.types.forEach(type => {
+        if (type.reduction >= max.reduction) {
+          max = type;
+        }
+      });
+      return <tr key={f.name} className={f === this.state.selectedRow ? 'active' : ''} onClick={e => this.onRowSelect(f, e)}
+        onContextMenu={e => this.onMenu(f, e)}>
+        <td>{f.name}</td>
+        <td>{max.group}</td>
+      </tr>;
+    });
     return (
-      <div id="structure" className="panel">
-      The goal of this feature is to allow you to define in RequelPro a schema for each table, so RequelPro can report data with missing or invalidate values. It could even make an initial attempt to infer the schema from the table's data.
+      <div id="structure">
+        <div id="structureTable" className="panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>{fields}</tbody>
+          </table>
+        </div>
       </div>
     );
   }

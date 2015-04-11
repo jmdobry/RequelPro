@@ -1,5 +1,6 @@
 import React from 'react';
 import layout from '../../services/layout.js';
+import alert from '../../services/alert.js';
 import Table from '../../models/table.js';
 import styles from './info.scss';
 import pascalCase from 'mout/string/pascalCase';
@@ -12,13 +13,15 @@ let Info = React.createClass({
    * Lifecycle
    */
   getInitialState() {
-    let state = this.getState();
-    state.table.getStatus();
-    return state;
+    return this.getState();
   },
   componentDidMount() {
     layout.maximize('#info');
-    Table.on('change', this.onChange());
+    Table.on('change', this.onChange);
+    this.onChange();
+  },
+  componentWillUnmount() {
+    Table.off('change', this.onChange());
   },
   componentWillReceiveProps() {
     this.onChange();
@@ -29,7 +32,7 @@ let Info = React.createClass({
   onChange() {
     this.state.table.getStatus().then(() => {
       this.setState(this.getState());
-    });
+    }).catch(err => alert.error('Failed to retrieve table status!', err));
   },
   /*
    * Methods

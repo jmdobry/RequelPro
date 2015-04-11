@@ -57,9 +57,7 @@ let Table = store.defineResource({
               indexes: r.db(this.database.name).table(table('name')).indexStatus().without('function').coerceTo('array')
             };
           })
-      ).then(table => {
-          return Table.inject(table);
-        });
+      ).then(table => Table.inject(table, { notify: false }));
     },
     getData(options) {
       let connection = this.connection;
@@ -123,6 +121,20 @@ let Table = store.defineResource({
       return connection.run(rql.getAll.apply(rql, rows.map(row => {
         return row.id
       })).delete());
+    },
+    getFieldsAndTypes() {
+      return this.connection.run(
+        r.do(r.db(this.database.name).table(this.name).sample(500).coerceTo('array'), rows => {
+          return rows.concatMap(_row => _row.keys())
+            .distinct()
+            .map(field => {
+              return {
+                name: field,
+                types: rows.group(_row => _row(field).default(null).typeOf()).count().ungroup().coerceTo('array')
+              };
+            });
+        })
+      );
     }
   }
 });
