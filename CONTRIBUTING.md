@@ -13,6 +13,6 @@ When submitting issues on GitHub, please include as much detail as possible to m
 1. `git clone git@github.com:jmdobry/RequelPro.git`
 1. `cd RequelPro`
 1. `npm install`
-1. `grunt build`
+1. `npm run build`
 1. Write your code
 1. Submit a PR and we'll review

@@ -1,0 +1,143 @@
+@charset "UTF-8";
+@import "./styles/variables";
+@import "foundation/components/grid";
+@import "foundation/components/accordion";
+@import "foundation/components/alert-boxes";
+@import "foundation/components/block-grid";
+@import "foundation/components/breadcrumbs";
+@import "foundation/components/button-groups";
+@import "foundation/components/buttons";
+@import "foundation/components/clearing";
+@import "foundation/components/dropdown";
+@import "foundation/components/dropdown-buttons";
+@import "foundation/components/flex-video";
+@import "foundation/components/forms";
+@import "foundation/components/icon-bar";
+@import "foundation/components/inline-lists";
+@import "foundation/components/joyride";
+@import "foundation/components/keystrokes";
+@import "foundation/components/labels";
+@import "foundation/components/magellan";
+@import "foundation/components/orbit";
+@import "foundation/components/pagination";
+@import "foundation/components/panels";
+@import "foundation/components/pricing-tables";
+@import "foundation/components/progress-bars";
+@import "foundation/components/range-slider";
+@import "foundation/components/reveal";
+@import "foundation/components/side-nav";
+@import "foundation/components/split-buttons";
+@import "foundation/components/sub-nav";
+@import "foundation/components/switches";
+@import "foundation/components/tables";
+@import "foundation/components/tabs";
+@import "foundation/components/thumbs";
+@import "foundation/components/tooltips";
+@import "foundation/components/top-bar";
+@import "foundation/components/type";
+@import "foundation/components/offcanvas";
+@import "foundation/components/visibility";
+
+//@import "../styles/requelpro/mixins";
+//@import "../styles/requelpro/main";
+// Elements
+@import "styles/elements/fonts";
+
+//@import "../styles/requelpro/elements/type";
+//@import "../styles/requelpro/elements/forms";
+//@import "../styles/requelpro/elements/dropdowns";
+//@import "../styles/requelpro/elements/navMenu";
+//@import "../styles/requelpro/elements/navTabs";
+//@import "../styles/requelpro/elements/modal";
+//@import "../styles/requelpro/elements/list-groups";
+//// Routes
+//@import "../styles/requelpro/routes/relations";
+//@import "../styles/requelpro/routes/content";
+
+body {
+  background-color: $light-gray;
+  background-image: url('./img/body_bg_tile.png');
+}
+
+.hidden {
+  display: none !important;
+}
+
+#import-file-dialog {
+  display: none;
+}
+
+.container {
+  width: 100% !important;
+}
+
+.side-nav {
+  padding: 0;
+  li {
+    font-size: 1.2rem;
+    a {
+      padding: 0;
+      .button {
+        margin: 0;
+      }
+    }
+  }
+}
+
+button, .button {
+  margin: 0;
+  &:focus {
+    outline: 0;
+  }
+  &:active {
+    background-color: darken($button-bg-hover, 10%);
+  }
+  &.secondary {
+    &:active {
+      background-color: darken($secondary-button-bg-hover, 10%);
+    }
+  }
+  &.success {
+    &:active {
+      background-color: darken($success-button-bg-hover, 10%);
+    }
+  }
+  &.alert {
+    &:active {
+      background-color: darken($alert-button-bg-hover, 10%);
+    }
+  }
+  &.warning {
+    &:active {
+      background-color: darken($warning-button-bg-hover, 10%);
+    }
+  }
+  &.info {
+    &:active {
+      background-color: darken($info-button-bg-hover, 10%);
+    }
+  }
+}
+
+.panel {
+  margin-bottom: 0;
+}
+
+.side-area {
+  box-shadow: 1px 1px 12px -4px #000;
+  z-index: 500;
+}
+
+strong, b {
+  font-family: "OpenSansRegular", $font-family-sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// Fix for sweetalert/foundation style clash
+.sweetalert-fix input {
+  display: none;
+}
